@@ -1,36 +1,33 @@
 package com.finalproject.model;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "market_product")
-public class MarketProduct {
-
-    @EmbeddedId
-    private MarketProductId id;
+@Table(name = "market_product",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"market_id", "product_id"}))
+public class MarketProduct implements Serializable {
 
     @Column(name = "discount_price", nullable = false)
     private BigDecimal discountPrice;
 
     @ManyToOne
-    @MapsId("marketId")
-    @JoinColumn(name = "market_id")
+    @JoinColumn(name = "market_id", referencedColumnName = "market_id", insertable = false, updatable = false)
     private Market market;
 
     @ManyToOne
-    @MapsId("productId")
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     private Product product;
 
-    // Getters and Setters
-    public MarketProductId getId() {
-        return id;
-    }
+    @Column(name = "market_id", nullable = false, updatable = false)
+    private String marketId;
 
-    public void setId(MarketProductId id) {
-        this.id = id;
-    }
+    @Id
+    @Column(name = "product_id", nullable = false, updatable = false)
+    private String productId;
+
+    // Getters and Setters
 
     public BigDecimal getDiscountPrice() {
         return discountPrice;
@@ -40,32 +37,6 @@ public class MarketProduct {
         this.discountPrice = discountPrice;
     }
 
-    public Market getMarket() {
-        return market;
-    }
-
-    public void setMarket(Market market) {
-        this.market = market;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-}
-
-@Embeddable
-class MarketProductId implements Serializable {
-    @Column(name = "market_id")
-    private String marketId;
-
-    @Column(name = "product_id")
-    private String productId;
-
-    // Getters, Setters, hashCode, and equals
     public String getMarketId() {
         return marketId;
     }
@@ -82,16 +53,19 @@ class MarketProductId implements Serializable {
         this.productId = productId;
     }
 
-    @Override
-    public int hashCode() {
-        return marketId.hashCode() + productId.hashCode();
+    public Market getMarket() {
+        return market;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        MarketProductId that = (MarketProductId) obj;
-        return marketId.equals(that.marketId) && productId.equals(that.productId);
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }
