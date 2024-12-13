@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue("STORE") // 指定区分子类的值
+@Table(name = "store")
 public class Store extends Account implements Serializable {
 
     @Column(name = "store_name")
@@ -17,7 +17,7 @@ public class Store extends Account implements Serializable {
     private BigDecimal storeScore;
 
     @Column(name = "certification")
-    private boolean certification;
+    private Integer certification;
 
     @Column(name = "address")
     private String address;
@@ -43,11 +43,11 @@ public class Store extends Account implements Serializable {
         this.storeScore = storeScore;
     }
 
-    public boolean isCertification() {
+    public Integer isCertification() {
         return certification;
     }
 
-    public void setCertification(boolean certification) {
+    public void setCertification(Integer certification) {
         this.certification = certification;
     }
 

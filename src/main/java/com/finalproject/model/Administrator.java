@@ -3,7 +3,7 @@ package com.finalproject.model;
 import jakarta.persistence.*;
 
 @Entity
-@DiscriminatorValue("ADMIN")
+@Table(name = "administrator")
 public class Administrator extends Account {
 
     @Column(name = "permission_level")

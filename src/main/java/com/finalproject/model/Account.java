@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 @Entity
 @Table(name = "account") // 数据库表名
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING)
 public class Account implements Serializable {
 
     @Id
     @Column(name = "account_id", nullable = false)
-    private String accountId; // 修改为小写
+    private String accountId;
 
     @Column(name = "user_name")
     private String userName;

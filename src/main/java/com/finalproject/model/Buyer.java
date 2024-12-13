@@ -2,7 +2,7 @@ package com.finalproject.model;
 import jakarta.persistence.*;
 
 @Entity
-@DiscriminatorValue("BUYER") // 指定区分子类的值
+@Table(name = "buyer")
 public class Buyer extends Account {
 
     @Column(name = "gender")

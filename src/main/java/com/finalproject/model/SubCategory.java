@@ -10,16 +10,16 @@ public class SubCategory implements Serializable {
 
     @Id
     @Column(name = "subcategory_id")
-    private String subcategoryId;
+    private String subCategoryId;
 
-    @Column(name = "category_name")
+    @Transient
     private String categoryName;
 
     @Column(name = "subcategory_name")
-    private String subcategoryName;
+    private String subCategoryName;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_name", insertable = false, updatable = false)
     private Category category;
 
     @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
@@ -28,15 +28,18 @@ public class SubCategory implements Serializable {
     // Getters and Setters
 
     public String getSubcategoryId() {
-        return subcategoryId;
+        return subCategoryId;
     }
 
     public void setSubcategoryId(String subcategoryId) {
-        this.subcategoryId = subcategoryId;
+        this.subCategoryId = subcategoryId;
     }
 
     public String getCategoryName() {
-        return categoryName;
+        if (category != null) {
+            return category.getCategoryName();  // 通过关联的 Category 获取 categoryName
+        }
+        return null;  // 如果没有关联的 Category，返回 null 或者自定义处理逻辑
     }
 
     public void setCategoryName(String categoryName) {
@@ -44,11 +47,11 @@ public class SubCategory implements Serializable {
     }
 
     public String getSubcategoryName() {
-        return subcategoryName;
+        return subCategoryName;
     }
 
     public void setSubcategoryName(String subcategoryName) {
-        this.subcategoryName = subcategoryName;
+        this.subCategoryName = subcategoryName;
     }
 
     public Category getCategory() {

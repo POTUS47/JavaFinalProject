@@ -3,6 +3,7 @@ package com.finalproject.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "market")
@@ -87,5 +88,9 @@ public class Market implements Serializable {
 
     public void setImageId(String imageId) {
         this.imageId = imageId;
+    }
+
+    public void setPosterImg(byte[] imageData) {
+        this.posterimg = imageData;
     }
 }
