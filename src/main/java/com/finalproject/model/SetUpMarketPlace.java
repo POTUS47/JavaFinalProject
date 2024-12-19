@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Table(name = "set_up_marketplace")
 public class SetUpMarketPlace implements Serializable {
 
-    @Id // Assuming market_id and administrator_account_id together form the composite key
+    @Id // Assuming market_id and administrator_id together form the composite key
     @EmbeddedId
     private SetUpMarketPlaceId id;
 
@@ -15,7 +15,7 @@ public class SetUpMarketPlace implements Serializable {
     private Market market;
 
     @ManyToOne
-    @JoinColumn(name = "administrator_account_id", insertable = false, updatable = false)
+    @JoinColumn(name = "administrator_id", insertable = false, updatable = false)
     private Administrator administrator;
 
     // Getters and Setters
@@ -39,15 +39,15 @@ public class SetUpMarketPlace implements Serializable {
         id.setMarketId(marketId);
     }
 
-    public String getAdministratorAccountId() {
-        return id.getAdministratorAccountId();
+    public String getAdministratorId () {
+        return id.getAdministratorId ();
     }
 
-    public void setAdministratorAccountId(String administratorAccountId) {
+    public void setAdministratorId (String administratorId ) {
         if (id == null) {
             id = new SetUpMarketPlaceId();
         }
-        id.setAdministratorAccountId(administratorAccountId);
+        id.setAdministratorId (administratorId );
     }
 
     public Market getMarket() {
@@ -74,7 +74,7 @@ public class SetUpMarketPlace implements Serializable {
         private String marketId;
 
         @Column(name = "administrator_account_id")
-        private String administratorAccountId;
+        private String administratorId ;
 
         // Getters and Setters
 
@@ -86,12 +86,12 @@ public class SetUpMarketPlace implements Serializable {
             this.marketId = marketId;
         }
 
-        public String getAdministratorAccountId() {
-            return administratorAccountId;
+        public String getAdministratorId () {
+            return administratorId ;
         }
 
-        public void setAdministratorAccountId(String administratorAccountId) {
-            this.administratorAccountId = administratorAccountId;
+        public void setAdministratorId (String administratorId ) {
+            this.administratorId  = administratorId ;
         }
 
         @Override
@@ -99,12 +99,12 @@ public class SetUpMarketPlace implements Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             SetUpMarketPlaceId that = (SetUpMarketPlaceId) o;
-            return marketId.equals(that.marketId) && administratorAccountId.equals(that.administratorAccountId);
+            return marketId.equals(that.marketId) && administratorId .equals(that.administratorId );
         }
 
         @Override
         public int hashCode() {
-            return marketId.hashCode() ^ administratorAccountId.hashCode();
+            return marketId.hashCode() ^ administratorId .hashCode();
         }
     }
 }

@@ -43,7 +43,7 @@ public class MarketService {
         // 保存 SetUpMarketplace 数据
         SetUpMarketPlace setUpMarketplace = new SetUpMarketPlace();
         setUpMarketplace.setMarketId(uidb);
-        setUpMarketplace.setAdministratorAccountId(model.getAdminId());
+        setUpMarketplace.setAdministratorId(model.getAdminId());
         System.out.println(model.getAdminId());
         setUpMarketPlaceRepository.save(setUpMarketplace);
 

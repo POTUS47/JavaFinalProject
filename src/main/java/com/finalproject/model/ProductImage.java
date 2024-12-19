@@ -13,13 +13,13 @@ public class ProductImage implements Serializable {
     @Column(name = "product_id")
     private String productId;
 
-    @Lob
-    @Column(name = "image")
-    private byte[] image;
-
     @ManyToOne
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "image_id", insertable = false, updatable = false)
+    private Image image;
 
     // Getters and Setters
 
@@ -39,14 +39,6 @@ public class ProductImage implements Serializable {
         this.productId = productId;
     }
 
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
     public Product getProduct() {
         return product;
     }
@@ -54,4 +46,13 @@ public class ProductImage implements Serializable {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
 }

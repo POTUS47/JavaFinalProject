@@ -1,60 +1,41 @@
 package com.finalproject.model;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "product") // 指定数据库表名
+@Table(name = "product")
 public class Product {
 
     @Id
     @Column(name = "product_id", nullable = false)
     private String productId;
 
-    @Column(name = "product_name")
+    @Column(name = "product_name", nullable = false, length = 50)
     private String productName;
 
-    @Column(name = "product_price", nullable = false)
+    @Column(name = "product_price", nullable = false, precision = 7, scale = 2)
     private BigDecimal productPrice;
 
-    @Column(name = "sale_or_not", nullable = false)
-    private boolean saleOrNot;
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
 
-    @Column(name = "tag")
+    @Column(name = "tag", nullable = false, length = 50)
     private String tag;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false, length = 200)
     private String description;
 
-    @Column(name = "account_id")
-    private String accountId;
+    @ManyToOne
+    @JoinColumn(name = "account_id", referencedColumnName = "account_id", nullable = false)
+    private Account store;  // Store entity representing the store owner (Account)
 
-    @Column(name = "store_tag")
+    @Column(name = "store_tag", length = 50)
     private String storeTag;
 
-    @Column(name = "sub_tag")
-    private String subTag;
-
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false) // 外键名
-    private Store store;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne
-    @JoinColumn(name = "sub_category_id")
-    private SubCategory subCategory;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImage> productImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductDetail> productDetails = new ArrayList<>();
+    @JoinColumn(name = "sub_tag", referencedColumnName = "subcategory_id", nullable = false)
+    private SubCategory subCategory;  // SubCategory entity representing the product's sub-category
 
     // Getters and Setters
     public String getProductId() {
@@ -81,12 +62,12 @@ public class Product {
         this.productPrice = productPrice;
     }
 
-    public boolean isSaleOrNot() {
-        return saleOrNot;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setSaleOrNot(boolean saleOrNot) {
-        this.saleOrNot = saleOrNot;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getTag() {
@@ -105,12 +86,12 @@ public class Product {
         this.description = description;
     }
 
-    public String getAccountId() {
-        return accountId;
+    public Account getStore() {
+        return store;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setStore(Account store) {
+        this.store = store;
     }
 
     public String getStoreTag() {
@@ -121,30 +102,6 @@ public class Product {
         this.storeTag = storeTag;
     }
 
-    public String getSubTag() {
-        return subTag;
-    }
-
-    public void setSubTag(String subTag) {
-        this.subTag = subTag;
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public SubCategory getSubCategory() {
         return subCategory;
     }
@@ -153,19 +110,18 @@ public class Product {
         this.subCategory = subCategory;
     }
 
-    public List<ProductImage> getProductImages() {
-        return productImages;
-    }
-
-    public void setProductImages(List<ProductImage> productImages) {
-        this.productImages = productImages;
-    }
-
-    public List<ProductDetail> getProductDetails() {
-        return productDetails;
-    }
-
-    public void setProductDetails(List<ProductDetail> productDetails) {
-        this.productDetails = productDetails;
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId='" + productId + '\'' +
+                ", productName='" + productName + '\'' +
+                ", productPrice=" + productPrice +
+                ", quantity=" + quantity +
+                ", tag='" + tag + '\'' +
+                ", description='" + description + '\'' +
+                ", store=" + store +
+                ", storeTag='" + storeTag + '\'' +
+                ", subCategory=" + subCategory +
+                '}';
     }
 }

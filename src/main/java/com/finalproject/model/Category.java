@@ -1,5 +1,6 @@
 package com.finalproject.model;
 import jakarta.persistence.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +12,18 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "category_pic")
-    private byte[] categoryPic;
+    @ManyToOne
+    @JoinColumn(name = "category_pic_id", referencedColumnName = "image_id", insertable = false, updatable = false)
+    private Image categoryPic;
 
     @Column(name = "category_description")
     private String categoryDescription;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubCategory> subCategories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products = new ArrayList<>();
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<SubCategory> subCategories = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Product> products = new ArrayList<>();
 
     // Getters and Setters
     public String getCategoryName() {
@@ -32,11 +34,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public byte[] getCategoryPic() {
+    public Image getCategoryPic() {
         return categoryPic;
     }
 
-    public void setCategoryPic(byte[] categoryPic) {
+    public void setCategoryPic(Image categoryPic) {
         this.categoryPic = categoryPic;
     }
 

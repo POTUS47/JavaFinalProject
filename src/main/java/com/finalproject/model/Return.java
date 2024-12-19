@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 public class Return implements Serializable {
 
     @Id
-    @Column(name = "order_id")
-    private String orderId;
+    @Column(name = "item_id")
+    private String itemId;
 
     @Column(name = "return_time")
     private LocalDateTime returnTime;
@@ -21,17 +21,17 @@ public class Return implements Serializable {
     private String returnStatus;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", insertable = false, updatable = false)
-    private Order orders;
+    @JoinColumn(name = "item_id", insertable = false, updatable = false)
+    private OrderItem item;
 
     // Getters and Setters
 
     public String getOrderId() {
-        return orderId;
+        return itemId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setOrderId(String itemId) {
+        this.itemId = itemId;
     }
 
     public LocalDateTime getReturnTime() {
@@ -58,11 +58,11 @@ public class Return implements Serializable {
         this.returnStatus = returnStatus;
     }
 
-    public Order getOrders() {
-        return orders;
+    public OrderItem getItem() {
+        return item;
     }
 
-    public void setOrders(Order orders) {
-        this.orders = orders;
+    public void setItem(OrderItem item) {
+        this.item = item;
     }
 }

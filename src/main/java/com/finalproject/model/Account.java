@@ -1,7 +1,6 @@
 package com.finalproject.model;
 import java.io.Serializable;
 import jakarta.persistence.*;
-import java.util.Arrays;
 
 @Entity
 @Table(name = "account") // 数据库表名
@@ -25,9 +24,13 @@ public class Account implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "photo")
-    private byte[] photo;
+    // 新增字段，外键关联到 image 表的 IMAGE_ID
+    @Column(name = "photo_id")
+    private String photoId;
+
+    // 新增字段，用于表示是否已认证
+    @Column(name = "has_certified", nullable = false)
+    private boolean hasCertified;
 
     // Getters and Setters
     public String getAccountId() {
@@ -70,12 +73,20 @@ public class Account implements Serializable {
         this.description = description;
     }
 
-    public byte[] getPhoto() {
-        return photo;
+    public String getPhotoId() {
+        return photoId;
     }
 
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
+    public void setPhotoId(String photoId) {
+        this.photoId = photoId;
+    }
+
+    public boolean isHasCertified() {
+        return hasCertified;
+    }
+
+    public void setHasCertified(boolean hasCertified) {
+        this.hasCertified = hasCertified;
     }
 
     @Override
@@ -86,7 +97,8 @@ public class Account implements Serializable {
                 ", email='" + email + '\'' +
                 ", password='[PROTECTED]'" + // 避免直接显示密码
                 ", description='" + description + '\'' +
-                ", photo=" + (photo != null ? Arrays.toString(photo) : "null") +
+                ", photoId='" + photoId + '\'' +
+                ", hasCertified=" + hasCertified +
                 '}';
     }
 }

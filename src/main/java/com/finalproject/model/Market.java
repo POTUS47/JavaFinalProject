@@ -25,12 +25,12 @@ public class Market implements Serializable {
     @Column(name = "detail")
     private String detail;
 
-    @Lob
-    @Column(name = "posterimg")
-    private byte[] posterimg;
-
     @Column(name = "image_id")
     private String imageId;
+
+    @ManyToOne
+    @JoinColumn(name = "image_id", referencedColumnName = "image_id", insertable = false, updatable = false)
+    private Image marketPic;
 
     // Getters and Setters
 
@@ -74,14 +74,6 @@ public class Market implements Serializable {
         this.detail = detail;
     }
 
-    public byte[] getPosterimg() {
-        return posterimg;
-    }
-
-    public void setPosterimg(byte[] posterimg) {
-        this.posterimg = posterimg;
-    }
-
     public String getImageId() {
         return imageId;
     }
@@ -90,7 +82,12 @@ public class Market implements Serializable {
         this.imageId = imageId;
     }
 
-    public void setPosterImg(byte[] imageData) {
-        this.posterimg = imageData;
+    public Image getMarketPic() {
+        return marketPic;
     }
+
+    public void setMarketPic(Image marketPic) {
+        this.marketPic = marketPic;
+    }
+
 }

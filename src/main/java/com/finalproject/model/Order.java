@@ -1,77 +1,56 @@
 package com.finalproject.model;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
-public class Order implements Serializable {
+public class Order {
 
     @Id
-    @Column(name = "order_id")
+    @Column(name = "order_id", nullable = false)
     private String orderId;
 
-    @Column(name = "product_id")
-    private String productId;
+    @ManyToOne
+    @JoinColumn(name = "buyer_id", referencedColumnName = "account_id", nullable = false)
+    private Buyer buyer;  // Assuming there is an Account class for the buyer
 
-    @Column(name = "total_pay", nullable = false)
-    private BigDecimal totalPay;
+    @ManyToOne
+    @JoinColumn(name = "store_id", referencedColumnName = "account_id")
+    private Store store;  // Assuming there is an Account class for the store
 
-    @Column(name = "actual_pay", nullable = false)
-    private BigDecimal actualPay;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
-    @Column(name = "create_time", nullable = false)
-    private LocalDateTime createTime;
+    @Column(name = "total_price", precision = 10, scale = 2)
+    private BigDecimal totalPrice;
 
-    @Column(name = "receiving_time")
-    private LocalDateTime receivingTime;
+    @Column(name = "shipping_address", length = 255)
+    private String shippingAddress;
 
-    @Column(name = "delivery_number")
-    private String deliveryNumber;
+    @Column(name = "billing_address", length = 255)
+    private String billingAddress;
 
-    @Column(name = "score")
-    private BigDecimal score;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status")
+    private PaymentStatus paymentStatus;
 
-    @Column(name = "remark")
-    private String remark;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
+    private PaymentMethod paymentMethod;
 
-    @Column(name = "bonus_credits")
-    private int bonusCredits;
+    @Column(name = "order_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
+    private LocalDateTime orderTime;
 
-    @Column(name = "return_or_not")
-    private Boolean returnOrNot;
-
-    @Column(name = "buyer_account_id")
-    private String buyerAccountId;
-
-    @Column(name = "store_account_id")
-    private String storeAccountId;
-
-    @Column(name = "delivery_address")
-    private String deliveryAddress;
-
-    @Column(name = "username")
+    @Column(name = "username", length = 50)
     private String username;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "buyer_account_id", insertable = false, updatable = false)
-    private Buyer buyer;
-
-    @ManyToOne
-    @JoinColumn(name = "store_account_id", insertable = false, updatable = false)
-    private Store store;
+    @Column(name = "pay_time")
+    private LocalDateTime payTime;
 
     // Getters and Setters
-
     public String getOrderId() {
         return orderId;
     }
@@ -80,116 +59,76 @@ public class Order implements Serializable {
         this.orderId = orderId;
     }
 
-    public String getProductId() {
-        return productId;
+    public Account getBuyer() {
+        return buyer;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setBuyer(Buyer buyer) {
+        this.buyer = buyer;
     }
 
-    public BigDecimal getTotalPay() {
-        return totalPay;
+    public Account getStore() {
+        return store;
     }
 
-    public void setTotalPay(BigDecimal totalPay) {
-        this.totalPay = totalPay;
+    public void setStore(Store store) {
+        this.store = store;
     }
 
-    public BigDecimal getActualPay() {
-        return actualPay;
-    }
-
-    public void setActualPay(BigDecimal actualPay) {
-        this.actualPay = actualPay;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public LocalDateTime getReceivingTime() {
-        return receivingTime;
+    public String getShippingAddress() {
+        return shippingAddress;
     }
 
-    public void setReceivingTime(LocalDateTime receivingTime) {
-        this.receivingTime = receivingTime;
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
-    public String getDeliveryNumber() {
-        return deliveryNumber;
+    public String getBillingAddress() {
+        return billingAddress;
     }
 
-    public void setDeliveryNumber(String deliveryNumber) {
-        this.deliveryNumber = deliveryNumber;
+    public void setBillingAddress(String billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
-    public BigDecimal getScore() {
-        return score;
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setScore(BigDecimal score) {
-        this.score = score;
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
-    public String getRemark() {
-        return remark;
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
-    public int getBonusCredits() {
-        return bonusCredits;
+    public LocalDateTime getOrderTime() {
+        return orderTime;
     }
 
-    public void setBonusCredits(int bonusCredits) {
-        this.bonusCredits = bonusCredits;
-    }
-
-    public Boolean getReturnOrNot() {
-        return returnOrNot;
-    }
-
-    public void setReturnOrNot(Boolean returnOrNot) {
-        this.returnOrNot = returnOrNot;
-    }
-
-    public String getBuyerAccountId() {
-        return buyerAccountId;
-    }
-
-    public void setBuyerAccountId(String buyerAccountId) {
-        this.buyerAccountId = buyerAccountId;
-    }
-
-    public String getStoreAccountId() {
-        return storeAccountId;
-    }
-
-    public void setStoreAccountId(String storeAccountId) {
-        this.storeAccountId = storeAccountId;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
+    public void setOrderTime(LocalDateTime orderTime) {
+        this.orderTime = orderTime;
     }
 
     public String getUsername() {
@@ -200,27 +139,44 @@ public class Order implements Serializable {
         this.username = username;
     }
 
-    public Product getProduct() {
-        return product;
+    public LocalDateTime getPayTime() {
+        return payTime;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setPayTime(LocalDateTime payTime) {
+        this.payTime = payTime;
     }
 
-    public Buyer getBuyer() {
-        return buyer;
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId='" + orderId + '\'' +
+                ", buyer=" + buyer +
+                ", store=" + store +
+                ", orderStatus=" + orderStatus +
+                ", totalPrice=" + totalPrice +
+                ", shippingAddress='" + shippingAddress + '\'' +
+                ", billingAddress='" + billingAddress + '\'' +
+                ", paymentStatus=" + paymentStatus +
+                ", paymentMethod=" + paymentMethod +
+                ", orderTime=" + orderTime +
+                ", username='" + username + '\'' +
+                ", payTime=" + payTime +
+                '}';
     }
 
-    public void setBuyer(Buyer buyer) {
-        this.buyer = buyer;
+    // Enum for OrderStatus
+    public enum OrderStatus {
+        等待确认, 处理中, 运输中, 已完成, 已取消, 已送达
     }
 
-    public Store getStore() {
-        return store;
+    // Enum for PaymentStatus
+    public enum PaymentStatus {
+        等待支付, 已付款 ,付款失败
     }
 
-    public void setStore(Store store) {
-        this.store = store;
+    // Enum for PaymentMethod
+    public enum PaymentMethod {
+        支付宝,微信 ,钱包
     }
 }

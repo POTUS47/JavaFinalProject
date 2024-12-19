@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "buyer_product_bookmark",
+@Table(name = "bookmark_product",
         uniqueConstraints = @UniqueConstraint(columnNames = {"buyer_account_id", "product_id"}))
-public class BuyerProductBookmark implements Serializable {
+public class BookmarkProduct implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name = "buyer_account_id", referencedColumnName = "account_id", insertable = false, updatable = false)
+    @JoinColumn(name = "buyer_id", referencedColumnName = "account_id", insertable = false, updatable = false)
     private Buyer buyer;
 
     @ManyToOne
@@ -17,18 +17,18 @@ public class BuyerProductBookmark implements Serializable {
     private Product product;
 
     @Id
-    @Column(name = "buyer_account_id", nullable = false, updatable = false)
-    private String buyerAccountId;
+    @Column(name = "buyer_id", nullable = false, updatable = false)
+    private String buyerId;
 
     @Column(name = "product_id", nullable = false, updatable = false)
     private String productId;
 
-    public String getBuyerAccountId() {
-        return buyerAccountId;
+    public String getBuyerId() {
+        return buyerId;
     }
 
-    public void setBuyerAccountId(String buyerAccountId) {
-        this.buyerAccountId = buyerAccountId;
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
     }
 
     public String getProductId() {
