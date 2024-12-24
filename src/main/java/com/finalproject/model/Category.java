@@ -50,19 +50,19 @@ public class Category {
         this.categoryDescription = categoryDescription;
     }
 
-    public List<SubCategory> getSubCategories() {
-        return subCategories;
-    }
-
-    public void setSubCategories(List<SubCategory> subCategories) {
-        this.subCategories = subCategories;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+//    public List<SubCategory> getSubCategories() {
+//        return subCategories;
+//    }
+//
+//    public void setSubCategories(List<SubCategory> subCategories) {
+//        this.subCategories = subCategories;
+//    }
+//
+//    public List<Product> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
 }
