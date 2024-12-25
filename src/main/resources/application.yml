@@ -3,6 +3,15 @@
 server:
   port: 8080
 
+springdoc:
+  api-docs:
+    enabled: true # 开启OpenApi接口
+    path: /v3/api-docs  # 自定义路径，默认为 "/v3/api-docs"
+  swagger-ui:
+    enabled: true # 开启swagger界面，依赖OpenApi，需要OpenApi同时开启
+    path: /swagger-ui/index.html # 自定义路径，默认为"/swagger-ui/index.html"
+
+
 spring:
   servlet:
     multipart:
@@ -29,6 +38,21 @@ spring:
       static-locations:
         - "classpath:/static/"
         - "file:/home/ecs-user/image/"
+
+  mail:
+    host: smtp.qq.com               # QQ 邮箱的 SMTP 服务器地址
+    port: 587                       # SMTP 端口号
+    username: 1473030672@qq.com  # 你的 QQ 邮箱地址
+    password: pxdzrvnwxffdbafa  # 生成的授权码
+    protocol: smtp                  # 协议
+    properties:
+      mail:
+        smtp:
+          auth: true                # 启用认证
+          starttls:
+            enable: true            # 启用 STARTTLS 加密
+    default-encoding: UTF-8         # 默认编码
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
