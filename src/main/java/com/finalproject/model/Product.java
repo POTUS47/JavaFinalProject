@@ -33,9 +33,22 @@ public class Product {
     @Column(name = "store_tag", length = 50)
     private String storeTag;
 
-    @ManyToOne
-    @JoinColumn(name = "sub_tag", referencedColumnName = "subcategory_id", nullable = false)
-    private SubCategory subCategory;  // SubCategory entity representing the product's sub-category
+    @Column(name = "sub_tag", nullable = false, length = 50)
+    private String subCategory;  // SubCategory entity representing the product's sub-category
+
+    public Product(String productId,String productName,BigDecimal productPrice,int quantity,String tag,String description,String subCategory ) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.quantity = quantity;
+        this.tag = tag;
+        this.description = description;
+        this.subCategory = subCategory;
+    }
+
+    public Product() {
+
+    }
 
     // Getters and Setters
     public String getProductId() {
@@ -102,11 +115,11 @@ public class Product {
         this.storeTag = storeTag;
     }
 
-    public SubCategory getSubCategory() {
+    public String getSubCategory() {
         return subCategory;
     }
 
-    public void setSubCategory(SubCategory subCategory) {
+    public void setSubCategory(String subCategory) {
         this.subCategory = subCategory;
     }
 
