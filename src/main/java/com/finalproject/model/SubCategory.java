@@ -70,10 +70,6 @@ public class SubCategory implements Serializable {
         this.products = products;
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
-        product.setSubCategory(this);
-    }
 
     public void removeProduct(Product product) {
         products.remove(product);

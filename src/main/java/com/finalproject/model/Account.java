@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "account") // 数据库表名
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+//@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.Type)
 public class Account implements Serializable {
 
     @Id
@@ -27,6 +27,10 @@ public class Account implements Serializable {
     // 新增字段，外键关联到 image 表的 IMAGE_ID
     @Column(name = "photo_id")
     private String photoId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="type")
+    private Type type;
 
     // 新增字段，用于表示是否已认证
     @Column(name = "has_certified", nullable = false)
@@ -100,5 +104,9 @@ public class Account implements Serializable {
                 ", photoId='" + photoId + '\'' +
                 ", hasCertified=" + hasCertified +
                 '}';
+    }
+
+    public enum Type {
+        买家, 商家 ,管理员
     }
 }
