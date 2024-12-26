@@ -1,13 +1,13 @@
 package com.finalproject.DTO;
-
 import java.util.List;
+import com.finalproject.DTO.ImageModels.*;
 import java.math.BigDecimal;
 public class FavouriteDTOs {
     // 商品DTO
     public static class ProductDTO {
         private String productId;
         private BigDecimal productPrice;
-        private ImageModels.ImageModel productPicId; // 图片ID
+        private String productPic; // 图片ID
         private String productName;
 
         // Getter 和 Setter 方法
@@ -28,12 +28,12 @@ public class FavouriteDTOs {
             this.productPrice = productPrice;
         }
 
-        public ImageModels.ImageModel getProductPicId() {
-            return productPicId;
+        public String getProductPic() {
+            return productPic;
         }
 
-        public void setProductPicId(ImageModels.ImageModel productPicId) {
-            this.productPicId = productPicId;
+        public void setProductPic(String productPic) {
+            this.productPic = productPic;
         }
 
         public String getProductName() {
@@ -51,9 +51,9 @@ public class FavouriteDTOs {
         private String storeId;
         private String productId;
         private BigDecimal productPrice;
-        private Boolean saleOrNot;
+        private Integer quantity;
         private String tag;
-        private ImageModels.ImageModel productPicId;
+        private String productPic;
         private String productName;
 
         public String getBuyerId() {
@@ -88,12 +88,12 @@ public class FavouriteDTOs {
             this.productPrice = productPrice;
         }
 
-        public Boolean getSaleOrNot() {
-            return saleOrNot;
+        public Integer getQuantity() {
+            return quantity;
         }
 
-        public void setSaleOrNot(Boolean saleOrNot) {
-            this.saleOrNot = saleOrNot;
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
         }
 
         public String getTag() {
@@ -104,12 +104,12 @@ public class FavouriteDTOs {
             this.tag = tag;
         }
 
-        public ImageModels.ImageModel getProductPicId() {
-            return productPicId;
+        public String getProductPic() {
+            return productPic;
         }
 
-        public void setProductPicId(ImageModels.ImageModel productPicId) {
-            this.productPicId = productPicId;
+        public void setProductPic(String productPic) {
+            this.productPic = productPic;
         }
 
         public String getProductName() {
@@ -128,7 +128,6 @@ public class FavouriteDTOs {
         private String storeId;
         private String storeName;
         private BigDecimal storeScore;
-        private String storePicId; // 图片ID
         private List<ProductDTO> products;
 
         // Getter 和 Setter 方法
@@ -165,14 +164,6 @@ public class FavouriteDTOs {
             this.storeScore = storeScore;
         }
 
-        public String getStorePicId() {
-            return storePicId;
-        }
-
-        public void setStorePicId(String storePicId) {
-            this.storePicId = storePicId;
-        }
-
         public List<ProductDTO> getProducts() {
             return products;
         }
@@ -191,19 +182,11 @@ public class FavouriteDTOs {
         }
     }
 
-    public static class BookmarkStoreDTO {
-        private String userId;
+    // 店铺收藏DTO
+    public static class StoreIdDTO {
         private String storeId;
 
-        // Getters and Setters
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
+        // Getter 和 Setter
         public String getStoreId() {
             return storeId;
         }
@@ -211,22 +194,13 @@ public class FavouriteDTOs {
         public void setStoreId(String storeId) {
             this.storeId = storeId;
         }
-
     }
 
-    public static class BookmarkProductDTO {
-        private String userId;
+    // 商品收藏DTO
+    public static class ProductIdDTO {
         private String productId;
 
-        // Getters and Setters
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
+        // Getter 和 Setter
         public String getProductId() {
             return productId;
         }
@@ -234,7 +208,6 @@ public class FavouriteDTOs {
         public void setProductId(String productId) {
             this.productId = productId;
         }
-
     }
 
 }

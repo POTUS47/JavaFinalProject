@@ -1,14 +1,10 @@
 package com.finalproject.service;
 import com.finalproject.DTO.FavouriteDTOs.*;
-import com.finalproject.DTO.ImageModels;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
 import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,28 +12,31 @@ import java.util.Optional;
 
 @Service
 public class FavouriteService {
-    @Autowired
-    private StoreRepository storeRepository;
+    private final StoreRepository storeRepository;
+    private final ProductRepository productRepository;
+    private final BuyerRepository buyerRepository;
+    private final BuyerStoreBookmarkRepository bookmarkStoreRepository;
+    private final BuyerProductBookmarkRepository bookmarkProductRepository;
+    private final ProductImageRepository productImageRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private BuyerRepository buyerRepository;
-
-    @Autowired
-    private BuyerStoreBookmarkRepository bookmarkStoreRepository;
-
-    @Autowired
-    private BuyerProductBookmarkRepository bookmarkProductRepository;
-
-    @Autowired
-    private ProductImageRepository productImageRepository;
-    @Autowired
-    private BuyerProductBookmarkRepository buyerProductBookmarkRepository;
+    // 构造函数注入
+    public FavouriteService(StoreRepository storeRepository,
+                       ProductRepository productRepository,
+                       BuyerRepository buyerRepository,
+                       BuyerStoreBookmarkRepository bookmarkStoreRepository,
+                       BuyerProductBookmarkRepository bookmarkProductRepository,
+                       ProductImageRepository productImageRepository) {
+        this.storeRepository = storeRepository;
+        this.productRepository = productRepository;
+        this.buyerRepository = buyerRepository;
+        this.bookmarkStoreRepository = bookmarkStoreRepository;
+        this.bookmarkProductRepository = bookmarkProductRepository;
+        this.productImageRepository = productImageRepository;
+    }
 
     @Transactional
     public Result<List<FavouriteStoresDTO>>getFavouriteStores(String userId){
+        System.out.println(userId);
         // 查询买家信息
         Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
         if (buyerOpt.isEmpty()) {
@@ -68,8 +67,6 @@ public class FavouriteService {
             favouriteStoreDTO.setStoreName(store.getStoreName());
             favouriteStoreDTO.setStoreScore(store.getStoreScore());
 
-            //图片另外处理
-            favouriteStoreDTO.setStorePicId("暂时不知图片是哪个");
 
             // 获取该店铺下的商品信息
             List<ProductDTO> productDTOList = new ArrayList<>();
@@ -84,11 +81,9 @@ public class FavouriteService {
                 // 获取商品的图片信息
                 List<ProductImage> productImages = productImageRepository.findByProductId(product.getProductId());
                 if (!productImages.isEmpty()) {
-                    // 假设每个商品至少有一张图片，取第一张图片
-                    ProductImage productImage = productImages.getFirst();
-                    ImageModels.ImageModel imageModel = new ImageModels.ImageModel();
-                    imageModel.setImageId(productImage.getImageId()); // 使用图片ID
-                    productDTO.setProductPicId(imageModel); // 将图片ID设置到商品DTO
+                    // 取第一张图片
+                    String imageId = productImages.getFirst().getImageId();
+                    productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
                 }
 
                 productDTOList.add(productDTO);
@@ -104,6 +99,8 @@ public class FavouriteService {
 
     @Transactional
     public Result<List<FavouriteProductsDTO>>getFavouriteProducts(String userId){
+
+        System.out.println(userId);
         // 查询买家信息
         Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
         if (buyerOpt.isEmpty()) {
@@ -127,7 +124,7 @@ public class FavouriteService {
             favouriteProductsDTO.setProductName(product.getProductName());
             favouriteProductsDTO.setProductPrice(product.getProductPrice());
             favouriteProductsDTO.setTag(product.getTag());
-            favouriteProductsDTO.setSaleOrNot(product.getQuantity()==0);
+            favouriteProductsDTO.setQuantity(product.getQuantity());
 
             // 获取店铺
             Store store = product.getStore();
@@ -136,13 +133,10 @@ public class FavouriteService {
             // 获取商品的图片信息
             List<ProductImage> productImages = productImageRepository.findByProductId(product.getProductId());
             if (!productImages.isEmpty()) {
-                // 假设每个商品至少有一张图片，取第一张图片
-                ProductImage productImage = productImages.getFirst();
-                ImageModels.ImageModel imageModel = new ImageModels.ImageModel();
-                imageModel.setImageId(productImage.getImageId()); // 使用图片ID
-                favouriteProductsDTO.setProductPicId(imageModel); // 将图片ID设置到商品DTO
+                // 取第一张图片
+                String imageId = productImages.getFirst().getImageId();
+                favouriteProductsDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
             }
-
 
             favouriteProducts.add(favouriteProductsDTO);
         }
@@ -156,6 +150,8 @@ public class FavouriteService {
     public Result<String> bookmarkStore(String userId, String storeId) {
 
         // 查询商家信息
+        System.out.println(userId + "------------------------" + storeId);
+
         Optional<Store> storeOpt = storeRepository.findById(storeId);
         if (storeOpt.isEmpty()) {
             return Result.error(404, "未找到商家信息");
