@@ -29,6 +29,9 @@ spring:
 
     # Hibernate 设置，控制 JPA 的行为
     jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect  # 适用于 MySQL 8
       hibernate:
         ddl-auto: update  # 可以选择 update、create-drop、none 等
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
