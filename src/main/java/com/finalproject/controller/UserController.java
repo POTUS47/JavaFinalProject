@@ -1,6 +1,7 @@
 package com.finalproject.controller;
 
 import com.finalproject.DTO.AccountDTOs;
+import com.finalproject.DTO.Result;
 import com.finalproject.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,39 +21,30 @@ public class UserController {
         this.userService = userService;
     }
 
-    // 发送验证码(要改要改！！！不可以直接返回前端)
+    // 发送验证码 (要改要改！！！不可以直接返回前端)
     @PostMapping("/send-code")
-    public ResponseEntity<String> sendVerificationCode(@RequestBody String email) {
-        String code=userService.sendVerificationCode(email);
-        System.out.println("Generated verification code for " + email + ": " + code);
-        return ResponseEntity.ok("Verification code sent."+ code);
+    public ResponseEntity<Result<String>> sendVerificationCode(@RequestBody String email) {
+        Result<String> response=userService.sendVerificationCode(email);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 
     // 用户注册
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AccountDTOs.UserRegisterDTO dto) {
-        boolean success = userService.registerUser(dto);
-        if (success) {
-            return ResponseEntity.ok("Registration successful");
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
+    public ResponseEntity<Result<String>> register(@RequestBody AccountDTOs.UserRegisterDTO dto) {
+        Result<String> response = userService.registerUser(dto);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 
     // 用户登录
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody AccountDTOs.LoginDTO loginRequest) {
-        Map<String, Object> response = new HashMap<>();
-        String token = userService.login(loginRequest.getIdentifier(), loginRequest.getPassword());
-        if (token != null) {
-            response.put("success", true);
-            response.put("message", "登录成功");
-            response.put("token", token);  // 返回 JWT token
-        } else {
-            response.put("success", false);
-            response.put("message", "用户名或密码错误");
-        }
-        return response;
+    public ResponseEntity<Result<String>> login(@RequestBody AccountDTOs.LoginDTO loginRequest) {
+        Result<String> response= userService.login(loginRequest.getIdentifier(), loginRequest.getPassword());
+        return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    // 修改密码
+
+
 
     // 示例 访问保护数据
     @PostMapping("/profile/update")

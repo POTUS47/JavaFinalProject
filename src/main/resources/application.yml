@@ -22,6 +22,11 @@ spring:
     username: root
     password: Zhmmysql:2024
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/javaProject?useSSL=false&serverTimezone=UTC
+#    username: root
+#    password: xwh123456
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
     # Hibernate 设置，控制 JPA 的行为
     jpa:
       hibernate:
