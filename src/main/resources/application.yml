@@ -13,10 +13,14 @@ springdoc:
 
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB # 单个文件的最大大小
+      max-request-size: 50MB # 整个multipart/form-data请求的最大大小
   datasource:
-    url: jdbc:mysql://localhost:3306/javaProject?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/javaproject?useSSL=false&serverTimezone=UTC
     username: root
-    password: xwh123456
+    password: Zhmmysql:2024
     driver-class-name: com.mysql.cj.jdbc.Driver
     # Hibernate 设置，控制 JPA 的行为
     jpa:
@@ -29,6 +33,11 @@ spring:
       minimum-idle: 5  # 最小空闲连接数
       idle-timeout: 30000  # 空闲连接的最大存活时间
       max-lifetime: 600000  # 连接的最大生命周期
+  web:
+    resources:
+      static-locations:
+        - "classpath:/static/"
+        - "file:/home/ecs-user/image/"
 
   mail:
     host: smtp.qq.com               # QQ 邮箱的 SMTP 服务器地址
@@ -49,3 +58,5 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+upload:
+  path: /home/ecs-user/image/

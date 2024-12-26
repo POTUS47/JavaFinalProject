@@ -73,7 +73,7 @@ public class SetUpMarketPlace implements Serializable {
         @Column(name = "market_id")
         private String marketId;
 
-        @Column(name = "administrator_account_id")
+        @Column(name = "administrator_id")
         private String administratorId ;
 
         // Getters and Setters

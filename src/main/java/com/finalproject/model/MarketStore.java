@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "market_store",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"market_id", "store_account_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"market_id", "store_id"}))
 public class MarketStore implements Serializable {
 
     @Id
@@ -15,12 +15,12 @@ public class MarketStore implements Serializable {
     @Column(name = "in_or_not")
     private boolean inOrNot;
 
-    @Column(name = "store_account_id")
+    @Column(name = "store_id")
     private String storeAccountId;
 
     // 如果你需要直接操作 Store 和 Market 实体，保留以下映射；否则可以移除。
     @ManyToOne
-    @JoinColumn(name = "store_account_id", referencedColumnName = "account_id", insertable = false, updatable = false)
+    @JoinColumn(name = "store_id", referencedColumnName = "account_id", insertable = false, updatable = false)
     private Store store;
 
     @ManyToOne

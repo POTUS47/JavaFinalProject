@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "account") // 数据库表名
 @Inheritance(strategy = InheritanceType.JOINED)
-//@DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class Account implements Serializable {
 
     @Id

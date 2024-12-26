@@ -1,11 +1,10 @@
 package com.finalproject.repository;
-import com.finalproject.model.Buyer;
-import com.finalproject.model.Order;
+import com.finalproject.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, String> {
+public interface ImageRepository extends JpaRepository<Image, String> {
 
 }
