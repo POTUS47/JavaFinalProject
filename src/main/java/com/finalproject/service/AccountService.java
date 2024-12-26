@@ -65,18 +65,21 @@ public class AccountService {
         SnowflakeIdGenerator generator = new SnowflakeIdGenerator();
         String generatedId = generator.nextId();
         Account account;
-        switch (dto.getIdentity().toUpperCase()) {
-            case "ADMIN":
+        switch (dto.getIdentity()) {
+            case "管理员":
                 account = new Administrator();
+                account.setType(Account.Type.管理员);
                 break;
-            case "SELLER":
+            case "商家":
                 account = new Store();
+                account.setType(Account.Type.商家);
                 break;
-            case "BUYER":
+            case "买家":
                 account = new Buyer();
+                account.setType(Account.Type.买家);
                 break;
             default:
-                return Result.error(400, "注册类型无效,必须是ADMIN/SELLER/BUYER的一种");
+                return Result.error(400, "注册类型无效,必须是买家商家管理员");
         }
         account.setAccountId(generatedId);
         account.setUserName(dto.getUsername());
@@ -99,7 +102,8 @@ public class AccountService {
             // 接下来需要调用数据库的方法，通过用户ID查找用户身份
             if (BCrypt.checkpw(password, user.getPassword())) {
                 // 登录成功，生成JWT并返回
-                String jwt=JwtTokenUtil.generateJWT(user.getAccountId(), "buyer");
+
+                String jwt=JwtTokenUtil.generateJWT(user.getAccountId(), user.getType().toString());
                 return Result.success(jwt);
             }
         }

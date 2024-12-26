@@ -15,12 +15,12 @@ public class Result<T> {
         this.data = data;
     }
 
-    public Result(String code, String msg) {
+    public Result(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 

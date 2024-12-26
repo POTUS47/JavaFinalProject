@@ -30,7 +30,7 @@ public class ProductController {
     public Result addNewProduct(@RequestBody addProductDTO newProduct,@RequestParam("ProductImages") List<MultipartFile> productImages) throws IOException {
 
         if (productImages == null||productImages.isEmpty()) {
-            return new Result("400","上传的产品图片为空");
+            return new Result(400,"上传的产品图片为空");
         }
 
         try {
@@ -41,9 +41,9 @@ public class ProductController {
 
             return Result.success("成功添加商品，商品Id:"+productId+"成功添加"+num+"张商品图片");
         } catch (BusinessTagException e) {
-            return new Result(e.getErrorCode(),e.getErrorMessage());
+              return new Result(400,e.getMessage());
         } catch (Exception e) {
-            return new Result(e.getMessage(),e.getMessage());
+            return new Result(400,e.getMessage());
         }
     }
 
