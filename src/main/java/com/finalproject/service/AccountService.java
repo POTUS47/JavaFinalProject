@@ -37,14 +37,13 @@ public class AccountService {
         message.setTo(email);
         message.setSubject("Your Verification Code");
         message.setText("Your verification code is: " + verificationCode);
-
         try {
             mailSender.send(message);
         } catch (Exception e) {
             throw new RuntimeException("Failed to send email. Please try again later.", e);
         }
-
         // 保存验证码到缓存中（可结合 Redis 使用）
+        // 注意：若email 在 Map 中已经存在，则 put 会覆盖该键当前的值
         verificationCodes.put(email, verificationCode);
 
         return verificationCode; // 返回验证码供前端使用
@@ -69,6 +68,8 @@ public class AccountService {
     // 用户注册
     public boolean registerUser(AccountDTOs.UserRegisterDTO dto) {
         //String generatedId = IdGeneratorA.generate(); // 调用函数生成 ID
+        if(!this.verifyCode(dto.getEmail(), dto.getVerificationCode()))
+            throw new IllegalArgumentException("验证码填写错误！");
         String generatedId="111111";
 
         Account account;
