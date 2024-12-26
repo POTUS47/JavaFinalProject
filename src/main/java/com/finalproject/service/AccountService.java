@@ -7,7 +7,6 @@ import com.finalproject.model.Store;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -21,15 +20,19 @@ import java.util.concurrent.ConcurrentHashMap;
 //通过注解，标注这是Service层
 @Service
 public class AccountService {
-    //因为在Service层中我们需要调用Dao层
-    //所以将Dao层作为一个资源将其加进来
+
     @Resource
     private AccountRepository accountRepository;
-    @Autowired
-    private JavaMailSender mailSender;
-    private Map<String, String> verificationCodes = new ConcurrentHashMap<>(); // 用于存储验证码
+    private final JavaMailSender mailSender;
+    private Map<String, String> verificationCodes; // 用于存储验证码
+
+    public AccountService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+        this.verificationCodes = new ConcurrentHashMap<>();
+    }
+
     // 发送验证码
-    public Result<String> sendVerificationCode(String email) {
+    public Result<Map<String, String>> sendVerificationCode(String email) {
         // 生成 6 位随机验证码
         String verificationCode = String.format("%06d", new Random().nextInt(999999));
         // 发送邮件
@@ -46,11 +49,12 @@ public class AccountService {
         // 保存验证码到缓存中（可结合 Redis 使用）
         // 注意：若email 在 Map 中已经存在，则 put 会覆盖该键当前的值
         verificationCodes.put(email, verificationCode);
-
-        return Result.success(verificationCode);
+        Map<String, String> data = new HashMap<>();
+        data.put("verificationCode",verificationCode);
+        return Result.success(data);
     }
 
-    // 获取验证码（后期需要改成redis）
+    // 获取验证码（后期需要改成redis缓存）
     public boolean verifyCode(String email, String code) {
         // 校验验证码
         String storedCode = verificationCodes.get(email);
@@ -58,8 +62,8 @@ public class AccountService {
     }
 
     // 用户注册
-    public Result<String> registerUser(AccountDTOs.UserRegisterDTO dto) {
-        if(!this.verifyCode(dto.getEmail(), dto.getVerificationCode()))
+    public Result<Map<String, String>> registerUser(AccountDTOs.UserRegisterDTO dto) {
+        if (!this.verifyCode(dto.getEmail(), dto.getVerificationCode()))
             return Result.error(400, "验证码错误！");
         // 生成唯一 ID
         SnowflakeIdGenerator generator = new SnowflakeIdGenerator();
@@ -86,12 +90,14 @@ public class AccountService {
         account.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt())); // 加密密码
         account.setEmail(dto.getEmail());
         accountRepository.save(account);
-        return Result.success();
+        Map<String, String> data = new HashMap<>();
+        data.put("message", "登录成功！");
+        data.put("ID", generatedId);
+        return Result.success(data);
     }
 
-
     // 用户登录
-    public Result<String> login(String identifier, String password) {
+    public Result<Map<String, String>> login(String identifier, String password) {
         Optional<Account> userOptional = accountRepository.findByAccountId(identifier);
         if (userOptional.isEmpty()) {
             userOptional = accountRepository.findByEmail(identifier);
@@ -102,17 +108,91 @@ public class AccountService {
             // 接下来需要调用数据库的方法，通过用户ID查找用户身份
             if (BCrypt.checkpw(password, user.getPassword())) {
                 // 登录成功，生成JWT并返回
-
                 String jwt=JwtTokenUtil.generateJWT(user.getAccountId(), user.getType().toString());
-                return Result.success(jwt);
+                Map<String, String> data = new HashMap<>();
+                data.put("JwtToken", jwt);
+                return Result.success(data);
             }
         }
         return Result.error(404, "用户名或密码错误");
     }
 
+    // 修改密码
+    public Result<Map<String, String>> changePassword(String userId, String newPassword) {
+        Optional<Account> userOptional= accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改密码的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"密码修改成功！");
+        return Result.success(data);
+    }
+
+    // 修改邮箱
+    public Result<Map<String, String>> updateEmail(String userId, String newEmail) {
+        Optional<Account> userOptional= accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改邮箱的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setEmail(newEmail);
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"邮箱修改成功！");
+        return Result.success(data);
+    }
+
+    // 修改用户名
+    public Result<Map<String, String>> updateUsername(String userId, String newUsername) {
+        Optional<Account> userOptional= accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改用户名的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setUserName(newUsername);
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"昵称修改成功！");
+        return Result.success(data);
+    }
+
+    // 修改用户简介
+    public Result<Map<String, String>> updateDescription(String userId, String newDescription) {
+        Optional<Account> userOptional= accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改简介的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setDescription(newDescription);
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"简介修改成功！");
+        return Result.success(data);
+    }
+
+    // 上传用户头像
 
 
-
+    // 获取用户全部基本信息
+    public Result<AccountDTOs.UserInfoDTO> getUserInfo(String userId) {
+        // 查找用户
+        Optional<Account> userOptional = accountRepository.findByAccountId(userId);
+        // 如果没有找到用户
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想获取基本信息的用户不存在");
+        }
+        // 获取用户信息
+        Account user = userOptional.get();
+        // 创建 UserInfoDTO 对象
+        AccountDTOs.UserInfoDTO userInfo = new AccountDTOs.
+                UserInfoDTO(user.getAccountId(), user.getUserName(),
+                user.getEmail(),user.getPhotoId(),user.getType().toString());
+        // 返回成功结果
+        return Result.success(userInfo);
+    }
 
 
 }
