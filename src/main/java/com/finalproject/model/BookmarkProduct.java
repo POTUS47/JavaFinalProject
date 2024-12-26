@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "bookmark_product",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"buyer_account_id", "product_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"buyer_id", "product_id"}))
 public class BookmarkProduct implements Serializable {
 
     @ManyToOne

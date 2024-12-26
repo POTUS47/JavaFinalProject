@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface BuyerRepository extends JpaRepository<Buyer, Integer> {
+public interface BuyerRepository extends JpaRepository<Buyer, String> {
 
 }

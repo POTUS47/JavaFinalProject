@@ -28,7 +28,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "account_id", nullable = false)
-    private Account store;  // Store entity representing the store owner (Account)
+    private Store store;  // Store entitsy representing the store owner (Account)
 
     @Column(name = "store_tag", length = 50)
     private String storeTag;
@@ -99,11 +99,11 @@ public class Product {
         this.description = description;
     }
 
-    public Account getStore() {
+    public Store getStore() {
         return store;
     }
 
-    public void setStore(Account store) {
+    public void setStore(Store store) {
         this.store = store;
     }
 
