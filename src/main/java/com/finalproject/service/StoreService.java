@@ -25,13 +25,8 @@ public class StoreService {
         this.storeRepository = storeRepository;
     }
 
-    public Result<Store> getStoreByAccountId(String accountId) {
+    public Optional<Store> getStoreByAccountId(String accountId) {
         // 根据 accountId 查找对应的 Store
-        //若不存在该商家
-        Optional<Store> temp=storeRepository.findByAccountId(accountId);
-        if(temp.isEmpty()){
-            return Result.error(404,"不存在该id的商家");
-        }
-        return Result.success(temp.get());
+        return storeRepository.findByAccountId(accountId);
     }
 }

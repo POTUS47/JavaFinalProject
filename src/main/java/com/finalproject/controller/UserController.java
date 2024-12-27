@@ -10,9 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final AccountService userService;
@@ -116,10 +117,8 @@ public class UserController {
 
     // 根据 account_id 获取 Store 信息
     @GetMapping("/store/{accountId}")
-    public ResponseEntity<Result<Store>> getStoreByAccountId(@PathVariable String accountId) {
-        // 调用 StoreService 查找 Store
-        Result<Store> store = storeService.getStoreByAccountId(accountId);
-        return ResponseEntity.status(store.getCode()).body(store);
+    public ResponseEntity<Optional<Store>> getStoreByAccountId(@PathVariable String accountId) {
+        return ResponseEntity.ok(storeService.getStoreByAccountId(accountId));
     }
 
 

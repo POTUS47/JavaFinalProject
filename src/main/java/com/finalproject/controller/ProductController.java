@@ -50,4 +50,12 @@ public class ProductController {
 //
 //    }
 
+    //
+    @PostMapping("/GetProductDetails")
+    public ResponseEntity<Result<productDetailDTO>> getProductDetails(@RequestParam String productId,Authentication auth){
+        String userId = (String) auth.getPrincipal();
+        Result<productDetailDTO> response=productService.getProductDetail(productId,userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 }

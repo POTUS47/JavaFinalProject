@@ -67,6 +67,18 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 检查是否收藏商品
+    @GetMapping("/internal/is-product-bookmarked/{userId}/{productId}")
+    public Result<Boolean> isProductBookmarkedInternal(@PathVariable String userId, @PathVariable String productId) {
+        return favouriteService.isProductBookmarked(userId, productId);
+    }
+
+    // 检查是否收藏店铺
+    @GetMapping("/internal/is-store-bookmarked/{userId}/{storeId}")
+    public Result<Boolean> isStoreBookmarkedInternal(@PathVariable String userId, @PathVariable String storeId) {
+        return favouriteService.isProductBookmarked(userId, storeId);
+    }
+
 
 
 }

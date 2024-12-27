@@ -45,7 +45,9 @@ public class ProductService {
 
     public Result<String> addProduct( String userId,addProductDTO newProduct) {
         // 创建并保存商品实体
-        Product product = createAndSaveProduct(newProduct,userId);
+        if(createAndSaveProduct(newProduct,userId).getCode()==404){
+            return Result.error(404,"不存在商家所以保存失败");
+        }
 
         // 处理商品详情
         //saveProductDetails(product.getId(), newProduct.getPicDes());
@@ -56,31 +58,90 @@ public class ProductService {
         return Result.success();
     }
 
-    private Product createAndSaveProduct(addProductDTO newProduct,String storeId) {
-        // 生成唯一的 PRODUCT_ID
+    private Optional<Store> getStoreFromSubsystem(String storeId){
+        String url = baseUrl + "/api/users/store/" + storeId;
+        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    private Boolean getProductMarkFromSubsystem(String productId,String userId){
+        String url = baseUrl + "/api/shopping/internal/is-product-bookmarked/" + userId+"/"+productId;
+        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody().getData();
+    }
+
+    private Boolean getStoreMarkFromSubsystem(String userId,String storeId){
+        String url = baseUrl + "/api/shopping/internal/is-store-bookmarked/" + userId+"/"+storeId;
+        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody().getData();
+    }
+
+    private Result<String> createAndSaveProduct(addProductDTO newProduct,String storeId) {
         String productId = "p" + idGenerator.nextId();
 
         // 调用用户子系统的 StoreController API 获取 Store 信息
-        String url = baseUrl + "/users/store/" + storeId;
-        ResponseEntity<Result<Store>> response = restTemplate.exchange(
-                 url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<Result<Store>>() {} ); // 使用 ParameterizedTypeReference 来处理泛型
-
-        // 检查返回的 Result<Store> 是否成功
-        Result<Store> result = response.getBody();
-        Store store= new Store();
-        if (result.getCode() == 200) {
-            store = result.getData();
+        Optional<Store> result = getStoreFromSubsystem(storeId);
+        if(result.isEmpty()){
+            return Result.error(404);
         }
-        System.out.println(store.getAccountId());
-        Product product = new Product(productId,newProduct.getProductName(),newProduct.getProductPrice(),newProduct.getQuantity(),
-                newProduct.getTag(),newProduct.getDescription(),newProduct.getSubTag(),store);
+        Store store=result.get();
+        Product product = new Product(productId,
+                newProduct.getProductName(),
+                newProduct.getProductPrice(),
+                newProduct.getQuantity(),
+                newProduct.getTag(),
+                newProduct.getDescription(),
+                newProduct.getSubTag(),store);
 
         productRepository.save(product);
 
-        return product;
+        return Result.success();
+    }
+
+    public Result<productDetailDTO>getProductDetail(String productId,String userId) {
+        //商品相关
+        Optional<Product> product=productRepository.findById(productId);
+        if(product.isEmpty()){
+            return Result.error(404,"不存在该id的商品");
+        }
+        Product pro = product.get();
+        //商家相关信息
+        Store store=pro.getStore();
+
+        //商品图片相关信息 todo
+        //商品详情信息 todo
+
+        productDetailDTO res=new productDetailDTO(pro.getProductName(),
+                pro.getProductPrice(),
+                pro.getTag(),
+                pro.getSubCategory(),
+                pro.getDescription(),
+                pro.getStoreTag(),
+                pro.getQuantity(),
+                store.getStoreName(),
+                store.getAccountId(),
+                store.getAddress(),
+                store.getStoreScore(),
+                getProductMarkFromSubsystem(productId,userId),
+                getStoreMarkFromSubsystem(store.getAccountId(),userId));
+
+
+        return Result.success(res);
     }
 
 

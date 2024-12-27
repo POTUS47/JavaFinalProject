@@ -77,6 +77,12 @@ public class Result<T> {
         return rs;
     }
 
+    public static <T> Result<T> error(int code) {
+        Result rs = new Result<>();
+        rs.setCode(code);
+        return rs;
+    }
+
     public static <T> Result<T> success(String msg,T data ) {
         Result rs = new Result<>();
         rs.setData(data);
