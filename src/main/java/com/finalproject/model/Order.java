@@ -56,6 +56,9 @@ public class Order {
     @Column(name = "pay_time")
     private LocalDateTime payTime;
 
+    @Column(name = "shipping_number", length = 255)
+    private String shippingNumber;
+
 
     // Getters and Setters
     public String getOrderId() {
@@ -188,9 +191,17 @@ public class Order {
         this.storeId = storeId;
     }
 
+    public String getShippingNumber() {
+        return shippingNumber;
+    }
+
+    public void setShippingNumber(String shippingNumber) {
+        this.shippingNumber = shippingNumber;
+    }
+
     // Enum for OrderStatus
     public enum OrderStatus {
-        等待确认, 处理中, 运输中, 已完成, 已取消, 已送达
+        处理中, 运输中, 已完成
     }
 
     // Enum for PaymentStatus

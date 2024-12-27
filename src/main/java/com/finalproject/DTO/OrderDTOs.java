@@ -89,6 +89,20 @@ public class OrderDTOs {
         }
     }
 
+    public static class OrderIdDTO {
+        private String orderId;
+
+        // getters and setters
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setoOrderId(String productId) {
+            this.orderId = productId;
+        }
+    }
+
+
     // 确认订单并支付
     public static class OrderConfirmDTO {
         private String orderId;
@@ -214,6 +228,96 @@ public class OrderDTOs {
         }
     }
 
+    public static class OrderCenterDTO {
+        private String orderId;
+        private String username;
+        private String storeName;
+        private String address;
+        private String createTime;
+        private boolean isPaid;
+        private BigDecimal totalPay;
+        private String orderStatus;
+        private List<OrderItemDTOs.OrderItemDTO> orderItems;
+
+
+        // 无参构造函数
+        public OrderCenterDTO() {
+        }
+
+        // Getter和Setter
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public String getCreateTime() {
+            return createTime;
+        }
+
+        public void setCreateTime(String createTime) {
+            this.createTime = createTime;
+        }
+
+        public boolean isPaid() {
+            return isPaid;
+        }
+
+        public void setPaid(boolean isPaid) {
+            this.isPaid = isPaid;
+        }
+
+        public List<OrderItemDTOs.OrderItemDTO> getOrderItems() {
+            return orderItems;
+        }
+
+        public void setOrderItems(List<OrderItemDTOs.OrderItemDTO> orderItems) {
+            this.orderItems = orderItems;
+        }
+
+        public BigDecimal getTotalPay() {
+            return totalPay;
+        }
+
+        public void setTotalPay(BigDecimal totalPay) {
+            this.totalPay = totalPay;
+        }
+
+        public String getOrderStatus() {
+            return orderStatus;
+        }
+
+        public void setOrderStatus(String orderStatus) {
+            this.orderStatus = orderStatus;
+        }
+
+        public String getStoreName() {
+            return storeName;
+        }
+
+        public void setStoreName(String storeName) {
+            this.storeName = storeName;
+        }
+    }
+
     public static class CreditsDTO {
         private int bonusCredits;
         private int credits;
@@ -301,5 +405,51 @@ public class OrderDTOs {
             this.orderItemId = orderItemId;
         }
     }
+
+    public static class OrderStatisticsDTO {
+        private int orderCount;
+        private BigDecimal totalAmount;
+
+        // getters and setters
+        public int getOrderCount() {
+            return orderCount;
+        }
+
+        public void setOrderCount(int orderCount) {
+            this.orderCount = orderCount;
+        }
+
+        public BigDecimal getTotalAmount() {
+            return totalAmount;
+        }
+
+        public void setTotalAmount(BigDecimal totalAmount) {
+            this.totalAmount = totalAmount;
+        }
+    }
+
+    public static class OrderDeliveryDTO {
+
+        private String deliveryNumber;
+        private String orderId;
+
+        // Getters and Setters
+        public String getDeliveryNumber() {
+            return deliveryNumber;
+        }
+
+        public void setDeliveryNumber(String deliveryNumber) {
+            this.deliveryNumber = deliveryNumber;
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+    }
+
 
 }

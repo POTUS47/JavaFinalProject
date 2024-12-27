@@ -9,6 +9,7 @@ import com.finalproject.repository.*;
 import com.finalproject.util.SnowflakeIdGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public class OrderService {
             order.setShippingAddress(buyerAddress);
             order.setBillingAddress(store.getAddress());
             order.setOrderTime(LocalDateTime.now());
-            order.setOrderStatus(Order.OrderStatus.等待确认);
+            order.setOrderStatus(Order.OrderStatus.处理中);
             order.setPaymentStatus(Order.PaymentStatus.等待支付);
             order.setUsername(username);
 
@@ -165,6 +166,7 @@ public class OrderService {
         return Result.success(200, isNull ?"存在商品缺货，请注意查收":"订单生成成功",orderRelatedDTOList);
     }
 
+    // 修改收货人信息
     @Transactional
     public Result<String> changeNameAndAddress(ChangeNameAndAddressDTO changeNameAndAddressDTO) {
         String orderId=changeNameAndAddressDTO.getOrderId();
@@ -181,6 +183,168 @@ public class OrderService {
         order.setUsername(name);
         orderRepository.save(order);
         return  Result.success(200,"修改成功");
+    }
+
+    // 删除订单
+    @Transactional
+    public Result<String> deleteOrder(String orderId) {
+        System.out.println("------------");
+        System.out.println(orderId);
+        List<OrderItem> orderItemList = orderItemRepository.findByOrderId(orderId);
+        orderItemRepository.deleteAll(orderItemList);
+        Order order = orderRepository.findById(orderId).get();
+        orderRepository.delete(order);
+        return Result.success("订单删除成功");
+    }
+
+    // 根据订单实体获取单个订单信息
+    private OrderCenterDTO convertToOrderCenterDTO(Order order) {
+        // 获取店铺信息
+        Optional<Store> storeOpt = storeRepository.findById(order.getStoreId());
+        Store store = storeOpt.orElseThrow(() -> new RuntimeException("店铺信息未找到"));
+
+        // 获取买家信息
+        Optional<Buyer> buyerOpt = buyerRepository.findById(order.getBuyerId());
+        Buyer buyer = buyerOpt.orElseThrow(() -> new RuntimeException("买家信息未找到"));
+
+        // 构建OrderCenterDTO
+        OrderCenterDTO orderCenterDTO = new OrderCenterDTO();
+        orderCenterDTO.setOrderId(order.getOrderId());
+        orderCenterDTO.setUsername(buyer.getUserName());
+        orderCenterDTO.setStoreName(store.getStoreName());
+        orderCenterDTO.setAddress(order.getShippingAddress());
+        orderCenterDTO.setCreateTime(order.getOrderTime().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+        orderCenterDTO.setPaid(order.getPaymentStatus() != Order.PaymentStatus.等待支付);
+        orderCenterDTO.setTotalPay(order.getTotalPrice());
+        orderCenterDTO.setOrderStatus(order.getOrderStatus().toString());
+
+        // 获取该订单的所有订单项信息
+        List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getOrderId());
+        for (OrderItem orderItem : orderItems) {
+            Product product = productRepository.findById(orderItem.getProductId())
+                    .orElseThrow(() -> new RuntimeException("商品信息未找到"));
+            OrderItemDTO orderItemDTO = new OrderItemDTO();
+            orderItemDTO.setProductId(product.getProductId());
+            orderItemDTO.setProductName(product.getProductName());
+            orderItemDTO.setProductPrice(product.getProductPrice());
+
+            // 获取商品图片信息
+            List<ProductImage> productImages = productImageRepository.findByProductId(product.getProductId());
+            if (!productImages.isEmpty()) {
+                orderItemDTO.setProductImage("http://47.97.59.189:8080/images/" + productImages.get(0).getImageId());
+            }
+
+            orderItemDTOList.add(orderItemDTO);
+        }
+
+        // 设置订单项到DTO
+        orderCenterDTO.setOrderItems(orderItemDTOList);
+        return orderCenterDTO;
+    }
+
+    // 通用获取订单信息接口
+    @Transactional
+    public Result<List<OrderCenterDTO>> getAllOrders(List<Order> orders) {
+        List<OrderCenterDTO> orderInfos = new ArrayList<>();
+        for (Order order : orders) {
+            OrderCenterDTO orderCenterDTO = convertToOrderCenterDTO(order);
+            orderInfos.add(orderCenterDTO);
+        }
+        return Result.success(orderInfos);
+    }
+
+    // 获取单个订单信息
+    @Transactional
+    public Result<OrderCenterDTO> getOneOrder(String orderId) {
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return Result.error(404, "订单不存在");
+        }
+        Order order = orderOpt.get();
+        OrderCenterDTO orderCenterDTO = convertToOrderCenterDTO(order);
+        return Result.success(orderCenterDTO);
+    }
+
+    // 买家获取订单信息
+    @Transactional
+    public Result<List<OrderCenterDTO>> getBuyersAllOrders(String userId){
+        // 查找该买家的所有订单信息
+        List<Order> orders = orderRepository.findByBuyerId(userId);
+        if (orders == null || orders.isEmpty()) {
+            return Result.error(404,"无相关用户订单");
+        }
+        Result<List<OrderCenterDTO>> response=getAllOrders(orders);
+        return Result.success(response.getData());
+    }
+
+    // 商家获取订单信息
+    @Transactional
+    public Result<List<OrderCenterDTO>> getStoreAllOrders(String userId){
+        // 查找该买家的所有订单信息
+        List<Order> orders = orderRepository.findByStoreId(userId);
+        if (orders == null || orders.isEmpty()) {
+            return Result.error(404,"无相关商家订单");
+        }
+        Result<List<OrderCenterDTO>> response=getAllOrders(orders);
+        return Result.success(response.getData());
+    }
+
+    // 买家确认收货
+    @Transactional
+    public Result<String> receiveOrder(String orderId) {
+        System.out.println("------------");
+        System.out.println(orderId);
+
+        Optional<Order> orderopt =orderRepository.findById(orderId);
+        if (orderopt.isEmpty()) {
+            return Result.error(404,"订单不存在");
+        }
+        Order order = orderopt.get();
+        order.setOrderStatus(Order.OrderStatus.已完成);
+        return Result.success("确认收货成功");
+    }
+
+    // 获取商家某天的交易量和交易额
+    @Transactional
+    public Result<OrderStatisticsDTO> getOrderNumberByDate(String storeId,String date) {
+        // 将日期字符串转换为 LocalDate
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // 获取当天的开始时间和结束时间
+        LocalDateTime startDate = localDate.atStartOfDay();  // 00:00:00
+        LocalDateTime endDate = localDate.plusDays(1).atStartOfDay().minusNanos(1);  // 23:59:59.999999999
+
+        // 查询该商家在该日期范围内的所有订单
+        List<Order> orders = orderRepository.findByStoreIdAndOrderTimeBetween(storeId, startDate, endDate);
+
+        // 统计订单数量和总金额
+        int orderCount = orders.size();
+        BigDecimal totalAmount = orders.stream()
+                .map(Order::getTotalPrice)  // 获取每个订单的总金额
+                .reduce(BigDecimal.ZERO, BigDecimal::add);  // 汇总所有订单的总金额
+
+        // 构建并返回统计结果
+        OrderStatisticsDTO statisticsDTO = new OrderStatisticsDTO();
+        statisticsDTO.setOrderCount(orderCount);
+        statisticsDTO.setTotalAmount(totalAmount);
+
+        return Result.success(statisticsDTO);
+    }
+
+    // 商家发货
+    @Transactional
+    public Result<String> updateDeliveryNumber(String deliveryNumber,String orderId) {
+        Optional<Order> orderOpt =orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return Result.error(404,"订单不存在");
+        }
+        Order order = orderOpt.get();
+        order.setOrderStatus(Order.OrderStatus.运输中);
+        order.setShippingNumber(deliveryNumber);
+        orderRepository.save(order);
+        return Result.success("成功更新快递单号");
     }
 
 }

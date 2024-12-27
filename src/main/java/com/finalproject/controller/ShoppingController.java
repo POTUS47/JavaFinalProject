@@ -122,5 +122,56 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 判断是否存在当前商品的订单项
+    @DeleteMapping("/order/delete-order")
+    public ResponseEntity<Result<String>> deleteOrder(@RequestParam String orderId) {
+        Result<String> response = orderService.deleteOrder(orderId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 
+    // 获取当前买家所有订单信息
+    @GetMapping("/order/get-all-buyer-orders")
+    public ResponseEntity<Result<List<OrderCenterDTO>>> getAllBuyerOrders(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<List<OrderCenterDTO>> response = orderService.getBuyersAllOrders(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 获取当前商家所有订单信息
+    @GetMapping("/order/get-all-store-orders")
+    public ResponseEntity<Result<List<OrderCenterDTO>>> getAllStoreOrders(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<List<OrderCenterDTO>> response = orderService.getStoreAllOrders(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 获取单个订单信息
+    @GetMapping("/order/get-one-order")
+    public ResponseEntity<Result<OrderCenterDTO>> getOneOrder(@RequestParam String orderId) {
+        Result<OrderCenterDTO> response = orderService.getOneOrder(orderId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 确认收货
+    @PostMapping("/order/receive-order")
+    public ResponseEntity<Result<String>> receiveOrder(@RequestBody OrderIdDTO orderIdDTO) {
+        Result<String> response = orderService.receiveOrder(orderIdDTO.getOrderId());
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 返回商家某天的交易量和交易额
+    @GetMapping("/order/get-order-by-date")
+    public ResponseEntity<Result<OrderStatisticsDTO>> getOrderNumberByDate(@RequestParam String date,Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<OrderStatisticsDTO> response = orderService.getOrderNumberByDate(userId,date);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 商家更新快递单号
+    @PatchMapping("/order/update-delivery-number")
+    public ResponseEntity<Result<String>> updateDeliveryNumber(@RequestBody OrderDeliveryDTO orderDeliveryDTO){
+        Result<String> response = orderService.updateDeliveryNumber(orderDeliveryDTO.getDeliveryNumber(),
+                orderDeliveryDTO.getOrderId());
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }
