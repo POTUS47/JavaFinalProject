@@ -1,6 +1,7 @@
 package com.finalproject.interceptor;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.finalproject.service.AccountService;
 import com.finalproject.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,13 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final AccountService userService;
+
+    // 构造器注入 AccountService
+    public JwtAuthenticationFilter(AccountService userService) {
+        this.userService = userService;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -32,6 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             DecodedJWT decodedJWT = JwtTokenUtil.verify(token);
             String userId = decodedJWT.getClaim("id").asString();
             String role = decodedJWT.getClaim("role").asString();
+
+            // 验证用户 ID 是否在数据库中存在
+            if (!userService.isUserExists(userId)) {
+                throw new IllegalArgumentException("User does not exist");
+            }
 
             // 创建Authentication对象并设置到SecurityContext
             UsernamePasswordAuthenticationToken authentication =

@@ -210,4 +210,12 @@ public class AccountService {
         return Result.success(userInfo);
     }
 
+    public boolean isUserExists(String userId) {
+        Optional<Account> userOptional = accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
 }

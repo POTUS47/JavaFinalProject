@@ -57,10 +57,11 @@ public class ProductController {
 
     //
     @PostMapping("/GetProductDetails")
-    public ResponseEntity<Result<productDetailDTO>> getProductDetails(@RequestParam String productId,Authentication auth){
+    public ResponseEntity<Result<productDetailDTO>> getProductDetails(@RequestParam String productId,Authentication auth) {
         String userId = (String) auth.getPrincipal();
-        Result<productDetailDTO> response=productService.getProductDetail(productId,userId);
+        Result<productDetailDTO> response = productService.getProductDetail(productId, userId);
         return ResponseEntity.status(response.getCode()).body(response);
+    }
     // 根据 product_id 获取 Product 信息
     @GetMapping("/product/{productId}")
     public Optional<Product> getProductById(@PathVariable String productId) {
