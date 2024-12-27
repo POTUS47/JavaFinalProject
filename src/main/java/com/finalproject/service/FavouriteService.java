@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
@@ -80,32 +81,42 @@ public class FavouriteService {
             List<ProductDTO> productDTOList = new ArrayList<>();
             String storeId = bookmarkStore.getStoreAccountId();
             String url = baseUrl + "/api/productController/products/" + storeId;
-            ResponseEntity<List<Product>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<Product>>() {} );
-            List<Product> products = response.getBody();
+            ResponseEntity<List<Product>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Product>>() {
+                    } );
+            if (response.getStatusCode() == HttpStatus.OK){
+                List<Product> products = response.getBody();
+                if (products != null) {
+                    for (Product product : products) {
+                        ProductDTO productDTO = new ProductDTO();
+                        productDTO.setProductId(product.getProductId());
+                        productDTO.setProductName(product.getProductName());
+                        productDTO.setProductPrice(product.getProductPrice());
 
-            if (products != null) {
-                for (Product product : products) {
-                    ProductDTO productDTO = new ProductDTO();
-                    productDTO.setProductId(product.getProductId());
-                    productDTO.setProductName(product.getProductName());
-                    productDTO.setProductPrice(product.getProductPrice());
+                        // 获取商品的图片信息
+                        String url1 = baseUrl + "/api/productController/productImages/" + storeId;
+                        ResponseEntity<List<ProductImage>> productImageResponse = restTemplate.exchange(url1, HttpMethod.GET, null,
+                                new ParameterizedTypeReference<>() {
+                                } );
+                        List<ProductImage> productImages = productImageResponse.getBody();
 
-                    // 获取商品的图片信息
-                    String url1 = baseUrl + "/api/productController/productImages/" + storeId;
-                    ResponseEntity<List<ProductImage>> productImageResponse = restTemplate.exchange(url1, HttpMethod.GET, null,
-                            new ParameterizedTypeReference<List<ProductImage>>() {} );
-                    List<ProductImage> productImages = productImageResponse.getBody();
+                        if (!productImages.isEmpty()) {
+                            // 取第一张图片
+                            String imageId = productImages.getFirst().getImageId();
+                            productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                        }
 
-                    if (!productImages.isEmpty()) {
-                        // 取第一张图片
-                        String imageId = productImages.getFirst().getImageId();
-                        productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                        productDTOList.add(productDTO);
                     }
-
-                    productDTOList.add(productDTO);
                 }
+
             }
+
+
+
 
             // 设置该店铺下的所有商品信息
             favouriteStoreDTO.setProducts(productDTOList);

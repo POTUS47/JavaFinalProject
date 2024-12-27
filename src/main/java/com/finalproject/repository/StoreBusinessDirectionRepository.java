@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StoreBusinessDirectionRepository extends JpaRepository<StoreBusinessDirection, Integer> {
+public interface StoreBusinessDirectionRepository extends JpaRepository<StoreBusinessDirection, String> {
     List<StoreBusinessDirection> findByBusinessTagContaining(String businessTag);
 
     Optional<StoreBusinessDirection> findByStoreIdAndBusinessTag(String storeId, String businessTag);
+
 }

@@ -1,6 +1,9 @@
 package com.finalproject.DTO;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ProductDTOs {
 
@@ -61,6 +64,42 @@ public class ProductDTOs {
 
 
     }
+    public static class DesPic{
+        private String Url;
+        private String Description;
+
+        public DesPic(String Url, String Description) {
+            this.Url = Url;
+            this.Description = Description;
+        }
+
+        public String getUrl() {
+            return Url;
+        }
+
+        public String getDescription() {
+            return Description;
+        }
+    }
+
+    public static class uploadDesPic{
+        private MultipartFile Pic;
+        private String Description;
+
+        public uploadDesPic(MultipartFile pic, String Description) {
+            this.Pic = pic;
+            this.Description = Description;
+        }
+
+        public String getDescription() {
+            return Description;
+        }
+
+        public MultipartFile getPic() {
+            return Pic;
+        }
+    }
+
     public static class productDetailDTO{
         private String ProductName;
         private BigDecimal ProductPrice ;
@@ -75,6 +114,8 @@ public class ProductDTOs {
         private BigDecimal StoreScore;
         private Boolean IsProductStared;
         private Boolean IsStoreStared;
+        private List<String> Pictures;
+        private List<DesPic> ImageAndText;
 
         public productDetailDTO(String ProductName,
                                 BigDecimal ProductPrice,
@@ -88,7 +129,9 @@ public class ProductDTOs {
                                 String FromWhere,
                                 BigDecimal StoreScore,
                                 Boolean IsProductStared,
-                                Boolean IsStoreStared) {
+                                Boolean IsStoreStared,
+                                List<String> Pictures,
+                                List<DesPic> ImageAndText) {
             this.ProductName = ProductName;
             this.ProductPrice = ProductPrice;
             this.Tag = Tag;
@@ -102,6 +145,8 @@ public class ProductDTOs {
             this.StoreScore = StoreScore;
             this.IsProductStared = IsProductStared;
             this.IsStoreStared = IsStoreStared;
+            this.Pictures = Pictures;
+            this.ImageAndText = ImageAndText;
         }
 
         public String getProductName() {
@@ -154,6 +199,14 @@ public class ProductDTOs {
 
         public Boolean getStoreStared() {
             return IsStoreStared;
+        }
+
+        public List<String> getPictures() {
+            return Pictures;
+        }
+
+        public List<DesPic> getImageAndText() {
+            return ImageAndText;
         }
     }
 
