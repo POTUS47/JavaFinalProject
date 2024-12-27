@@ -65,6 +65,10 @@ public class AccountService {
     public Result<Map<String, String>> registerUser(AccountDTOs.UserRegisterDTO dto) {
         if (!this.verifyCode(dto.getEmail(), dto.getVerificationCode()))
             return Result.error(400, "验证码错误！");
+        Optional<Account> possible_account = accountRepository.findByEmail(dto.getEmail());
+        if (possible_account.isPresent()) {
+            return Result.error(400, "该邮箱已被使用过！");
+        }
         // 生成唯一 ID
         SnowflakeIdGenerator generator = new SnowflakeIdGenerator();
         String generatedId = generator.nextId();

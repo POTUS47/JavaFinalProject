@@ -68,6 +68,9 @@ public class AccountDTOs {
         public void setPhotoId(String photoId) {
             this.photoId = photoId;
         }
+        public void setType(String type) {
+            this.type = type;
+        }
         public String getType() {
             return type;
         }
