@@ -3,8 +3,15 @@ import com.finalproject.DTO.FavouriteDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +25,7 @@ public class FavouriteService {
     private final BookmarkStoreRepository bookmarkStoreRepository;
     private final BookmarkProductRepository bookmarkProductRepository;
     private final ProductImageRepository productImageRepository;
+    private final RestTemplate restTemplate;
 
     // 构造函数注入
     public FavouriteService(StoreRepository storeRepository,
@@ -25,23 +33,23 @@ public class FavouriteService {
                        BuyerRepository buyerRepository,
                        BookmarkStoreRepository bookmarkStoreRepository,
                        BookmarkProductRepository bookmarkProductRepository,
-                       ProductImageRepository productImageRepository) {
+                       ProductImageRepository productImageRepository,
+                            RestTemplate restTemplate) {
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
         this.buyerRepository = buyerRepository;
         this.bookmarkStoreRepository = bookmarkStoreRepository;
         this.bookmarkProductRepository = bookmarkProductRepository;
         this.productImageRepository = productImageRepository;
+        this.restTemplate = restTemplate;
     }
 
+    @Value("${api.base-url}")
+    private String baseUrl;
+
+    // 把所有检查用户存不存在的接口都删掉了
     @Transactional
     public Result<List<FavouriteStoresDTO>>getFavouriteStores(String userId){
-        System.out.println(userId);
-        // 查询买家信息
-        Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
-        if (buyerOpt.isEmpty()) {
-            return Result.error(404, "未找到买家信息");
-        }
 
         // 查询该用户收藏的所有店铺
         //list的是model
@@ -70,23 +78,33 @@ public class FavouriteService {
 
             // 获取该店铺下的商品信息
             List<ProductDTO> productDTOList = new ArrayList<>();
-            List<Product> products = productRepository.findByStore(bookmarkStore.getStore());
+            String storeId = bookmarkStore.getStoreAccountId();
+            String url = baseUrl + "/api/productController/products/" + storeId;
+            ResponseEntity<List<Product>> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<Product>>() {} );
+            List<Product> products = response.getBody();
 
-            for (Product product : products) {
-                ProductDTO productDTO = new ProductDTO();
-                productDTO.setProductId(product.getProductId());
-                productDTO.setProductName(product.getProductName());
-                productDTO.setProductPrice(product.getProductPrice());
+            if (products != null) {
+                for (Product product : products) {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setProductId(product.getProductId());
+                    productDTO.setProductName(product.getProductName());
+                    productDTO.setProductPrice(product.getProductPrice());
 
-                // 获取商品的图片信息
-                List<ProductImage> productImages = productImageRepository.findByProductId(product.getProductId());
-                if (!productImages.isEmpty()) {
-                    // 取第一张图片
-                    String imageId = productImages.getFirst().getImageId();
-                    productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                    // 获取商品的图片信息
+                    String url1 = baseUrl + "/api/productController/productImages/" + storeId;
+                    ResponseEntity<List<ProductImage>> productImageResponse = restTemplate.exchange(url1, HttpMethod.GET, null,
+                            new ParameterizedTypeReference<List<ProductImage>>() {} );
+                    List<ProductImage> productImages = productImageResponse.getBody();
+
+                    if (!productImages.isEmpty()) {
+                        // 取第一张图片
+                        String imageId = productImages.getFirst().getImageId();
+                        productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                    }
+
+                    productDTOList.add(productDTO);
                 }
-
-                productDTOList.add(productDTO);
             }
 
             // 设置该店铺下的所有商品信息
@@ -99,13 +117,6 @@ public class FavouriteService {
 
     @Transactional
     public Result<List<FavouriteProductsDTO>>getFavouriteProducts(String userId){
-
-        System.out.println(userId);
-        // 查询买家信息
-        Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
-        if (buyerOpt.isEmpty()) {
-            return Result.error(404, "未找到买家信息");
-        }
 
         List<BookmarkProduct> bookmarkedProducts = bookmarkProductRepository.findByBuyerId(userId);
         if (bookmarkedProducts.isEmpty()) {
@@ -156,12 +167,6 @@ public class FavouriteService {
         if (storeOpt.isEmpty()) {
             return Result.error(404, "未找到商家信息");
 
-        }
-
-        // 查询买家信息
-        Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
-        if (buyerOpt.isEmpty()) {
-            return Result.error(404, "未找到买家信息");
         }
 
         // 收藏过则取消收藏
