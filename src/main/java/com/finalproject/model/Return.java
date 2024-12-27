@@ -17,8 +17,15 @@ public class Return implements Serializable {
     @Column(name = "return_reason")
     private String returnReason;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "return_status")
-    private String returnStatus;
+    private ReturnStatus returnStatus;
+
+    @Column(name = "shipping_number")
+    private String shippingNumber;
+
+    @Column(name = "result_reason")
+    private String resultReason;
 
     @ManyToOne
     @JoinColumn(name = "item_id", insertable = false, updatable = false)
@@ -50,11 +57,11 @@ public class Return implements Serializable {
         this.returnReason = returnReason;
     }
 
-    public String getReturnStatus() {
+    public ReturnStatus getReturnStatus() {
         return returnStatus;
     }
 
-    public void setReturnStatus(String returnStatus) {
+    public void setReturnStatus(ReturnStatus returnStatus) {
         this.returnStatus = returnStatus;
     }
 
@@ -65,4 +72,23 @@ public class Return implements Serializable {
     public void setItem(OrderItem item) {
         this.item = item;
     }
+
+    public String getShippingNumber() {
+        return shippingNumber;
+    }
+    public void setShippingNumber(String shippingNumber) {
+        this.shippingNumber = shippingNumber;
+    }
+
+    public String getResultReason() {
+        return resultReason;
+    }
+    public void setResultReason(String resultReason) {
+        this.resultReason = resultReason;
+    }
+
+    public enum ReturnStatus {
+        待审核, 审核通过, 申请被拒绝,已退货,已收货,已退款
+    }
+
 }

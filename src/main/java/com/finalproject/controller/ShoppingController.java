@@ -78,6 +78,18 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 检查是否收藏商品
+    @GetMapping("/internal/is-product-bookmarked/{userId}/{productId}")
+    public Result<Boolean> isProductBookmarkedInternal(@PathVariable String userId, @PathVariable String productId) {
+        return favouriteService.isProductBookmarked(userId, productId);
+    }
+
+    // 检查是否收藏店铺
+    @GetMapping("/internal/is-store-bookmarked/{userId}/{storeId}")
+    public Result<Boolean> isStoreBookmarkedInternal(@PathVariable String userId, @PathVariable String storeId) {
+        return favouriteService.isProductBookmarked(userId, storeId);
+    }
+
     // 可选多个商品添加对应订单
     @PostMapping("/order/add-orders")
     public ResponseEntity<Result<List<OrderRelatedDTO>>> addOrders(@RequestBody ProductIdsDTO productIdsDTO, Authentication authentication) {

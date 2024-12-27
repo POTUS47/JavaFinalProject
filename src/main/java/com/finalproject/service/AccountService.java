@@ -5,6 +5,8 @@ import com.finalproject.model.Administrator;
 import com.finalproject.model.Buyer;
 import com.finalproject.model.Store;
 import com.finalproject.repository.BuyerRepository;
+import com.finalproject.repository.StoreRepository;
+import com.finalproject.repository.WalletRepository;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
@@ -24,8 +26,7 @@ public class AccountService {
 
     @Resource
     private AccountRepository accountRepository;
-    @Resource
-    private BuyerRepository buyerRepository;
+
     private final JavaMailSender mailSender;
     private Map<String, String> verificationCodes; // 用于存储验证码
 
@@ -51,9 +52,7 @@ public class AccountService {
         }
         // 保存验证码到缓存中（可结合 Redis 使用）
         // 注意：若email 在 Map 中已经存在，则 put 会覆盖该键当前的值
-        System.out.println(email);
         verificationCodes.put(email, verificationCode);
-        System.out.println(verificationCodes.toString());///////
 
         Map<String, String> data = new HashMap<>();
         data.put("verificationCode",verificationCode);
@@ -63,13 +62,7 @@ public class AccountService {
     // 获取验证码（后期需要改成redis缓存）
     public boolean verifyCode(String email, String code) {
         // 校验验证码
-        System.out.println("--------------------");///////
-        System.out.println(verificationCodes.toString());///////
-
-        System.out.println(email);
         String storedCode = verificationCodes.get("\""+email+"\"");
-        System.out.println(storedCode);
-        System.out.println(code);
         return storedCode != null && storedCode.equals(code);
     }
 
@@ -77,6 +70,10 @@ public class AccountService {
     public Result<Map<String, String>> registerUser(AccountDTOs.UserRegisterDTO dto) {
         if (!this.verifyCode(dto.getEmail(), dto.getVerificationCode()))
             return Result.error(400, "验证码错误！");
+        Optional<Account> possible_account = accountRepository.findByEmail(dto.getEmail());
+        if (possible_account.isPresent()) {
+            return Result.error(400, "该邮箱已被使用过！");
+        }
         // 生成唯一 ID
         SnowflakeIdGenerator generator = new SnowflakeIdGenerator();
         String generatedId = generator.nextId();
@@ -186,7 +183,19 @@ public class AccountService {
     }
 
     // 上传用户头像
-
+    public Result<Map<String, String>> updatePhoto(String userId, String photoId){
+        Optional<Account> userOptional= accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改头像的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setPhotoId(photoId);
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"头像修改成功！");
+        data.put("photo_id", photoId);
+        return Result.success(data);
+    }
 
     // 获取用户全部基本信息
     public Result<AccountDTOs.UserInfoDTO> getUserInfo(String userId) {
@@ -204,6 +213,15 @@ public class AccountService {
                 user.getEmail(),user.getPhotoId(),user.getType().toString());
         // 返回成功结果
         return Result.success(userInfo);
+    }
+
+
+    public boolean isUserExists(String userId) {
+        Optional<Account> userOptional = accountRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
 }

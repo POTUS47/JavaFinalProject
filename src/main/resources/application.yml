@@ -80,3 +80,6 @@ logging:
 
 upload:
   path: /home/ecs-user/image/
+
+jwt:
+  secret: secureKey123
