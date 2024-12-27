@@ -33,8 +33,8 @@ public class ProductService {
     private StoreBusinessDirectionRepository storeBusinessDirectionRepository;
     private SubCategoryRepository subCategoryRepository;
 
-//    @Value("${user.service.url}")  // 存储用户子系统的服务URL
-//    private String userServiceUrl;
+    @Value("${api.base-url}")
+    private String baseUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -61,8 +61,9 @@ public class ProductService {
         String productId = "p" + idGenerator.nextId();
 
         // 调用用户子系统的 StoreController API 获取 Store 信息
+        String url = baseUrl + "/users/store/" + storeId;
         ResponseEntity<Result<Store>> response = restTemplate.exchange(
-                 "http://47.97.59.189:8080/users/store/" + storeId,
+                 url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<Result<Store>>() {} ); // 使用 ParameterizedTypeReference 来处理泛型
