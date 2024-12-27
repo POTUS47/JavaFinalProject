@@ -4,6 +4,7 @@ import com.finalproject.DTO.Result;
 import com.finalproject.model.Administrator;
 import com.finalproject.model.Buyer;
 import com.finalproject.model.Store;
+import com.finalproject.repository.BuyerRepository;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
@@ -23,6 +24,8 @@ public class AccountService {
 
     @Resource
     private AccountRepository accountRepository;
+    @Resource
+    private BuyerRepository buyerRepository;
     private final JavaMailSender mailSender;
     private Map<String, String> verificationCodes; // 用于存储验证码
 
@@ -48,7 +51,10 @@ public class AccountService {
         }
         // 保存验证码到缓存中（可结合 Redis 使用）
         // 注意：若email 在 Map 中已经存在，则 put 会覆盖该键当前的值
+        System.out.println(email);
         verificationCodes.put(email, verificationCode);
+        System.out.println(verificationCodes.toString());///////
+
         Map<String, String> data = new HashMap<>();
         data.put("verificationCode",verificationCode);
         return Result.success(data);
@@ -57,7 +63,13 @@ public class AccountService {
     // 获取验证码（后期需要改成redis缓存）
     public boolean verifyCode(String email, String code) {
         // 校验验证码
-        String storedCode = verificationCodes.get(email);
+        System.out.println("--------------------");///////
+        System.out.println(verificationCodes.toString());///////
+
+        System.out.println(email);
+        String storedCode = verificationCodes.get("\""+email+"\"");
+        System.out.println(storedCode);
+        System.out.println(code);
         return storedCode != null && storedCode.equals(code);
     }
 
@@ -197,6 +209,5 @@ public class AccountService {
         // 返回成功结果
         return Result.success(userInfo);
     }
-
 
 }

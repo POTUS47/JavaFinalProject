@@ -4,17 +4,22 @@ package com.finalproject.controller;
 import com.finalproject.DTO.ProductDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.exception.BusinessTagException;
+import com.finalproject.model.Buyer;
 import com.finalproject.model.Image;
+import com.finalproject.model.Product;
+import com.finalproject.model.ProductImage;
 import com.finalproject.service.ImageService;
 import com.finalproject.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,52 +27,56 @@ import java.util.stream.Collectors;
 public class ProductController {
     @Autowired
     private  ImageService imageService;
+
     @Autowired
     private ProductService productService;
 
 
+    //添加新商品但不传图片
     @PostMapping("/addNewProduct")
-    public Result addNewProduct(@RequestBody addProductDTO newProduct,@RequestParam("ProductImages") List<MultipartFile> productImages) throws IOException {
+    public ResponseEntity<Result<String>> addNewProduct(@RequestBody addProductDTO newProduct, Authentication authentication){
+        //商家Id
+        String userId = (String) authentication.getPrincipal();
+        Result<String> response = productService.addProduct(userId,newProduct);
+        return ResponseEntity.status(response.getCode()).body(response);
 
-        if (productImages == null||productImages.isEmpty()) {
-            return new Result(400,"上传的产品图片为空");
-        }
-
-        try {
-            // 创建并保存商品实体
-            String productId = productService.addProduct(newProduct);
-
-            int num=imageService.saveImage(productImages,"商品");
-
-            return Result.success("成功添加商品，商品Id:"+productId+"成功添加"+num+"张商品图片");
-        } catch (BusinessTagException e) {
-              return new Result(400,e.getMessage());
-        } catch (Exception e) {
-            return new Result(400,e.getMessage());
-        }
-    }
-
-//    @PostMapping("/upload")
-//    public Result uploadImages(@RequestParam("files") List<MultipartFile> files) throws IOException {
-//        if (files == null || files.isEmpty()) {
-//            Result result=new Result("400","上传的产品图片为空");
-//            return result;
+//        if (productImages == null || productImages.isEmpty()) {
+//            Result result = Result.error(400, "上传的图片为空");
+//            return ResponseEntity.status();
 //        }
 //
-//        // 过滤掉空文件并上传
-//        List<Image> savedImages = files.stream()
-//                .filter(file -> !file.isEmpty())
-//                .map(file -> {
-//                    try {
-//                        // 假设所有的图片都属于 "测试" 类型
-//                        return imageService.saveImage(file, "测试");
-//                    } catch (IOException e) {
-//                        throw new RuntimeException("Failed to save image", e);
-//                    }
-//                })
-//                .collect(Collectors.toList());
+//        // 创建并保存商品实体
+//        String productId = productService.addProduct(newProduct);
+    }
+
+    //添加商品图片
+//    @PostMapping("/addProductImage")
+//    public ResponseEntity<Result<String>> addProductImage(@RequestParam("ProductImages") List<MultipartFile> productImages){
 //
-//        return new ResponseEntity<>(savedImages, HttpStatus.CREATED);
 //    }
+
+    //
+    @PostMapping("/GetProductDetails")
+    public ResponseEntity<Result<productDetailDTO>> getProductDetails(@RequestParam String productId,Authentication auth){
+        String userId = (String) auth.getPrincipal();
+        Result<productDetailDTO> response=productService.getProductDetail(productId,userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    // 根据 product_id 获取 Product 信息
+    @GetMapping("/product/{productId}")
+    public Optional<Product> getProductById(@PathVariable String productId) {
+        return productService.getProductById(productId);
+    }
+
+    // 根据 product_id 获取 Product 信息
+    @GetMapping("/products/{storeId}")
+    public List<Product> getProductsByStoreId(@PathVariable String storeId) {
+        return productService.getProductsByStoreId(storeId);
+    }
+
+    // 根据商品ID获取商品的所有图片
+    @GetMapping("/productImages/{productId}")
+    public List<ProductImage> getProductImagesByProductId(@PathVariable String productId) {
+        return productService.getProductImagesByProductId(productId);
+    }
 
 }

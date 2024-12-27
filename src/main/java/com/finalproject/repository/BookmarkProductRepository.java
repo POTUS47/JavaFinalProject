@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BuyerProductBookmarkRepository extends JpaRepository<BookmarkProduct, String> {
+public interface BookmarkProductRepository extends JpaRepository<BookmarkProduct, String> {
 
     boolean existsByBuyerIdAndProductId(String userId, String productId);
 

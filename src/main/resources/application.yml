@@ -11,6 +11,17 @@ springdoc:
     enabled: true # 开启swagger界面，依赖OpenApi，需要OpenApi同时开启
     path: /swagger-ui/index.html # 自定义路径，默认为"/swagger-ui/index.html"
 
+#服务器部署环境
+#api:
+#  base-url: "http://47.97.59.189:8080"
+#trusted:
+#  ip: "47.97.59.189"
+
+#本地测试环境
+api:
+  base-url: "http://127.0.0.1:8080"
+trusted:
+  ip: "localhost, 0:0:0:0:0:0:0:1, 127.0.0.1"
 
 spring:
   servlet:
@@ -18,7 +29,8 @@ spring:
       max-file-size: 20MB # 单个文件的最大大小
       max-request-size: 50MB # 整个multipart/form-data请求的最大大小
   datasource:
-    url: jdbc:mysql://localhost:3306/javaproject?useSSL=false&serverTimezone=UTC
+    #url: jdbc:mysql://localhost:3306/javaproject?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://47.97.59.189:3306/javaproject?useSSL=false&serverTimezone=UTC
     username: root
     password: Zhmmysql:2024
     driver-class-name: com.mysql.cj.jdbc.Driver

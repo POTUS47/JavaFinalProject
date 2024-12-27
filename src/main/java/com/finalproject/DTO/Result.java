@@ -68,11 +68,34 @@ public class Result<T> {
         return rs;
     }
 
+    // 不返回数据，且想想自定义成功信息
+    public static <T> Result<T> success(int code, String msg, T data) {
+        Result rs = new Result<>();
+        rs.setCode(code);
+        rs.setMsg(msg);
+        rs.setData(data);
+        return rs;
+    }
+
     // 请求失败 -- 因为失败的原因不确定，所以不能指定
     public static <T> Result<T> error(int code, String msg) {
         //失败了就不需要返回数据给用户
         Result rs = new Result<>();
         rs.setCode(code);
+        rs.setMsg(msg);
+        return rs;
+    }
+
+    public static <T> Result<T> error(int code) {
+        Result rs = new Result<>();
+        rs.setCode(code);
+        return rs;
+    }
+
+    public static <T> Result<T> success(String msg,T data ) {
+        Result rs = new Result<>();
+        rs.setData(data);
+        rs.setCode(200);
         rs.setMsg(msg);
         return rs;
     }

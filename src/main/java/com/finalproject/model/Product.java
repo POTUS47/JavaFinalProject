@@ -27,8 +27,11 @@ public class Product {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "account_id", nullable = false)
+    @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable=false,updatable = false)
     private Store store;  // Store entitsy representing the store owner (Account)
+
+    @Column(name = "account_id", nullable = false,updatable = false)
+    private String storeId;
 
     @Column(name = "store_tag", length = 50)
     private String storeTag;
@@ -36,7 +39,7 @@ public class Product {
     @Column(name = "sub_tag", nullable = false, length = 50)
     private String subCategory;  // SubCategory entity representing the product's sub-category
 
-    public Product(String productId,String productName,BigDecimal productPrice,int quantity,String tag,String description,String subCategory ) {
+    public Product(String productId,String productName,BigDecimal productPrice,int quantity,String tag,String description,String subCategory,Store store ) {
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -44,6 +47,7 @@ public class Product {
         this.tag = tag;
         this.description = description;
         this.subCategory = subCategory;
+        this.store = store;
     }
 
     public Product() {
@@ -136,5 +140,13 @@ public class Product {
                 ", storeTag='" + storeTag + '\'' +
                 ", subCategory=" + subCategory +
                 '}';
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 }
