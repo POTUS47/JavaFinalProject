@@ -19,6 +19,7 @@ spring:
       max-request-size: 50MB # 整个multipart/form-data请求的最大大小
   datasource:
     url: jdbc:mysql://localhost:3306/javaproject?useSSL=false&serverTimezone=UTC
+    #url: jdbc:mysql://47.97.59.189:3306/javaproject?useSSL=false&serverTimezone=UTC
     username: root
     password: Zhmmysql:2024
     driver-class-name: com.mysql.cj.jdbc.Driver

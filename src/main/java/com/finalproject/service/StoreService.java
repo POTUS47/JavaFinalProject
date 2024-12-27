@@ -1,0 +1,37 @@
+package com.finalproject.service;
+import com.finalproject.DTO.AccountDTOs;
+import com.finalproject.DTO.Result;
+import com.finalproject.model.Administrator;
+import com.finalproject.model.Buyer;
+import com.finalproject.model.Store;
+import com.finalproject.util.JwtTokenUtil;
+import com.finalproject.util.SnowflakeIdGenerator;
+import jakarta.annotation.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
+import com.finalproject.model.Account;
+import com.finalproject.repository.StoreRepository;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+@Service
+public class StoreService {
+
+    private final StoreRepository storeRepository;
+
+    public StoreService(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
+    }
+
+    public Result<Store> getStoreByAccountId(String accountId) {
+        // 根据 accountId 查找对应的 Store
+        //若不存在该商家
+        Optional<Store> temp=storeRepository.findByAccountId(accountId);
+        if(temp.isEmpty()){
+            return Result.error(404,"不存在该id的商家");
+        }
+        return Result.success(temp.get());
+    }
+}

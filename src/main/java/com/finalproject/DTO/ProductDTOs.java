@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class ProductDTOs {
 
     public static class addProductDTO{
-        private String storeId ;
         private String ProductName;
         private BigDecimal ProductPrice ;
         private String Tag ;
@@ -16,13 +15,6 @@ public class ProductDTOs {
 //        private List<IFormFile>? ProductImages ;
 //        private List<PicDes>? PicDes ;
 
-        public String getStoreId() {
-            return storeId;
-        }
-
-        public void setStoreId(String storeId) {
-            this.storeId = storeId;
-        }
 
         public String getProductName() {
             return ProductName;

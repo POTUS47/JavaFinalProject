@@ -2,7 +2,9 @@ package com.finalproject.controller;
 
 import com.finalproject.DTO.AccountDTOs;
 import com.finalproject.DTO.Result;
+import com.finalproject.model.Store;
 import com.finalproject.service.AccountService;
+import com.finalproject.service.StoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,11 @@ import java.util.Map;
 public class UserController {
 
     private final AccountService userService;
+    private final StoreService storeService;
 
-    public UserController(AccountService userService) {
+    public UserController(AccountService userService,
+                          StoreService storeService) {
+        this.storeService = storeService;
         this.userService = userService;
     }
 
@@ -106,6 +111,15 @@ public class UserController {
                 "userId", userId,
                 "role", role
         ));
+    }
+
+
+    // 根据 account_id 获取 Store 信息
+    @GetMapping("/store/{accountId}")
+    public ResponseEntity<Result<Store>> getStoreByAccountId(@PathVariable String accountId) {
+        // 调用 StoreService 查找 Store
+        Result<Store> store = storeService.getStoreByAccountId(accountId);
+        return ResponseEntity.status(store.getCode()).body(store);
     }
 
 
