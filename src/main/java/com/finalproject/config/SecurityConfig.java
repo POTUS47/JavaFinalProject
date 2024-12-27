@@ -1,6 +1,7 @@
 package com.finalproject.config;
 
 import com.finalproject.interceptor.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +16,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String TRUSTED_IP = "47.97.59.189";  // 允许的 IP 地址
+    //private static final String TRUSTED_IP = "47.97.59.189";  // 允许的 IP 地址
+
+    @Value("${trusted.ip}")
+    private String trustedIp;
+
+    public String getTrustedIp() {
+        return trustedIp;
+    }
+
+    public void setTrustedIp(String trustedIp) {
+        this.trustedIp = trustedIp;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -42,6 +54,13 @@ public class SecurityConfig {
 
     // 判断请求的 IP 是否在信任的白名单内
     private boolean isTrustedIp(String ip) {
-        return TRUSTED_IP.equals(ip); // 如果 IP 是 47.97.59.189，则认为是信任的请求
+        // 将信任的 IP 地址放到一个数组中
+        String[] trustedIps = trustedIp.split(", ");
+        for (String trustedIp : trustedIps) {
+            if (trustedIp.equals(ip)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
