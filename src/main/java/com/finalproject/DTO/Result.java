@@ -85,4 +85,12 @@ public class Result<T> {
         rs.setMsg(msg);
         return rs;
     }
+
+    public static <T> Result<T> success(String msg,T data ) {
+        Result rs = new Result<>();
+        rs.setData(data);
+        rs.setCode(200);
+        rs.setMsg(msg);
+        return rs;
+    }
 }

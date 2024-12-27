@@ -38,4 +38,52 @@ public class AccountDTOs {
             return this.password;
         }
     }
+
+    public static class UserInfoDTO {
+        private String userId;
+        private String userName;
+        private String email;
+        private String photoId;
+        private String type;
+
+        // 构造函数
+        public UserInfoDTO(String userId, String userName,
+                           String email, String photoId, String type) {
+            this.userId = userId;
+            this.userName = userName;
+            this.email = email;
+            this.photoId = photoId;
+            this.type = type;
+        }
+        // Getter 和 Setter
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+        public void setEmail(String email) {
+            this.email = email;
+        }
+        public void setPhotoId(String photoId) {
+            this.photoId = photoId;
+        }
+        public String getType() {
+            return type;
+        }
+        public String getUserId() {
+            return userId;
+        }
+        public String getUserName() {
+            return userName;
+        }
+        public String getEmail() {
+            return email;
+        }
+        public String getPhotoId() {
+            return photoId;
+        }
+    }
+
+
 }

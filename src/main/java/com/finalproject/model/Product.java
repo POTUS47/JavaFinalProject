@@ -39,7 +39,7 @@ public class Product {
     @Column(name = "sub_tag", nullable = false, length = 50)
     private String subCategory;  // SubCategory entity representing the product's sub-category
 
-    public Product(String productId,String productName,BigDecimal productPrice,int quantity,String tag,String description,String subCategory ) {
+    public Product(String productId,String productName,BigDecimal productPrice,int quantity,String tag,String description,String subCategory,Store store ) {
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -47,6 +47,7 @@ public class Product {
         this.tag = tag;
         this.description = description;
         this.subCategory = subCategory;
+        this.store = store;
     }
 
     public Product() {

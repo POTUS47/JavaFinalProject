@@ -2,8 +2,10 @@ package com.finalproject.service;
 
 
 import com.finalproject.DTO.ProductDTOs.*;
+import com.finalproject.DTO.Result;
 import com.finalproject.exception.BusinessTagException;
 import com.finalproject.model.Product;
+import com.finalproject.model.Store;
 import com.finalproject.model.StoreBusinessDirection;
 import com.finalproject.model.SubCategory;
 import com.finalproject.repository.ProductRepository;
@@ -12,8 +14,13 @@ import com.finalproject.repository.SubCategoryRepository;
 import com.finalproject.util.SnowflakeIdGenerator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -21,34 +28,55 @@ import java.util.Optional;
 public class ProductService {
     private final SnowflakeIdGenerator idGenerator;
 
+    @Autowired
     private ProductRepository productRepository;
     private StoreBusinessDirectionRepository storeBusinessDirectionRepository;
     private SubCategoryRepository subCategoryRepository;
+
+    @Value("${api.base-url}")
+    private String baseUrl;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     ProductService(){
         idGenerator = new SnowflakeIdGenerator();
     }
 
-    public String addProduct( addProductDTO newProduct) {
+    public Result<String> addProduct( String userId,addProductDTO newProduct) {
         // 创建并保存商品实体
-        Product product = createAndSaveProduct(newProduct);
+        Product product = createAndSaveProduct(newProduct,userId);
 
         // 处理商品详情
         //saveProductDetails(product.getId(), newProduct.getPicDes());
 
         // 管理商家的运营方向
-        manageStoreBusinessDirection(newProduct);
+        //manageStoreBusinessDirection(newProduct);
 
-        return product.getProductId();
+        return Result.success();
     }
 
-    private Product createAndSaveProduct(addProductDTO newProduct) {
+    private Product createAndSaveProduct(addProductDTO newProduct,String storeId) {
         // 生成唯一的 PRODUCT_ID
         String productId = "p" + idGenerator.nextId();
 
-        // 创建商品实体并保存
+        // 调用用户子系统的 StoreController API 获取 Store 信息
+        String url = baseUrl + "/users/store/" + storeId;
+        ResponseEntity<Result<Store>> response = restTemplate.exchange(
+                 url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Result<Store>>() {} ); // 使用 ParameterizedTypeReference 来处理泛型
+
+        // 检查返回的 Result<Store> 是否成功
+        Result<Store> result = response.getBody();
+        Store store= new Store();
+        if (result.getCode() == 200) {
+            store = result.getData();
+        }
+        System.out.println(store.getAccountId());
         Product product = new Product(productId,newProduct.getProductName(),newProduct.getProductPrice(),newProduct.getQuantity(),
-                newProduct.getTag(),newProduct.getDescription(),newProduct.getSubTag());
+                newProduct.getTag(),newProduct.getDescription(),newProduct.getSubTag(),store);
 
         productRepository.save(product);
 
@@ -65,22 +93,22 @@ public class ProductService {
 //        }
 //    }
 
-    private void manageStoreBusinessDirection(addProductDTO newProduct)  {
-        Optional<SubCategory> subCategory = subCategoryRepository.findById(newProduct.getSubTag());
-        if (subCategory.isEmpty()) {
-            throw new BusinessTagException("SUBCATEGORY_NOT_FOUND", "子类别不存在");
-        }
-
-        // 检查该商家的TAG是否已经存在
-        String businessTag = newProduct.getTag() + subCategory.get().getSubcategoryName();
-        Optional<StoreBusinessDirection> existingTag = storeBusinessDirectionRepository.findByStoreIdAndBusinessTag(
-                newProduct.getStoreId(), businessTag);
-
-        existingTag.orElseGet(() -> {
-            StoreBusinessDirection newStoreTag = new StoreBusinessDirection(
-                    newProduct.getStoreId(), businessTag, 0);
-            return storeBusinessDirectionRepository.save(newStoreTag);
-        }).addLinkCount();
-
-    }
+//    private void manageStoreBusinessDirection(addProductDTO newProduct)  {
+//        Optional<SubCategory> subCategory = subCategoryRepository.findById(newProduct.getSubTag());
+//        if (subCategory.isEmpty()) {
+//            throw new BusinessTagException("SUBCATEGORY_NOT_FOUND", "子类别不存在");
+//        }
+//
+//        // 检查该商家的TAG是否已经存在
+//        String businessTag = newProduct.getTag() + subCategory.get().getSubcategoryName();
+//        Optional<StoreBusinessDirection> existingTag = storeBusinessDirectionRepository.findByStoreIdAndBusinessTag(
+//                newProduct.getStoreId(), businessTag);
+//
+//        existingTag.orElseGet(() -> {
+//            StoreBusinessDirection newStoreTag = new StoreBusinessDirection(
+//                    newProduct.getStoreId(), businessTag, 0);
+//            return storeBusinessDirectionRepository.save(newStoreTag);
+//        }).addLinkCount();
+//
+//    }
 }
