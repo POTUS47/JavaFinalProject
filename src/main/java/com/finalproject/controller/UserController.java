@@ -5,12 +5,15 @@ import com.finalproject.DTO.Result;
 import com.finalproject.model.Store;
 import com.finalproject.model.Buyer;
 import com.finalproject.repository.BuyerRepository;
+import com.finalproject.repository.WalletRepository;
 import com.finalproject.service.AccountService;
 import com.finalproject.service.StoreService;
+import com.finalproject.service.WalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,13 +23,13 @@ public class UserController {
 
     private final AccountService userService;
     private final StoreService storeService;
-    private final BuyerRepository buyerRepository;
+    private final WalletService walletService;
 
-    public UserController(AccountService userService,
-                          StoreService storeService, BuyerRepository buyerRepository) {
+    public UserController(AccountService userService, StoreService storeService,
+                          WalletService walletService) {
         this.storeService = storeService;
         this.userService = userService;
-        this.buyerRepository = buyerRepository;
+        this.walletService = walletService;
     }
 
     // 发送验证码 (要改要改！！！不可以直接返回前端)
@@ -40,6 +43,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Result<Map<String, String>>> register(@RequestBody AccountDTOs.UserRegisterDTO dto) {
         Result<Map<String, String>> response = userService.registerUser(dto);
+        walletService.createWallet(response.getData().get("ID"));
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -125,13 +129,32 @@ public class UserController {
         return ResponseEntity.ok(storeService.getStoreByAccountId(accountId));
     }
 
-    // 根据 account_id 获取 Buyer 信息
-    @GetMapping("/buyer/{accountId}")
-    public Optional<Buyer> getBuyerById(@PathVariable String accountId) {
-        return buyerRepository.findById(accountId);
+    // 钱包充值（需要有沙盒逻辑！！！！）
+    @PutMapping("/recharge")
+    public ResponseEntity<Result<Map<String, String>>>
+    recharge(@RequestParam BigDecimal amount, Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<Map<String, String>> result = walletService.recharge(userId, amount);
+        return ResponseEntity.status(result.getCode()).body(result);
     }
 
+    // 钱包支付
+    @PutMapping("/charge")
+    public ResponseEntity<Result<Map<String, String>>>
+    charge(@RequestParam BigDecimal amount, Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<Map<String, String>> result = walletService.subtract(userId, amount);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
 
+    // 查看余额
+    @GetMapping("/balance")
+    public ResponseEntity<Result<Map<String, String>>>
+    getBalance(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<Map<String, String>> result = walletService.checkBalance(userId);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
 
 
 }
