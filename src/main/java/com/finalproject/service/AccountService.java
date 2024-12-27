@@ -10,6 +10,7 @@ import com.finalproject.repository.WalletRepository;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -29,6 +30,8 @@ public class AccountService {
 
     private final JavaMailSender mailSender;
     private Map<String, String> verificationCodes; // 用于存储验证码
+    @Autowired
+    private BuyerRepository buyerRepository;
 
     public AccountService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -224,4 +227,7 @@ public class AccountService {
         return true;
     }
 
+    public Optional<Buyer> getBuyerByAccountId(String buyerId) {
+        return buyerRepository.findByAccountId(buyerId);
+    }
 }

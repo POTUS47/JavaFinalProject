@@ -9,8 +9,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 
 public class JwtTokenUtil {
-    @Value("${jwt.secret}")
-    private static String secret;
+//    @Value("${jwt.secret}")
+//    private static String secret;
+    private static final String secret="secureKey123";
 
     // 生成JWT
     public static String generateJWT(String id, String role) {

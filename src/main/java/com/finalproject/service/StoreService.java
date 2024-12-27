@@ -1,9 +1,7 @@
 package com.finalproject.service;
 import com.finalproject.DTO.AccountDTOs;
 import com.finalproject.DTO.Result;
-import com.finalproject.model.Administrator;
-import com.finalproject.model.Buyer;
-import com.finalproject.model.Store;
+import com.finalproject.model.*;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
@@ -11,7 +9,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import com.finalproject.model.Account;
 import com.finalproject.repository.StoreRepository;
 
 import java.util.*;
@@ -29,4 +26,5 @@ public class StoreService {
         // 根据 accountId 查找对应的 Store
         return storeRepository.findByAccountId(accountId);
     }
+
 }

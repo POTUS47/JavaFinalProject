@@ -10,6 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -19,35 +21,92 @@ import java.util.Optional;
 
 @Service
 public class FavouriteService {
-    private final StoreRepository storeRepository;
-    private final ProductRepository productRepository;
-    private final BuyerRepository buyerRepository;
     private final BookmarkStoreRepository bookmarkStoreRepository;
     private final BookmarkProductRepository bookmarkProductRepository;
-    private final ProductImageRepository productImageRepository;
     private final RestTemplate restTemplate;
 
     // 构造函数注入
-    public FavouriteService(StoreRepository storeRepository,
-                       ProductRepository productRepository,
-                       BuyerRepository buyerRepository,
-                       BookmarkStoreRepository bookmarkStoreRepository,
-                       BookmarkProductRepository bookmarkProductRepository,
-                       ProductImageRepository productImageRepository,
-                            RestTemplate restTemplate) {
-        this.storeRepository = storeRepository;
-        this.productRepository = productRepository;
-        this.buyerRepository = buyerRepository;
+    public FavouriteService(
+            BookmarkStoreRepository bookmarkStoreRepository,
+            BookmarkProductRepository bookmarkProductRepository,
+            RestTemplate restTemplate) {
         this.bookmarkStoreRepository = bookmarkStoreRepository;
         this.bookmarkProductRepository = bookmarkProductRepository;
-        this.productImageRepository = productImageRepository;
         this.restTemplate = restTemplate;
     }
 
     @Value("${api.base-url}")
     private String baseUrl;
 
-    // 把所有检查用户存不存在的接口都删掉了
+    /*
+    把所有检查用户存不存在的接口都删掉了
+     */
+
+    /////////////////////////////////////////////////////////////////////////以下是面向内部接口
+    @Transactional
+    public Optional<Product> getProductById(String productId) {
+        String url = baseUrl + "/api/productController/product/" + productId;
+        ResponseEntity<Optional<Product>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+        return response.getBody();
+    }
+
+    @Transactional
+    public List<Product> getProductsByStoreId(String storeId) {
+        String url = baseUrl + "/api/productController/products/" + storeId;
+        ResponseEntity<List<Product>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Product>>() {}
+        );
+        return response.getBody();
+    }
+
+    @Transactional
+    public Optional<Store> getStoreById(String storeId) {
+        String url = baseUrl + "/api/users/getStore/" + storeId;
+        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        return response.getBody();
+    }
+
+    @Transactional
+    public Optional<Buyer> getBuyerById(String buyerId) {
+        String url = baseUrl + "/api/users/buyer/" + buyerId;
+        ResponseEntity<Optional<Buyer>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        return response.getBody();
+    }
+
+    @Transactional
+    public List<ProductImage> getProductImagesById(String productId) {
+        // 获取商品的图片信息
+        String url = baseUrl + "/api/productController/productImages/" + productId;
+        ResponseEntity<List<ProductImage>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<ProductImage>>() {
+                });
+        return response.getBody();
+    }
+
+    /////////////////////////////////////////////////////////////////////////以下是面向外部接口
     @Transactional
     public Result<List<FavouriteStoresDTO>>getFavouriteStores(String userId){
 
@@ -63,26 +122,21 @@ public class FavouriteService {
 
         // 遍历用户“收藏店铺”的model
         for (BookmarkStore bookmarkStore : bookmarkedStores) {
+            System.out.println("-----------------");
+            System.out.println(bookmarkStore.getStoreAccountId());
             // 初始化DTO
             FavouriteStoresDTO favouriteStoreDTO = new FavouriteStoresDTO();
-
             favouriteStoreDTO.setBuyerId(bookmarkStore.getBuyerAccountId());
             favouriteStoreDTO.setStoreId(bookmarkStore.getStoreAccountId());
 
             // 获取店铺信息
-            // 有外码关系
             Store store = bookmarkStore.getStore();
             favouriteStoreDTO.setStoreName(store.getStoreName());
             favouriteStoreDTO.setStoreScore(store.getStoreScore());
 
-
             // 获取该店铺下的商品信息
             List<ProductDTO> productDTOList = new ArrayList<>();
-            String storeId = bookmarkStore.getStoreAccountId();
-            String url = baseUrl + "/api/productController/products/" + storeId;
-            ResponseEntity<List<Product>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<Product>>() {} );
-            List<Product> products = response.getBody();
+            List<Product> products = getProductsByStoreId(store.getAccountId());
 
             if (products != null) {
                 for (Product product : products) {
@@ -92,10 +146,7 @@ public class FavouriteService {
                     productDTO.setProductPrice(product.getProductPrice());
 
                     // 获取商品的图片信息
-                    String url1 = baseUrl + "/api/productController/productImages/" + storeId;
-                    ResponseEntity<List<ProductImage>> productImageResponse = restTemplate.exchange(url1, HttpMethod.GET, null,
-                            new ParameterizedTypeReference<List<ProductImage>>() {} );
-                    List<ProductImage> productImages = productImageResponse.getBody();
+                    List<ProductImage> productImages = getProductImagesById(product.getProductId());
 
                     if (!productImages.isEmpty()) {
                         // 取第一张图片
@@ -142,7 +193,7 @@ public class FavouriteService {
             favouriteProductsDTO.setStoreId(store.getAccountId());
 
             // 获取商品的图片信息
-            List<ProductImage> productImages = productImageRepository.findByProductId(product.getProductId());
+            List<ProductImage> productImages = getProductImagesById(product.getProductId());
             if (!productImages.isEmpty()) {
                 // 取第一张图片
                 String imageId = productImages.getFirst().getImageId();
@@ -159,14 +210,10 @@ public class FavouriteService {
 
     @Transactional
     public Result<String> bookmarkStore(String userId, String storeId) {
-
         // 查询商家信息
-        System.out.println(userId + "------------------------" + storeId);
-
-        Optional<Store> storeOpt = storeRepository.findById(storeId);
+        Optional<Store> storeOpt = getStoreById(storeId);
         if (storeOpt.isEmpty()) {
             return Result.error(404, "未找到商家信息");
-
         }
 
         // 收藏过则取消收藏
@@ -192,15 +239,13 @@ public class FavouriteService {
 
     @Transactional
     public Result<String> bookmarkProduct(String userId, String productId) {
-
-        // 查询商家信息
-        Optional<Product> productOpt = productRepository.findById(productId);
+        Optional<Product> productOpt = getProductById(productId);
         if (productOpt.isEmpty()) {
             return Result.error(404, "未找到商品信息");
         }
 
         // 查询买家信息
-        Optional<Buyer> buyerOpt = buyerRepository.findById(userId);
+        Optional<Buyer> buyerOpt = getBuyerById(userId);
         if (buyerOpt.isEmpty()) {
             return Result.error(404, "未找到买家信息");
         }

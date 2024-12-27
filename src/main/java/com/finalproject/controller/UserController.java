@@ -2,6 +2,7 @@ package com.finalproject.controller;
 
 import com.finalproject.DTO.AccountDTOs;
 import com.finalproject.DTO.Result;
+import com.finalproject.model.Product;
 import com.finalproject.model.Store;
 import com.finalproject.model.Buyer;
 import com.finalproject.repository.BuyerRepository;
@@ -156,5 +157,15 @@ public class UserController {
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
+    // 获取店铺信息
+    @GetMapping("/getStore/{storeId}")
+    public Optional<Store> getStoreById(@PathVariable String storeId) {
+        return storeService.getStoreByAccountId(storeId);
+    }
 
+    // 获取买家信息
+    @GetMapping("/buyer/{buyerId}")
+    public Optional<Buyer> getBuyerById(@PathVariable String buyerId) {
+        return userService.getBuyerByAccountId(buyerId);
+    }
 }

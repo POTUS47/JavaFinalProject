@@ -1,5 +1,6 @@
 package com.finalproject.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -28,6 +29,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable=false,updatable = false)
+    @JsonBackReference // 解决循环引用问题，防止 Store 被序列化
     private Store store;  // Store entitsy representing the store owner (Account)
 
     @Column(name = "account_id", nullable = false,updatable = false)

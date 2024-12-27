@@ -92,6 +92,7 @@ public class ProductService {
         return response.getBody().getData();
     }
 
+
     private Result<String> createAndSaveProduct(addProductDTO newProduct,String storeId) {
         String productId = "p" + idGenerator.nextId();
 
