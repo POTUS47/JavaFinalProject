@@ -15,16 +15,16 @@ public class FavouriteService {
     private final StoreRepository storeRepository;
     private final ProductRepository productRepository;
     private final BuyerRepository buyerRepository;
-    private final BuyerStoreBookmarkRepository bookmarkStoreRepository;
-    private final BuyerProductBookmarkRepository bookmarkProductRepository;
+    private final BookmarkStoreRepository bookmarkStoreRepository;
+    private final BookmarkProductRepository bookmarkProductRepository;
     private final ProductImageRepository productImageRepository;
 
     // 构造函数注入
     public FavouriteService(StoreRepository storeRepository,
                        ProductRepository productRepository,
                        BuyerRepository buyerRepository,
-                       BuyerStoreBookmarkRepository bookmarkStoreRepository,
-                       BuyerProductBookmarkRepository bookmarkProductRepository,
+                       BookmarkStoreRepository bookmarkStoreRepository,
+                       BookmarkProductRepository bookmarkProductRepository,
                        ProductImageRepository productImageRepository) {
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
@@ -168,7 +168,6 @@ public class FavouriteService {
         boolean isBookmarked = bookmarkStoreRepository.existsByBuyerIdAndStoreId(userId, storeId);
         if (isBookmarked) {
             try {
-                System.out.println("保存");
                 bookmarkStoreRepository.deleteBookmarkStore(userId, storeId);
                 return Result.success(200,"取消收藏成功");
             } catch (Exception e) {

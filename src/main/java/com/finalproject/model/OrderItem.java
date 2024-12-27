@@ -12,12 +12,18 @@ public class OrderItem {
     private String itemId;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false,insertable = false, updatable = false)
     private Order order;  // Assuming there is an Order class
 
     @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id",insertable = false, updatable = false)
     private Product product;  // Assuming there is a Product class
+
+    @Column(name = "order_id",nullable = false, updatable=false)
+    private String orderId;
+
+    @Column(name = "product_id",nullable = false, updatable=false)
+    private String productId;
 
     @Column(name = "unit_price", precision = 10, scale = 2)
     private BigDecimal unitPrice;
@@ -28,7 +34,7 @@ public class OrderItem {
     @Column(name = "total_pay", precision = 7, scale = 2)
     private BigDecimal totalPay;
 
-    @Column(name = "bonus_credits", nullable = false)
+    @Column(name = "bonus_credits")
     private int bonusCredits;
 
     @Column(name = "actual_pay", precision = 7, scale = 2)
@@ -148,6 +154,22 @@ public class OrderItem {
                 ", score=" + score +
                 ", remark='" + remark + '\'' +
                 '}';
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     // Enum for ItemStatus

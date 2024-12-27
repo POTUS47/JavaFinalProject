@@ -196,18 +196,5 @@ public class FavouriteDTOs {
         }
     }
 
-    // 商品收藏DTO
-    public static class ProductIdDTO {
-        private String productId;
-
-        // Getter 和 Setter
-        public String getProductId() {
-            return productId;
-        }
-
-        public void setProductId(String productId) {
-            this.productId = productId;
-        }
-    }
 
 }

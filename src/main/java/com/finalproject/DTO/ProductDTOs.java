@@ -68,4 +68,16 @@ public class ProductDTOs {
         }
 
     }
+
+    public static class ProductIdDTO{
+        private String productId;
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+    }
 }
