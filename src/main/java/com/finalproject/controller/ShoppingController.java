@@ -1,13 +1,18 @@
 package com.finalproject.controller;
 import com.finalproject.DTO.FavouriteDTOs.*;
+import com.finalproject.DTO.OneYuanShoppingRecordDTOs.OneYuanShoppingRecordDTO;
 import com.finalproject.DTO.Result;
 import com.finalproject.service.FavouriteService;
 import jakarta.annotation.Resource;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import com.finalproject.service.OneYuanShoppingRecordService;
 
 
 // 购物子系统
@@ -18,6 +23,7 @@ public class ShoppingController {
 
     @Resource
     private FavouriteService favouriteService;
+    private OneYuanShoppingRecordService oneYuanShoppingRecordService;
 
     // 获取用户收藏的店铺
     @GetMapping("/favourite/get-favourite-stores")
@@ -66,7 +72,13 @@ public class ShoppingController {
         Result<Boolean>response = favouriteService.isProductBookmarked(userId, model.getProductId());
         return ResponseEntity.status(response.getCode()).body(response);
     }
-
-
+    
+    // 查看参与的一元购
+    // @GetMapping("/participants/{buyerId}")
+    // public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getParticipatedRecords(Authentication authentication) {
+    //     String userId = (String) authentication.getPrincipal();
+    //     Result<List<OneYuanShoppingRecordDTO>> response = oneYuanShoppingRecordService.getParticipatedRecords(userId);
+    //     return ResponseEntity.status(response.getCode()).body(response);
+    // }
 
 }
