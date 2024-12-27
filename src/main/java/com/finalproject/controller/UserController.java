@@ -3,6 +3,8 @@ package com.finalproject.controller;
 import com.finalproject.DTO.AccountDTOs;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.Store;
+import com.finalproject.model.Buyer;
+import com.finalproject.repository.BuyerRepository;
 import com.finalproject.service.AccountService;
 import com.finalproject.service.StoreService;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,13 @@ public class UserController {
 
     private final AccountService userService;
     private final StoreService storeService;
+    private final BuyerRepository buyerRepository;
 
     public UserController(AccountService userService,
-                          StoreService storeService) {
+                          StoreService storeService, BuyerRepository buyerRepository) {
         this.storeService = storeService;
         this.userService = userService;
+        this.buyerRepository = buyerRepository;
     }
 
     // 发送验证码 (要改要改！！！不可以直接返回前端)
@@ -121,6 +125,11 @@ public class UserController {
         return ResponseEntity.ok(storeService.getStoreByAccountId(accountId));
     }
 
+    // 根据 account_id 获取 Buyer 信息
+    @GetMapping("/buyer/{accountId}")
+    public Optional<Buyer> getBuyerById(@PathVariable String accountId) {
+        return buyerRepository.findById(accountId);
+    }
 
 
 

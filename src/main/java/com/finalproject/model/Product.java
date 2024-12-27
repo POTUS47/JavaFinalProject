@@ -27,8 +27,11 @@ public class Product {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "account_id", nullable = false)
+    @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable=false,updatable = false)
     private Store store;  // Store entitsy representing the store owner (Account)
+
+    @Column(name = "account_id", nullable = false,updatable = false)
+    private String storeId;
 
     @Column(name = "store_tag", length = 50)
     private String storeTag;
@@ -137,5 +140,13 @@ public class Product {
                 ", storeTag='" + storeTag + '\'' +
                 ", subCategory=" + subCategory +
                 '}';
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 }

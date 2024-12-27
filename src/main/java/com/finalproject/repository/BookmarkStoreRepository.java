@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Repository
-public interface BuyerStoreBookmarkRepository extends JpaRepository<BookmarkStore, String> {
+public interface BookmarkStoreRepository extends JpaRepository<BookmarkStore, String> {
 
     boolean existsByBuyerIdAndStoreId(String userId, String storeId);
 

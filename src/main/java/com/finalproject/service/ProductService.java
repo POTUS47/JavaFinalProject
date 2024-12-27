@@ -4,11 +4,9 @@ package com.finalproject.service;
 import com.finalproject.DTO.ProductDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.exception.BusinessTagException;
-import com.finalproject.model.Product;
-import com.finalproject.model.Store;
-import com.finalproject.model.StoreBusinessDirection;
-import com.finalproject.model.SubCategory;
+import com.finalproject.model.*;
 import com.finalproject.repository.ProductRepository;
+import com.finalproject.repository.ProductImageRepository;
 import com.finalproject.repository.StoreBusinessDirectionRepository;
 import com.finalproject.repository.SubCategoryRepository;
 import com.finalproject.util.SnowflakeIdGenerator;
@@ -22,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +29,8 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ProductImageRepository productImageRepository;
     private StoreBusinessDirectionRepository storeBusinessDirectionRepository;
     private SubCategoryRepository subCategoryRepository;
 
@@ -142,6 +143,18 @@ public class ProductService {
 
 
         return Result.success(res);
+    }
+
+    public Optional<Product> getProductById(String productId) {
+        return productRepository.findById(productId);
+    }
+
+    public List<Product> getProductsByStoreId(String storeId) {
+        return productRepository.findByStoreId(storeId);
+    }
+
+    public List<ProductImage> getProductImagesByProductId(String productId) {
+        return productImageRepository.findByProductId(productId);
     }
 
 

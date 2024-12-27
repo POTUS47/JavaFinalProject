@@ -13,12 +13,18 @@ public class Order {
     private String orderId;
 
     @ManyToOne
-    @JoinColumn(name = "buyer_id", referencedColumnName = "account_id", nullable = false)
+    @JoinColumn(name = "buyer_id", referencedColumnName = "account_id", nullable = false,insertable = false, updatable = false)
     private Buyer buyer;  // Assuming there is an Account class for the buyer
 
     @ManyToOne
-    @JoinColumn(name = "store_id", referencedColumnName = "account_id")
+    @JoinColumn(name = "store_id", referencedColumnName = "account_id",insertable = false, updatable = false)
     private Store store;  // Assuming there is an Account class for the store
+
+    @Column(name = "buyer_id",nullable = false, updatable=false)
+    private String buyerId;
+
+    @Column(name = "store_id",nullable = false, updatable=false)
+    private String storeId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
@@ -49,6 +55,7 @@ public class Order {
 
     @Column(name = "pay_time")
     private LocalDateTime payTime;
+
 
     // Getters and Setters
     public String getOrderId() {
@@ -163,6 +170,22 @@ public class Order {
                 ", username='" + username + '\'' +
                 ", payTime=" + payTime +
                 '}';
+    }
+
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     // Enum for OrderStatus
