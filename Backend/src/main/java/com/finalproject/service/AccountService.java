@@ -123,6 +123,8 @@ public class AccountService {
                 String jwt=JwtTokenUtil.generateJWT(user.getAccountId(), user.getType().toString());
                 Map<String, String> data = new HashMap<>();
                 data.put("JwtToken", jwt);
+                data.put("type", user.getType().toString());
+                data.put("id", user.getAccountId());
                 return Result.success(data);
             }
         }
