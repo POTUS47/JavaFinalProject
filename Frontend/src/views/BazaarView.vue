@@ -32,7 +32,7 @@
 import Navbar from '../components/Navbar.vue';
 import { ref, onMounted, computed } from 'vue';
 import router from '@/router';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 const markets = ref([]);
 const currentIndex = ref(0);

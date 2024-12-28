@@ -72,7 +72,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import imageA from '@/assets/setting.svg';
 import 'animate.css';
 import { ElSelect, ElOption, ElButton ,ElMessage} from 'element-plus';

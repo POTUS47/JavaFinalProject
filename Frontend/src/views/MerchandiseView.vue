@@ -122,7 +122,7 @@ import { Mousewheel } from 'swiper/modules';
 import Navbar from '../components/Navbar.vue';
 import { ref, computed,onMounted,reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 import Loading from '../views/templates/LoadingView.vue';
 import Container from '../views/templates/PicTextContainer.vue'

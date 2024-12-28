@@ -49,7 +49,7 @@ import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { getLunar } from 'chinese-lunar-calendar';
 import { Search } from '@element-plus/icons-vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import chineseLunar from 'chinese-lunar';
 // 引入UserModal组件
 const userModal = ref(null);

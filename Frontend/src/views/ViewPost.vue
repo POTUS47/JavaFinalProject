@@ -5,7 +5,7 @@ import {  ElButton, ElInput, ElCarousel, ElCarouselItem, ElImage,ElRow,ElCol,ElM
 import 'element-plus/dist/index.css';
 import router from '@/router';
 import 'animate.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import Loading from '../views/templates/LoadingView.vue';
 
 

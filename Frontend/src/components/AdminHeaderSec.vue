@@ -27,7 +27,7 @@ import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElIcon, ElMessage } from 'e
 import { ref } from 'vue';
 import { ArrowDown, CircleClose } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 const router = useRouter();
 

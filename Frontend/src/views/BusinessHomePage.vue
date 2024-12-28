@@ -75,7 +75,7 @@
 
 <script>
 import OrderStatisticsChart from './OverviewView.vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import Sidebar from './BusinessSidebar.vue'
 export default {
   components: {

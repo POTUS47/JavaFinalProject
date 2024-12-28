@@ -4,7 +4,7 @@ import { ref ,computed} from 'vue';
 import { ElMenu,ElButton, ElInput,ElRate,ElMessage} from 'element-plus';
 import 'element-plus/dist/index.css';
 import Navbar from '../components/Navbar.vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import router from '@/router';
 import Loading from '../views/templates/LoadingView.vue';
 

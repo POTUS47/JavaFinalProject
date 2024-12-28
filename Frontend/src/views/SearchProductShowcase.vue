@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import Navbar from '../components/Navbar.vue';
 import { useRouter} from 'vue-router';
 

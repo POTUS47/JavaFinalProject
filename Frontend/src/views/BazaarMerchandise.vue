@@ -42,10 +42,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import Navbar from '../components/Navbar.vue';
 import { ref, onMounted } from 'vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -77,7 +77,7 @@ const fetchProducts = async (marketId) => {
   }
 };
 
-const goToProductDetail = (productId: string) => {
+const goToProductDetail = (productId) => {
   localStorage.setItem('productIdOfDetail', productId);
   router.push('/productdetail');
 };
