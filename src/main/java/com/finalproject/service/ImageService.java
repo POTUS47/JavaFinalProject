@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImageService {
@@ -102,6 +103,7 @@ public class ImageService {
         }
     }
 
+
     private String getContentType(String fileName) {
         // 根据文件名后缀确定Content-Type
         int dotIndex = fileName.lastIndexOf('.');
@@ -117,4 +119,27 @@ public class ImageService {
             return MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
     }
+
+    public Result<String> deleteImage(String imageId) {
+        Optional<Image> imageOptional = imageRepository.findById(imageId);
+        if (imageOptional.isEmpty()) {
+            return Result.error(404, "图片未找到");
+        }
+        Image image = imageOptional.get();
+
+        Path imagePath = Paths.get(image.getFilePath());
+        try {
+            if (Files.exists(imagePath)) {
+                Files.delete(imagePath);
+            } else {
+                return Result.error(404, "图片文件不存在");
+            }
+        } catch (IOException e) {
+            return Result.error(500, "删除图片文件时出错");
+        }
+        imageRepository.delete(image);
+
+        return Result.success("图片删除成功");
+    }
+
 }

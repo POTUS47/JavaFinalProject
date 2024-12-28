@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,32 +68,8 @@ public class ProductService {
         }
 
         // 管理商家的运营方向
-        manageStoreBusinessDirection(combinedTag,userId);
+        manageStoreBusinessDirection(combinedTag,userId,combinedTag,false);
         return Result.success(res.getData());
-    }
-
-    private Result<String> checkTagAndSubTag(String tag,String subTag) {
-        // 检查tag是否在category表中存在此category_name
-        Optional<Category> categoryOpt = categoryRepository.findByCategoryName(tag);
-        if (categoryOpt.isEmpty()) {
-            return Result.error(404, "商品分类错误: " + tag);
-        }
-
-        // 检查subTag是否在sub_category的subcategory_id中存在
-        Optional<SubCategory> subCategoryOpt = subCategoryRepository.findBySubCategoryId(subTag);
-        if (subCategoryOpt.isEmpty()) {
-            return Result.error(404, "商品小分类错误: " + subTag);
-        }
-
-        // 存储小分类对应的category_name
-        SubCategory subCategory = subCategoryOpt.get();
-        String categoryName = categoryOpt.get().getCategoryName();
-
-        // 拼接tag和小分类的name并放在result的data中返回
-        String resultData = categoryName + tag;
-
-        return Result.success(resultData);
-
     }
 
     public Result<String> addPhoto(List<MultipartFile> files, String productId) throws IOException {
@@ -133,62 +110,6 @@ public class ProductService {
                 return Result.error(500,"上传图片失败");
             }
         }
-        return Result.success();
-    }
-
-    private Optional<Store> getStoreFromSubsystem(String storeId){
-        String url = baseUrl + "/api/users/store/" + storeId;
-        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                } );
-        return response.getBody();
-    }
-
-    private Boolean getProductMarkFromSubsystem(String productId,String userId){
-        String url = baseUrl + "/api/shopping/internal/is-product-bookmarked/" + userId+"/"+productId;
-        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                } );
-        return response.getBody().getData();
-    }
-
-    private Boolean getStoreMarkFromSubsystem(String userId,String storeId){
-        String url = baseUrl + "/api/shopping/internal/is-store-bookmarked/" + userId+"/"+storeId;
-        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                } );
-        return response.getBody().getData();
-    }
-
-    private Result<String> createAndSaveProduct(addProductDTO newProduct,String storeId) {
-        String productId = "p" + idGenerator.nextId();
-
-        // 调用用户子系统的 StoreController API 获取 Store 信息
-        Optional<Store> result = getStoreFromSubsystem(storeId);
-        if(result.isEmpty()){
-            return Result.error(404);
-        }
-        Store store=result.get();
-        Product product = new Product(productId,
-                newProduct.getProductName(),
-                newProduct.getProductPrice(),
-                newProduct.getQuantity(),
-                newProduct.getTag(),
-                newProduct.getDescription(),
-                newProduct.getSubTag(),
-                store,storeId);
-
-        productRepository.save(product);
-
         return Result.success(productId);
     }
 
@@ -235,6 +156,73 @@ public class ProductService {
         return Result.success(res);
     }
 
+    public Result<List<ShowProductDTO>> searchInStore(String storeId,String keyword){
+        String likePattern = "%" + String.join("%", keyword.split("")) + "%";
+        List<Product> products = productRepository.searchProducts(storeId, keyword, likePattern);
+        List<ShowProductDTO> result = new ArrayList<>();
+
+
+        //todo 默认图片id
+        for (Product product : products) {
+            Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
+            String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
+            ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
+                    product.getProductName(),
+                    product.getProductPrice(),
+                    product.getQuantity(),
+                    product.getTag(),
+                    product.getSubCategory(),
+                    product.getDescription(),
+                    imageId,
+                    product.getStoreTag());
+            result.add(dto);
+        }
+        return Result.success(result);
+    }
+
+    public Result<String> deleteProImage(String productId,String imageId) {
+        Optional<ProductImage> productImage=productImageRepository.findById(imageId);
+        if(productImage.isEmpty()){
+            return Result.error(404,"不存在该图片id");
+        }
+        else if(!productImage.get().getProductId().equals(productId)){
+            return Result.error(403,"不是该商品的图片，无权操作");
+        }
+        return imageService.deleteImage(imageId);
+    }
+
+    public Result<List<DesPic>> getDesPic(String productId) {
+        List<DesPic> productDetails = productDetailRepository.findByProductId(productId).stream()
+                .map(detail -> new DesPic(detail.getImageId(), detail.getDescription()))  // 映射为DesPic对象
+                .toList();
+        if(productDetails.isEmpty()){
+            return Result.error(404);
+        }
+        return Result.success(productDetails);
+    }
+
+    public Result<String> updateDescription(UpdateDescriptionRequest request){
+        Optional<ProductDetail> res=productDetailRepository.findById(request.getImageId());
+        if(res.isEmpty()){
+            return Result.error(404,"不存在该图片");
+        }
+        ProductDetail productDetail=res.get();
+        productDetail.setDescription(request.getDescription());
+        productDetailRepository.save(productDetail);
+        return Result.success();
+    }
+
+    public Result<String> deleteDetail(String imageId){
+        Optional<ProductDetail> res=productDetailRepository.findById(imageId);
+        if(res.isEmpty()){
+            return Result.error(404,"不存在该id");
+        }
+        ProductDetail productDetail=res.get();
+        String productId=productDetail.getProductId();
+        productDetailRepository.delete(productDetail);
+        return Result.success(productId);
+    }
+
     public Optional<Product> getProductById(String productId) {
         return productRepository.findById(productId);
     }
@@ -247,19 +235,155 @@ public class ProductService {
         return productImageRepository.findByProductId(productId);
     }
 
-    private void manageStoreBusinessDirection(String tag, String storeId) {
+    private void manageStoreBusinessDirection(String tag, String storeId,String oldTag,Boolean isUpdate) {
+        if(isUpdate){
+            Optional<StoreBusinessDirection> old=storeBusinessDirectionRepository.
+                    findByStoreIdAndBusinessTag(storeId,oldTag);
+            StoreBusinessDirection temp=old.get();
+            int tempCount=temp.getLinkCount()-1;
+            storeBusinessDirectionRepository.updateLinkCount(tempCount,storeId,oldTag);
+        }
         // 根据 storeId 和 tag 在 store_business_direction 表中查找是否存在
         Optional<StoreBusinessDirection> storeBusinessDirectionOpt = storeBusinessDirectionRepository
                 .findByStoreIdAndBusinessTag(storeId, tag);
 
         if (storeBusinessDirectionOpt.isPresent()) {
             StoreBusinessDirection storeBusinessDirection = storeBusinessDirectionOpt.get();
-            storeBusinessDirection.setLinkCount(storeBusinessDirection.getLinkCount() + 1);
-            storeBusinessDirectionRepository.save(storeBusinessDirection);
+            int count=storeBusinessDirection.getLinkCount() + 1;
+            storeBusinessDirectionRepository.updateLinkCount(count,storeId,tag);
         } else {
             StoreBusinessDirection newStoreBusinessDirection = new StoreBusinessDirection(storeId,tag,1);
             storeBusinessDirectionRepository.save(newStoreBusinessDirection);
         }
     }
 
+    private Optional<Store> getStoreFromSubsystem(String storeId){
+        String url = baseUrl + "/api/users/store/" + storeId;
+        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    private Boolean getProductMarkFromSubsystem(String productId,String userId){
+        String url = baseUrl + "/api/shopping/internal/is-product-bookmarked/" + userId+"/"+productId;
+        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody().getData();
+    }
+
+    private Boolean getStoreMarkFromSubsystem(String userId,String storeId){
+        String url = baseUrl + "/api/shopping/internal/is-store-bookmarked/" + userId+"/"+storeId;
+        ResponseEntity<Result<Boolean>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody().getData();
+    }
+
+    private Result<String> createAndSaveProduct(addProductDTO newProduct,String storeId) {
+        String productId = "p" + idGenerator.nextId();
+
+        // 调用用户子系统的 StoreController API 获取 Store 信息
+//        Optional<Store> result = getStoreFromSubsystem(storeId);
+//        if(result.isEmpty()){
+//            return Result.error(404);
+//        }
+//        Store store=result.get();
+        Product product = new Product(productId,
+                newProduct.getProductName(),
+                newProduct.getProductPrice(),
+                newProduct.getQuantity(),
+                newProduct.getTag(),
+                newProduct.getDescription(),
+                newProduct.getSubTag(),
+                storeId,
+                newProduct.getStoreTag());
+
+        productRepository.save(product);
+
+        return Result.success(productId);
+    }
+
+    private Result<String> checkTagAndSubTag(String tag,String subTag) {
+        // 检查tag是否在category表中存在此category_name
+        Optional<Category> categoryOpt = categoryRepository.findByCategoryName(tag);
+        if (categoryOpt.isEmpty()) {
+            return Result.error(404, "商品分类错误: " + tag);
+        }
+
+        // 检查subTag是否在sub_category的subcategory_id中存在
+        Optional<SubCategory> subCategoryOpt = subCategoryRepository.findBySubCategoryId(subTag);
+        if (subCategoryOpt.isEmpty()) {
+            return Result.error(404, "商品小分类错误: " + subTag);
+        }
+
+        // 存储小分类对应的category_name
+        SubCategory subCategory = subCategoryOpt.get();
+        String categoryName = subCategory.getSubcategoryName();
+
+        // 拼接tag和小分类的name并放在result的data中返回
+        String resultData = tag+categoryName  ;
+
+        return Result.success(resultData);
+
+    }
+
+    //todo 数据库存默认图片
+    public Result<List<String>> getProductImages(String productId) {
+        List<ProductImage> images=getProductImagesByProductId(productId);
+        List<String> res=new ArrayList<>();
+        if(images.isEmpty()){
+            String defaultId="1";
+            res.add(defaultId);
+        }
+        for(ProductImage image:images){
+            res.add(image.getImageId());
+        }
+        return Result.success(res);
+    }
+
+    public Result<String> editPro(ShowProductDTO dto,String storeId) {
+
+        Optional<Product> optionalProduct = productRepository.findById(dto.getProductId());
+
+        if (optionalProduct.isEmpty()) {
+            return Result.error(404, "商品未找到");
+        }
+        Product product = optionalProduct.get();
+        if(!product.getStoreId().equals(storeId)){
+            return Result.error(403,"无权操作，不是本商家的商品");
+        }
+
+        //检查tag
+        Result<String> result = checkTagAndSubTag(dto.getTag(),dto.getSubTag());
+        if(result.getCode()!=200){
+            return result;
+        }
+        String combinedTag=result.getData();
+
+        //更新商品
+        Optional.ofNullable(dto.getProductName()).ifPresent(product::setProductName);
+        Optional.ofNullable(dto.getProductPrice()).ifPresent(product::setProductPrice);
+        Optional.of(dto.getQuantity()).ifPresent(product::setQuantity);
+        Optional.ofNullable(dto.getTag()).ifPresent(product::setTag);
+        Optional.ofNullable(dto.getSubTag()).ifPresent(product::setSubCategory);
+        Optional.ofNullable(dto.getDescription()).ifPresent(product::setDescription);
+        Optional.ofNullable(dto.getStoreTag()).ifPresent(product::setStoreTag);
+
+        productRepository.save(product);
+
+        //商家运营方向管理
+        manageStoreBusinessDirection(combinedTag,storeId,combinedTag,false);
+        return Result.success(product.getProductId());
+    }
 }

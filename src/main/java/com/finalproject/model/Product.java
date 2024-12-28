@@ -42,8 +42,9 @@ public class Product {
     public Product(String productId,String productName,
                    BigDecimal productPrice, int quantity,
                    String tag,String description,
-                   String subCategory,Store store ,
-                   String storeId) {
+                   String subCategory ,
+                   String storeId,
+                   String storeTag) {
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -51,8 +52,8 @@ public class Product {
         this.tag = tag;
         this.description = description;
         this.subCategory = subCategory;
-        this.store = store;
         this.storeId = storeId;
+        this.storeTag = storeTag;
     }
 
     public Product() {

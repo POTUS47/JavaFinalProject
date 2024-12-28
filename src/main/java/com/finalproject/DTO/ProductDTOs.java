@@ -221,4 +221,101 @@ public class ProductDTOs {
             this.productId = productId;
         }
     }
+
+    public static class ShowProductDTO {
+        private String productId;
+        private String productName;
+        private BigDecimal productPrice;
+        private int quantity;
+        private String tag;
+        private String subTag;
+        private String description;
+        private String productPic;
+        private String storeTag;
+
+        ShowProductDTO(){
+
+        }
+
+
+        public ShowProductDTO(String productId, String productName,
+                              BigDecimal productPrice, int quantity,
+                              String tag, String subTag,
+                              String description,String productPic,
+                              String storeTag) {
+            this.productId = productId;
+            this.productName = productName;
+            this.productPrice = productPrice;
+            this.quantity = quantity;
+            this.tag = tag;
+            this.subTag = subTag;
+            this.description = description;
+            this.productPic = productPic;
+            this.storeTag = storeTag;
+
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public BigDecimal getProductPrice() {
+            return productPrice;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public String getSubTag() {
+            return subTag;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getProductPic() {
+            return productPic;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public String getStoreTag() {
+            return storeTag;
+        }
+    }
+
+    public static class UpdateDescriptionRequest{
+        private String ImageId;
+        private String Description;
+
+        public UpdateDescriptionRequest(String ImageId, String Description) {
+            this.ImageId = ImageId;
+            this.Description = Description;
+        }
+
+        public void setImageId(String ImageId) {
+            this.ImageId = ImageId;
+        }
+        public void setDescription(String Description) {
+            this.Description = Description;
+        }
+
+        public String getImageId() {
+            return ImageId;
+        }
+
+        public String getDescription() {
+            return Description;
+        }
+    }
+
+
 }
