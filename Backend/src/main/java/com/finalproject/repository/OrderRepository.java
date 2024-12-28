@@ -1,8 +1,5 @@
 package com.finalproject.repository;
-import com.finalproject.model.Buyer;
-import com.finalproject.model.Order;
-import com.finalproject.model.Product;
-import com.finalproject.model.Store;
+import com.finalproject.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     Order findByStoreIdAndBuyerId(String storeId, String userId);
 
     List<Order> findByStoreIdAndOrderTimeBetween(String storeId, LocalDateTime startDate, LocalDateTime endDate);
+
+    Optional<Order> findByOrderId(String orderId);
 
 
 //    Optional<List<Order>> findByBuyerId(String orderId);

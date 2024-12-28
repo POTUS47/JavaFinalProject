@@ -273,4 +273,18 @@ public class ShoppingController {
                 orderDeliveryDTO.getOrderId());
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    //跨子系统用
+    //根据退货单id找到订单项并返回退货价格和orderid
+    @GetMapping("/internal/getPaymentAndId/{returnId}")
+    public Result<PaymentAndIdDTO> getPaymentAndId(@PathVariable("returnId") String returnId){
+        return orderItemService.getPaymentAndId(returnId);
+    }
+
+    //跨子系统用
+    //根据orderid找到买卖双方id
+    @GetMapping("/internal/getStoreBuyerId/{orderId}")
+    public Result<BuyerShopperIdDTO> getStoreBuyerId(@PathVariable("orderId") String orderId){
+        return orderItemService.getStoreBuyerId(orderId);
+    }
 }
