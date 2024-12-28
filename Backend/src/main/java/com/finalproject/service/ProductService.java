@@ -227,14 +227,6 @@ public class ProductService {
         return productRepository.findById(productId);
     }
 
-    public List<Product> getProductsByStoreId(String storeId) {
-        return productRepository.findByStoreId(storeId);
-    }
-
-    public List<ProductImage> getProductImagesByProductId(String productId) {
-        return productImageRepository.findByProductId(productId);
-    }
-
     private void manageStoreBusinessDirection(String tag, String storeId,String oldTag,Boolean isUpdate) {
         if(isUpdate){
             Optional<StoreBusinessDirection> old=storeBusinessDirectionRepository.

@@ -434,4 +434,18 @@ public class OrderService {
         return Result.success("成功更新快递单号");
     }
 
+    // 查询订单的状态
+    @Transactional
+    public Result<Map<String,String>> getOrderStatus(String orderId){
+        Optional<Order> order =orderRepository.findById(orderId);
+        if(order.isEmpty()) {
+            return Result.error(404,"希望查询状态的订单不存在！");
+        }
+        String status =order.get().getOrderStatus().toString();
+        Map<String,String> map = new HashMap<>();
+        map.put("status",status);
+        return Result.success(map);
+    }
+
+
 }

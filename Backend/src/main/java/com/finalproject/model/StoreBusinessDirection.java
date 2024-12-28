@@ -31,10 +31,6 @@ public class StoreBusinessDirection implements Serializable {
         this.linkCount = linkCount;
     }
 
-    public StoreBusinessDirection() {
-
-    }
-
     public int addLinkCount(){
         this.linkCount++;
         return this.linkCount;
