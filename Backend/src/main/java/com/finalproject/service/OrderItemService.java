@@ -5,9 +5,10 @@ import com.finalproject.model.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -16,15 +17,18 @@ public class OrderItemService {
     private final OrderRepository orderRepository;
     private final StoreRepository storeRepository;
     private final ProductRepository productRepository;
+    private final OrderService orderService;
 
     // 构造函数注入
     public OrderItemService(OrderItemRepository orderItemRepository,
                             OrderRepository orderRepository,
-                            StoreRepository storeRepository, ProductRepository productRepository){
+                            StoreRepository storeRepository, ProductRepository productRepository,
+                            OrderService orderService){
         this.orderItemRepository = orderItemRepository;
         this.orderRepository = orderRepository;
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
+        this.orderService = orderService;
     }
 
     // 更新订单项评分评价
@@ -111,4 +115,166 @@ public class OrderItemService {
         return Result.success(!orderItems.isEmpty());
     }
 
+    @Transactional
+    // 退货子系统接口使用的辅助函数，管理订单项申请退货逻辑
+    public Result<Map<String,String>> returnOrderItem(String user_id,String item_id){
+        Result<Map<String,String>> response;
+        response=this.isUserExistOrderItem(user_id,item_id);
+        if(response.getCode()!=200){
+            return response;
+        }
+        String orderId=response.getData().get("orderId");
+        response=orderService.getOrderStatus(orderId);
+        if(response.getCode()!=200){
+            return response;
+        }
+        String orderStatus=response.getData().get("status");
+
+        if(!orderStatus.equals("已完成")){
+            return Result.error(400,"请先确认收货！");
+        }
+        response=startAfterSell(item_id);
+        return response;
+    }
+
+    @Transactional
+    // 退货子系统接口使用的辅助函数，管理订单项审批退货逻辑
+    public Result<Map<String,String>> approveReturnOrderItem(String user_id,String item_id,
+    Boolean isApprove){
+        Result<Map<String,String>> response;
+        response=this.isStoreExistOrderItem(user_id,item_id);
+        if(isApprove||response.getCode()!=200){
+            return response;
+        }
+        response=endAfterSell(item_id);
+        return response;
+    }
+
+
+    // 搜索某用户是否存在一个ID为XXX的订单项
+    @Transactional
+    public Result<Map<String,String>> isUserExistOrderItem(String userId, String orderItemId){
+        Optional<OrderItem> item =orderItemRepository.findOrderItemByUserIdAndItemId(userId,orderItemId);
+        if(item.isEmpty()) {
+            return Result.error(404,"订单项不存在或无权限访问");
+        }
+        Map<String,String> data = new HashMap<>();
+        String orderId=item.get().getOrderId();
+        data.put("orderId",orderId);
+        return Result.success(data);
+    }
+
+    // 搜索某商家是否存在一个ID为XXX的订单项
+    @Transactional
+    public Result<Map<String,String>> isStoreExistOrderItem(String userId, String orderItemId){
+        Optional<OrderItem> item =orderItemRepository.findOrderItemByStoreIdAndItemId(userId,orderItemId);
+        if(item.isEmpty()) {
+            return Result.error(404,"订单项不存在或无权限访问");
+        }
+        Map<String,String> data = new HashMap<>();
+        String orderId=item.get().getOrderId();
+        data.put("orderId",orderId);
+        return Result.success(data);
+    }
+
+    // 返回订单项的状态
+    @Transactional
+    public Result<String> getItemStatus(String orderItemId){
+        Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
+        if(item.isEmpty()) {
+            return Result.error(404,"希望查询状态的订单项不存在！");
+        }
+        String status =item.get().getItemStatus().toString();
+        return Result.success(status);
+    }
+
+    // 将订单项的状态设置为"售后中"
+    @Transactional
+    public Result<Map<String,String>> startAfterSell(String orderItemId){
+        Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
+        if(item.isEmpty()) {
+            return Result.error(404,"希望修改状态的订单项不存在！");
+        }
+        if(!item.get().getItemStatus().equals(OrderItem.ItemStatus.无售后)){
+            return Result.error(400,"当前状态无法开启售后！");
+        }
+        item.get().setItemStatus(OrderItem.ItemStatus.售后中);
+        orderItemRepository.save(item.get());
+        Map<String,String> data = new HashMap<>();
+        data.put("orderId",item.get().getOrderId());
+        data.put("message","成功进入售后状态！");
+        return Result.success(data);
+    }
+
+    // 将订单项的状态设置为"售后结束"
+    @Transactional
+    public Result<Map<String,String>> endAfterSell(String orderItemId){
+        Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
+        if(item.isEmpty()) {
+            return Result.error(404,"希望修改状态的订单项不存在！");
+        }
+        if(!item.get().getItemStatus().equals(OrderItem.ItemStatus.售后中)){
+            return Result.error(400,"当前状态无法结束售后！");
+        }
+        item.get().setItemStatus(OrderItem.ItemStatus.售后结束);
+        orderItemRepository.save(item.get());
+        Map<String,String> data = new HashMap<>();
+        data.put("orderId",item.get().getOrderId());
+        data.put("message","售后结束成功！");
+        return Result.success(data);
+    }
+
+    // 返回商家待处理的售后订单项
+    @Transactional
+    public Result<List<String>> getStoreCurrentAfterSellItem(String userId){
+        Optional<List<OrderItem>> items =orderItemRepository.findAfterSalesOrderItemsByStoreId(userId);
+        if(items.isEmpty()) {
+            return Result.success(new ArrayList<>());
+        }
+        // 提取每个 OrderItem 的 id
+        List<String> itemIds = items.get().stream()
+                .map(OrderItem::getItemId)
+                .collect(Collectors.toList());
+        return Result.success(itemIds);
+    }
+
+    // 返回商家历史售后订单项
+    @Transactional
+    public Result<List<String>> getStoreHistoryAfterSellItem(String userId){
+        Optional<List<OrderItem>> items =orderItemRepository.findHistoryAfterSalesOrderItemsByStoreId(userId);
+        if(items.isEmpty()) {
+            return Result.success(new ArrayList<>());
+        }
+        // 提取每个 OrderItem 的 id
+        List<String> itemIds = items.get().stream()
+                .map(OrderItem::getItemId)
+                .collect(Collectors.toList());
+        return Result.success(itemIds);
+    }
+    // 返回买家售后中订单项
+    @Transactional
+    public Result<List<String>> getBuyerCurrentAfterSellItem(String userId){
+        Optional<List<OrderItem>> items =orderItemRepository.findAfterSalesOrderItemsByBuyerId(userId);
+        if(items.isEmpty()) {
+            return Result.success(new ArrayList<>());
+        }
+        // 提取每个 OrderItem 的 id
+        List<String> itemIds = items.get().stream()
+                .map(OrderItem::getItemId)
+                .collect(Collectors.toList());
+        return Result.success(itemIds);
+    }
+    // 返回买家历史售后订单项
+    @Transactional
+    public Result<List<String>> getBuyerHistoryAfterSellItem(String userId){
+        Optional<List<OrderItem>> items =orderItemRepository.findHistoryAfterSalesOrderItemsByBuyerId(userId);
+        if(items.isEmpty()) {
+            return Result.success(new ArrayList<>());
+        }
+        // 提取每个 OrderItem 的 id
+        List<String> itemIds = items.get().stream()
+                .map(OrderItem::getItemId)
+                .collect(Collectors.toList());
+        return Result.success(itemIds);
+    }
 }
