@@ -32,6 +32,22 @@ public class UserController {
         this.walletService = walletService;
     }
 
+    // 示例 访问保护数据
+    @PostMapping("/profile/update")
+    public ResponseEntity<?> updateProfile(@RequestBody AccountDTOs.LoginDTO dto, Authentication authentication) {
+        // 从 Authentication 获取用户信息
+        String userId = (String) authentication.getPrincipal();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+        // 假设更新逻辑
+        // userService.updateUserProfile(userId, fullName, address);
+        return ResponseEntity.ok(Map.of(
+                "message", "Profile updated successfully.",
+                "userId", userId,
+                "role", role
+        ));
+    }
+
     // 发送验证码 (要改要改！！！不可以直接返回前端)
     @PostMapping("/send-code")
     public ResponseEntity<Result<Map<String, String>>> sendVerificationCode(@RequestBody String email) {
@@ -105,23 +121,6 @@ public class UserController {
         Result<AccountDTOs.UserInfoDTO> result = userService.getUserInfo(userId);
         return ResponseEntity.status(result.getCode()).body(result);
     }
-
-    // 示例 访问保护数据
-    @PostMapping("/profile/update")
-    public ResponseEntity<?> updateProfile(@RequestBody AccountDTOs.LoginDTO dto, Authentication authentication) {
-        // 从 Authentication 获取用户信息
-        String userId = (String) authentication.getPrincipal();
-        String role = authentication.getAuthorities().iterator().next().getAuthority();
-
-        // 假设更新逻辑
-        // userService.updateUserProfile(userId, fullName, address);
-        return ResponseEntity.ok(Map.of(
-                "message", "Profile updated successfully.",
-                "userId", userId,
-                "role", role
-        ));
-    }
-
 
     // 根据 account_id 获取 Store 信息
     @GetMapping("/store/{accountId}")

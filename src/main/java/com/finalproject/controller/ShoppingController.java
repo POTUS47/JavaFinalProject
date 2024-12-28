@@ -4,6 +4,8 @@ import com.finalproject.DTO.OrderDTOs.*;
 import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.ProductDTOs.*;
 import com.finalproject.DTO.Result;
+import com.finalproject.model.OrderItem;
+import com.finalproject.repository.OrderItemRepository;
 import com.finalproject.service.FavouriteService;
 import com.finalproject.service.OrderService;
 import com.finalproject.service.OrderItemService;
@@ -12,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 // 购物子系统
@@ -133,6 +138,88 @@ public class ShoppingController {
         Result<Boolean> response = orderItemService.isExistProductOrder(productIdDTO.getProductId());
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    // 更改订单项的状态为有售后(子系统接口)
+    @PutMapping("/order/return/{user_id}/{item_id}")
+    public ResponseEntity<Result<Map<String,String>>>
+    returnOrderItem(@PathVariable String user_id,@PathVariable String item_id){
+        Result<Map<String,String>> response =orderItemService.returnOrderItem(user_id,item_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 更改订单项的状态为售后结束(子系统接口)
+    @PutMapping("/order/end_return/{item_id}")
+    public ResponseEntity<Result<Map<String,String>>>
+    endReturnOrderItem(@PathVariable String item_id){
+        Result<Map<String,String>> response =orderItemService.endAfterSell(item_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 商家审批是否同意订单项退货，不同意将更改订单项状态为售后结束(子系统接口)
+    @PutMapping("/order/approve_return/{user_id}/{item_id}/{is_approve}")
+    public ResponseEntity<Result<Map<String,String>>>
+    approveReturnOrderItem(@PathVariable String user_id,@PathVariable String item_id
+    ,@PathVariable Boolean is_approve){
+        Result<Map<String,String>> response = orderItemService.
+                approveReturnOrderItem(user_id,item_id,is_approve);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+
+    // 获取卖家待售后订单(子系统接口)
+    @GetMapping("/order/store/current_return/{user_id}")
+    public ResponseEntity<Result<List<String>>>
+    getStoreReturnRequest(@PathVariable String user_id){
+        Result<List<String>> response = orderItemService.
+                getStoreCurrentAfterSellItem(user_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 获取卖家历史售后订单(子系统接口)
+    @GetMapping("/order/store/history_return/{user_id}")
+    public ResponseEntity<Result<List<String>>>
+    getStoreHistoryReturnRequest(@PathVariable String user_id){
+        Result<List<String>> response = orderItemService.
+                getStoreHistoryAfterSellItem(user_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 获取买家待售后订单(子系统接口)
+    @GetMapping("/order/buyer/current_return/{user_id}")
+    public ResponseEntity<Result<List<String>>>
+    getBuyerReturnRequest(@PathVariable String user_id){
+        Result<List<String>> response = orderItemService.
+                getBuyerCurrentAfterSellItem(user_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 获取买家历史售后订单(子系统接口)
+    @GetMapping("/order/buyer/history_return/{user_id}")
+    public ResponseEntity<Result<List<String>>>
+    getBuyerHistoryReturnRequest(@PathVariable String user_id){
+        Result<List<String>> response = orderItemService.
+                getBuyerHistoryAfterSellItem(user_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 判断买家是否有权限修改某订单项状态（子系统接口）
+    @GetMapping("/order/buyer/have_item/{user_id}/{item_id}")
+    public ResponseEntity<Result<Map<String,String>>>
+    checkBuyerForItemChange(@PathVariable String user_id,@PathVariable String item_id){
+        Result<Map<String,String>> response = orderItemService.
+                isUserExistOrderItem(user_id,item_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 判断卖家是否有权限修改某订单项状态（子系统接口）
+    @GetMapping("/order/store/have_item/{user_id}/{item_id}")
+    public ResponseEntity<Result<Map<String,String>>>
+    checkStoreForItemChange(@PathVariable String user_id,@PathVariable String item_id){
+        Result<Map<String,String>> response = orderItemService.
+                isStoreExistOrderItem(user_id,item_id);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 
 
 }
