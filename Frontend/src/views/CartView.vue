@@ -66,7 +66,7 @@
                           </div>
                         </div>
                         <div class="store-products">
-                          <div v-for="product in store.products" :key="product.productId" class="product-item">
+                          <div v-for="product in store.products.slice(0,4)" :key="product.productId" class="product-item">
                             <!-- <img :src="'data:image/png;base64,' + product.productPic" alt="Product Image" class="product-image" /> -->
                             <img :src="product.productPic" alt="Product Image" class="product-image" />
                             <p class="product-price">{{ product.productName }}</p>

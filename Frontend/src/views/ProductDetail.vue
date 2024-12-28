@@ -68,8 +68,7 @@
         </div>
         <!-- 右侧的大图预览 -->
         <div class="preview">
-          <img v-if="currentImage" :src="currentImage"
-            :alt="`预览图 ${currentIndex + 1}`" />
+          <img v-if="currentImage" :src="currentImage" :alt="`预览图 ${currentIndex + 1}`" />
         </div>
       </div>
       <div class="text">
@@ -87,7 +86,7 @@
         </div>
         <div class="baozhang">
           <div class="baozhang1">数&nbsp量</div>
-          <div class="baozhang2">{{ product.quantity!=0 ? '有&nbsp货' : '无&nbsp货' }} </div>
+          <div class="baozhang2">{{ product.quantity != 0 ? '有&nbsp货' : '无&nbsp货' }} </div>
         </div>
 
         <div class="star_and_buy">
@@ -105,9 +104,9 @@
           right:30%;
           bottom:0%;
           position: absolute">
-            <img v-show="product.ProductStared" src="@/assets/mmy/stared.svg" alt="star" class="icon" />
-            <img v-show="!product.ProductStared" src="@/assets/mmy/star.svg" alt="star" class="icon" />
-            {{ product.ProductStared ? '已收藏' : '收&nbsp藏' }}
+            <img v-show="product.productStared" src="@/assets/mmy/stared.svg" alt="star" class="icon" />
+            <img v-show="!product.productStared" src="@/assets/mmy/star.svg" alt="star" class="icon" />
+            {{ product.productStared ? '已收藏' : '收&nbsp藏' }}
           </el-button>
           <!-- 购买 -->
           <el-button type="success" v-show="role === '买家' && isAbleBuy" @click="enterPay" style="background-color: #a61b29; 
@@ -124,10 +123,10 @@
     </div>
     <div class="detailContent">
       <h2>图文详情</h2>
-      <!-- <div v-for="(item, index) in imagesWithDescriptions" :key="index" class="image-and-text">
+      <div v-for="(item, index) in imagesWithDescriptions" :key="index" class="image-and-text">
         <p>{{ item.description }}</p>
         <img :src="item" :alt="`缩略图 ${index + 1}`" />
-      </div> -->
+      </div>
 
     </div>
   </div>
@@ -155,24 +154,7 @@ const role = localStorage.getItem('role');
 // 使用 useRoute 来访问路由参数
 const router = useRouter();
 
-// const product = ref({
-//   name: '',
-//   pictures: [],
-//   price: 0,
-//   description: '',
-//   storeName: '',
-//   storeId: '',
-//   discountPrice: 0,
-//   fromWhere: '',
-//   score: 0,
-//   ProductStared: false,
-//   storeStared: false,
-//   storeAvatar: {},
-//   finalPrice: 0,
-//   imageAndText: []
-// });
-
-const product=ref({});
+const product = ref({});
 
 //商品图片显示部分
 const imagesWithDescriptions = ref([]);
@@ -199,13 +181,13 @@ onMounted(async () => {
   //获取商品信息
   try {
     const response = await axiosInstance.post(`/productController/GetProductInfo`, null, {
-    params: {
-      productId: "p587111882510341"
-    },
-    headers: {
-      'Authorization': `${token}`
-    }
-  });
+      params: {
+        productId: productId
+      },
+      headers: {
+        'Authorization': `${token}`
+      }
+    });
     isLoading.value = false;
     product.value = response.data.data;
     imagesWithDescriptions.value = product.value.imageAndText || [];
@@ -213,7 +195,6 @@ onMounted(async () => {
     productImages.value = product.value.pictures || [];
     currentImage.value = productImages.value[0] || null;
     isAbleBuy.value = product.value.quantity > 0;
-    showProducts();
   } catch (error) {
     ElMessage.error('页面加载失败！');
   }
@@ -226,152 +207,38 @@ const enterSellerHome = () => {
   router.push('/businesshomepage');
 }
 const starProduct = async () => {
-  if (product.value.ProductStared === false) {
-    // console.log('进入收藏');
-    try {
-      const response = await axiosInstance.post('/Favourite/BookmarkProduct', null, {
-        params: {
-          userId: userId,
-          productId: productId
-        }
-      });
-
-      console.log(response.data);
-      if (response.status === 200) {
-        product.value.ProductStared = !product.value.ProductStared;
-      } else {
-        console.error('Unexpected response status:', response.status);
+  try {
+    const response = await axiosInstance.post('/shopping/favourite/bookmark-product',{
+      "productId": productId
+    },{
+      headers: {
+        'Authorization': `${token}` 
       }
-    } catch (error) {
-      console.error('starProduct failed:', error);
     }
-  } else {
-    console.log('进入取消收藏');
-    try {
-      const response = await axiosInstance.delete('/Favourite/UnbookmarkProduct', {
-        params: {
-          userId: userId,
-          productId: productId
-        }
-      });
-      console.log(response.data);
-      if (response.status === 200) {
-        product.value.ProductStared = !product.value.ProductStared;
-      } else {
-        console.error('Unexpected response status:', response.status);
-      }
-    } catch (error) {
-      console.error('unStarProduct failed:', error);
-    }
+    );
+    if (response.data.code == 200) {
+      product.value.productStared = !product.value.productStared;
+    } 
+  } catch (error) {
+    ElMessage.error(error.response.data.msg);
   }
 };
 const starStore = async () => {
-  if (product.value.storeStared === false) {
-    try {
-      const response = await axiosInstance.post('Favourite/BookmarkStore', null, {
-        params: {
-          userId: userId,
-          'storeId': product.value.storeId
-        }
-      });
-      if (response.status === 200) {
-        product.value.storeStared = !product.value.storeStared;
-      } else {
-        console.error('Unexpected response status:', response.status);
-      }
-    } catch (error) {
-      console.error('starStore failed:', error);
-    }
-  } else {
-    try {
-      const response = await axiosInstance.delete('/Favourite/UnbookmarkStore', {
-        params: {
-          userId: userId,
-          storeId: product.value.storeId
-        }
-      });
-      if (response.status === 200) {
-        product.value.storeStared = !product.value.storeStared;
-      } else {
-        console.error('Unexpected response status:', response.status);
-      }
-    } catch (error) {
-      console.error('unStarStore failed:', error);
-    }
-  }
-};
-const showComments = async () => {
-  activeSection.value = 'comments';
   try {
-    const response = await axiosInstance.get('/Shopping/GetStoreRemarks', {
-      params: {
-        storeId: product.value.storeId
+    const response = await axiosInstance.post('/shopping/favourite/bookmark-store',{
+      "storeId": product.value.storeId
+    },{
+      headers: {
+        'Authorization': `${token}` 
       }
-    });
-    if (remarks.length > 0) {
-      remarks.splice(0, remarks.length);
     }
-    const limitedRemarks = response.data.slice(0, 3);
-    if (limitedRemarks.length === 0) {
-      isRemarksNull.value = true;
-    }
-    limitedRemarks.forEach(remark => {
-      remark.buyerAvatar = `data:image/png;base64,${remark.buyerAvatar}`;
-      remarks.push(remark);
-    });
-    console.log(`remarks is ${JSON.stringify(remarks, null, 2)}`)
-    message.value = '已获取评论信息';
-    isRemarksLoading.value = false;
-    // console.log(remarks);
+    );
+    if (response.data.code == 200) {
+      product.value.storeStared = !product.value.storeStared;
+    } 
   } catch (error) {
-    if (error.response) {
-      message.value = error.response.data;
-    } else {
-      message.value = '获取评论信息失败';
-    }
+    ElMessage.error(error.response.data.msg);
   }
-  console.log(message.value);
-};
-const showProducts = async () => {
-  activeSection.value = 'preview';
-  console.log(`product.value.storeId${product.value.storeId}`);
-  try {
-    const response = await axiosInstance.get('/StoreViewProduct/GetProductsByStoreIdAndViewType', {
-      params: {
-        storeId: product.value.storeId,
-        ViewType: 1
-      }
-    });
-    if (displayProducts.length > 0) {
-      displayProducts.splice(0, displayProducts.length);
-    }
-    //splice和slice不同
-    // 只取返回数据的前三个商品
-    const limitedProducts = response.data.slice(0, 3);
-    limitedProducts.forEach(product => {
-      // product.productPic = `data:image/png;base64,${product.productPic}`;
-      displayProducts.push(product);
-    });
-    // console.log(`displayProducts is ${JSON.stringify(displayProducts, null, 2)}`)
-  } catch (error) {
-    if (error.response) {
-      message.value = error.response.data;
-    } else {
-      message.value = '获取全部信息失败';
-    }
-  }
-  console.log(message.value);
-};
-const handleButtonClick = () => {
-  localStorage.setItem('storeIdOfDetail', product.value.storeId);
-  router.push('/shopdetail');
-};
-const handleProductClick = (productId) => {
-  console.log('正在被点击');
-  console.log(`productId is ${productId}`);
-  localStorage.setItem('productIdOfDetail', productId);
-  // router.replace('/productdetail').catch(() => {});
-  location.reload();
 };
 const enterPay = () => {
   const productStr = JSON.stringify(product.value);//序列化对象
