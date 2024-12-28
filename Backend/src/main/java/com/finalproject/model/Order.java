@@ -43,7 +43,7 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @Column(name = "bonus_credits")
+    @Column(name = "bonus")
     private int bonusCredits;
 
     @Enumerated(EnumType.STRING)

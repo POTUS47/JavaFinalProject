@@ -434,7 +434,7 @@ public class OrderDTOs {
 
     public static class MoneyDTO{
         String orderId;
-        BigDecimal actualPay;
+        Double actualPay;
 
         public String getOrderId() {
             return orderId;
@@ -443,11 +443,11 @@ public class OrderDTOs {
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
-        public BigDecimal getActualPay() {
+        public Double getActualPay() {
             return actualPay;
         }
 
-        public void setActualPay(BigDecimal actualPay) {
+        public void setActualPay(Double actualPay) {
             this.actualPay = actualPay;
         }
     }

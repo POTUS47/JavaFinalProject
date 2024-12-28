@@ -27,9 +27,11 @@ public class AccountService {
 
     @Resource
     private AccountRepository accountRepository;
+
     @Autowired
     private final JavaMailSender mailSender;
-    private Map<String, String> verificationCodes; // 用于存储验证码
+
+    private final Map<String, String> verificationCodes; // 用于存储验证码
     @Autowired
     private BuyerRepository buyerRepository;
 

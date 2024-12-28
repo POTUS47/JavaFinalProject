@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,7 +280,7 @@ public class ShoppingController {
     @PostMapping("/order/pay-order")
     public ResponseEntity<Result<CreditsDTO>> payOrder(@RequestBody MoneyDTO moneyDTO,Authentication authentication){
         String userId = (String) authentication.getPrincipal();
-        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(),moneyDTO.getActualPay());
+        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), BigDecimal.valueOf(moneyDTO.getActualPay()));
         return ResponseEntity.status(response.getCode()).body(response);
     }
 }
