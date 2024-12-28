@@ -10,4 +10,15 @@ const axiosInstance = axios.create({
   },
 }); 
 
+
+// 请求拦截器，添加 Authorization 头
+axiosInstance.interceptors.request.use(config => {
+  const token = localStorage.getItem('token'); // 从 localStorage 获取 Token
+  if (token) {
+    config.headers.Authorization = `${token}`; // 设置Token
+  }
+  return config;
+}, error => Promise.reject(error));
+
+
 export default axiosInstance;
