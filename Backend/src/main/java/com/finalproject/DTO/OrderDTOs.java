@@ -1,5 +1,8 @@
 package com.finalproject.DTO;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.security.Timestamp;
 import java.util.List;
@@ -318,38 +321,6 @@ public class OrderDTOs {
         }
     }
 
-    public static class CreditsDTO {
-        private int bonusCredits;
-        private int credits;
-
-        // 无参构造函数
-        public CreditsDTO() {
-        }
-
-        // 全参构造函数
-        public CreditsDTO(int bonusCredits, int credits) {
-            this.bonusCredits = bonusCredits;
-            this.credits = credits;
-        }
-
-        // Getter和Setter
-        public int getBonusCredits() {
-            return bonusCredits;
-        }
-
-        public void setBonusCredits(int bonusCredits) {
-            this.bonusCredits = bonusCredits;
-        }
-
-        public int getCredits() {
-            return credits;
-        }
-
-        public void setCredits(int credits) {
-            this.credits = credits;
-        }
-    }
-
     // 用户上传需要购买的商品
     public static class ProductIdsDTO {
         List<String> productIds;
@@ -451,5 +422,34 @@ public class OrderDTOs {
         }
     }
 
+    public static class CreditsDTO{
+        Integer bonus;
+        public Integer getBonus() {
+            return bonus;
+        }
+        public void setBonus(Integer bonus) {
+            this.bonus = bonus;
+        }
+    }
+
+    public static class MoneyDTO{
+        String orderId;
+        BigDecimal actualPay;
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+        public BigDecimal getActualPay() {
+            return actualPay;
+        }
+
+        public void setActualPay(BigDecimal actualPay) {
+            this.actualPay = actualPay;
+        }
+    }
 
 }

@@ -124,6 +124,49 @@ public class OrderService {
         return response.getBody();
     }
 
+    // 买家支付订单
+    @Transactional
+    public Result<Map<String, String>> transferMoney(String userId, String storeId, BigDecimal amount) {
+        // 获取商品的图片信息
+        String url = baseUrl + "/api/users/" + userId+"/pay/"+storeId+"/"+amount;
+        ResponseEntity<Result<Map<String, String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<Result<Map<String, String>>>() {
+                });
+        return response.getBody();
+    }
+
+    // 增加积分
+    @Transactional
+    public Integer addCredit(String userId, Integer amount) {
+        // 获取商品的图片信息
+        String url = baseUrl + "/api/users/credit/add/" + userId+"/"+amount;
+        ResponseEntity<Integer> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<Integer>() {
+                });
+        return response.getBody();
+    }
+
+    // 减少积分
+    @Transactional
+    public Integer reduceCredit(String userId, Integer amount) {
+        // 获取商品的图片信息
+        String url = baseUrl + "/api/users/credit/reduce/" + userId+"/"+amount;
+        ResponseEntity<Integer> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<Integer>() {
+                });
+        return response.getBody();
+    }
+
+
     /////////////////////////////////////////////////////////////////////////以下是面向外部接口
     // 当前是一种商品只有一个，所以暂时没有处理数量问题
     @Transactional
@@ -248,6 +291,42 @@ public class OrderService {
         return Result.success(200, isNull ?"存在商品缺货，请注意查收":"订单生成成功",orderRelatedDTOList);
     }
 
+    // 支付接口，包含买家支付，商家得利，修改订单状态，买家获得积分
+    @Transactional
+    public Result<CreditsDTO> payOrder (String userId, String orderId, BigDecimal actualPay){
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return Result.error(404,"订单不存在");
+        }
+
+        // 支付订单
+        Order order = orderOpt.get();
+        Result<Map<String, String>> result=transferMoney(userId, order.getStoreId(), actualPay);
+        if (result.getCode()!=200){
+            return Result.error(result.getCode(),result.getMsg());
+        }
+
+        // 积分变化
+        BigDecimal totalPay =order.getTotalPrice();
+        BigDecimal difference = totalPay.subtract(actualPay);
+        Integer creditConsumption = difference.multiply(BigDecimal.valueOf(100)).intValue();
+        reduceCredit(userId,creditConsumption);
+        // 获取积分
+        Integer addamount=actualPay.multiply(BigDecimal.valueOf(100)).intValue();
+        addCredit(userId,creditConsumption);
+
+        CreditsDTO creditsDTO=new CreditsDTO();
+        creditsDTO.setBonus(addamount);
+
+        // 修改订单状态
+        order.setPaymentStatus(Order.PaymentStatus.已付款);
+        order.setPaymentMethod(Order.PaymentMethod.钱包);
+        order.setBonusCredits(addamount);
+        orderRepository.save(order);
+
+        return Result.success(creditsDTO);
+    }
     // 修改收货人信息
     @Transactional
     public Result<String> changeNameAndAddress(ChangeNameAndAddressDTO changeNameAndAddressDTO) {

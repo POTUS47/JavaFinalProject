@@ -273,4 +273,13 @@ public class ShoppingController {
                 orderDeliveryDTO.getOrderId());
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    //Result<CreditsDTO> payOrder (String userId, String orderId, BigDecimal actualPay)
+    // 买家支付订单
+    @PostMapping("/order/pay-order")
+    public ResponseEntity<Result<CreditsDTO>> payOrder(@RequestBody MoneyDTO moneyDTO,Authentication authentication){
+        String userId = (String) authentication.getPrincipal();
+        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(),moneyDTO.getActualPay());
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }
