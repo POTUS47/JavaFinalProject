@@ -43,6 +43,9 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
+    @Column(name = "bonus_credits")
+    private int bonusCredits;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
@@ -155,6 +158,14 @@ public class Order {
 
     public void setPayTime(LocalDateTime payTime) {
         this.payTime = payTime;
+    }
+
+    public int getBonusCredits() {
+        return bonusCredits;
+    }
+
+    public void setBonusCredits(int bonusCredits) {
+        this.bonusCredits = bonusCredits;
     }
 
     @Override

@@ -34,8 +34,7 @@ public class OrderItem {
     @Column(name = "total_pay", precision = 7, scale = 2)
     private BigDecimal totalPay;
 
-    @Column(name = "bonus_credits")
-    private int bonusCredits;
+
 
     @Column(name = "actual_pay", precision = 7, scale = 2)
     private BigDecimal actualPay;
@@ -99,13 +98,7 @@ public class OrderItem {
         this.totalPay = totalPay;
     }
 
-    public int getBonusCredits() {
-        return bonusCredits;
-    }
 
-    public void setBonusCredits(int bonusCredits) {
-        this.bonusCredits = bonusCredits;
-    }
 
     public BigDecimal getActualPay() {
         return actualPay;
@@ -148,7 +141,6 @@ public class OrderItem {
                 ", unitPrice=" + unitPrice +
                 ", quantity=" + quantity +
                 ", totalPay=" + totalPay +
-                ", bonusCredits=" + bonusCredits +
                 ", actualPay=" + actualPay +
                 ", itemStatus=" + itemStatus +
                 ", score=" + score +

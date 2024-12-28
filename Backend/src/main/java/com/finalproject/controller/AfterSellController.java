@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/afterSell")
+@RequestMapping("/api/afterSell")
 public class AfterSellController {
 
     private final ReturnService returnService;

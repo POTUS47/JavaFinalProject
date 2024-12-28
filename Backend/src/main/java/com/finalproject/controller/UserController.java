@@ -141,8 +141,7 @@ public class UserController {
     // 钱包支付
     @PutMapping("/charge")
     public ResponseEntity<Result<Map<String, String>>>
-    charge(@RequestParam BigDecimal amount, Authentication authentication) {
-        String userId = (String) authentication.getPrincipal();
+    charge(@RequestParam BigDecimal amount, String userId) {
         Result<Map<String, String>> result = walletService.subtract(userId, amount);
         return ResponseEntity.status(result.getCode()).body(result);
     }
@@ -166,5 +165,28 @@ public class UserController {
     @GetMapping("/buyer/{buyerId}")
     public Optional<Buyer> getBuyerById(@PathVariable String buyerId) {
         return userService.getBuyerByAccountId(buyerId);
+    }
+
+    // 买家支付
+    @PutMapping("/{buyerId}/pay/{storeId}/{amount}")
+    public Result<Map<String, String>>
+    transferMoney(@PathVariable String buyerId,
+                  @PathVariable String storeId,
+                  @PathVariable BigDecimal amount){
+        return walletService.transferMoney(buyerId, storeId,amount);
+    }
+
+    // 增加积分
+    @PutMapping("/credit/add/{userId}/{amount}")
+    public Integer addCredit(@PathVariable String userId,
+                             @PathVariable Integer amount                             ){
+        return userService.addCredit(userId,amount);
+    }
+
+    // 减少积分
+    @PutMapping("/credit/reduce/{userId}/{amount}")
+    public Integer reduceCredit(@PathVariable String userId,
+                             @PathVariable Integer amount                             ){
+        return userService.reduceCredit(userId,amount);
     }
 }
