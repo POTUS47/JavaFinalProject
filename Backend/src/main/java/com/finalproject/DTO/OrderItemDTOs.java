@@ -128,4 +128,40 @@ public class OrderItemDTOs {
         }
     }
 
+    public static class PaymentAndIdDTO{
+        private String orderId;
+        private BigDecimal actualPay;
+
+        public String getOrderId() {
+            return orderId;
+        }
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+        public BigDecimal getActualPay() {
+            return actualPay;
+        }
+        public void setActualPay(BigDecimal actualPay) {
+            this.actualPay = actualPay;
+        }
+    }
+
+    public static class BuyerShopperIdDTO{
+        private String storeId;
+        private String buyerId;
+
+        public String getStoreId() {
+            return storeId;
+        }
+        public void setStoreId(String storeId) {
+            this.storeId = storeId;
+        }
+        public String getBuyerId() {
+            return buyerId;
+        }
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+    }
+
 }

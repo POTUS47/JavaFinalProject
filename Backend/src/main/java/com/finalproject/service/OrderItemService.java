@@ -277,4 +277,26 @@ public class OrderItemService {
                 .collect(Collectors.toList());
         return Result.success(itemIds);
     }
+
+    public Result<PaymentAndIdDTO> getPaymentAndId(String returnId) {
+        Optional<OrderItem> res=orderItemRepository.findByItemId(returnId);
+        if(res.isEmpty()) {
+            return Result.error(404,"不存在该订单项");
+        }
+        PaymentAndIdDTO paymentAndIdDTO = new PaymentAndIdDTO();
+        paymentAndIdDTO.setOrderId(res.get().getOrderId());
+        paymentAndIdDTO.setActualPay(res.get().getActualPay());
+        return Result.success(paymentAndIdDTO);
+    }
+
+    public Result<BuyerShopperIdDTO> getStoreBuyerId(String orderId) {
+        Optional<Order> res=orderRepository.findByOrderId(orderId);
+        if(res.isEmpty()) {
+            return Result.error(404,"不存在该订单");
+        }
+        BuyerShopperIdDTO Ids = new BuyerShopperIdDTO();
+        Ids.setBuyerId(res.get().getBuyerId());
+        Ids.setStoreId(res.get().getStoreId());
+        return Result.success(Ids);
+    }
 }

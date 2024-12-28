@@ -1,7 +1,9 @@
 package com.finalproject.service;
 
 import com.finalproject.DTO.AfterSellDTOs;
+import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
+import com.finalproject.model.Product;
 import com.finalproject.model.Return;
 import com.finalproject.repository.ReturnRepository;
 import jakarta.annotation.Resource;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -165,15 +168,72 @@ public class ReturnService {
         return response;
     }
 
+    //跨子系统的调用
+    //根据退货单找价格和订单id
+    public Result<PaymentAndIdDTO> getPaymentFromSubSys(String returnId) {
+        String url = baseUrl + "/api/shopping/internal/getPaymentAndId/" + returnId;
+        ResponseEntity<Result<PaymentAndIdDTO>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+        return response.getBody();
+    }
+
+    //跨子系统的调用
+    //根据orderId找买卖双方id
+    public Result<BuyerShopperIdDTO> getShopperAndBuyerId(String orderId) {
+        String url = baseUrl + "/api/shopping/internal/getStoreBuyerId/" + orderId;
+        ResponseEntity<Result<BuyerShopperIdDTO>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+        return response.getBody();
+    }
+
+    //跨子系统的调用
+    //根据双方id和金额进行退款
+    public Result<Map<String,String>> refundFromSubsys(String storeId,String buyerId,BigDecimal actualPay) {
+        String url = baseUrl + "/api/users/"+buyerId+"/pay/"+storeId+"/"+actualPay;
+        ResponseEntity<Result<Map<String, String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+        return response.getBody();
+    }
+
     // 退款相关
     public Result<Map<String,String>> refund(String userID,String returnId) {
         //逻辑待补充。。。。。。。。
         // refund函数待完成：
-        // 检查退货单状态是否为“已收货”。
+        // 检查退货单return状态是否为“已收货”。
+        if(!hasRecieved(returnId).getData()){
+            return Result.error(400,"用户未收货，不可以退货");
+        }
+
         // 根据returnid找到相应的订单项，获取退货价格。
+        PaymentAndIdDTO res=getPaymentFromSubSys(returnId).getData();
+        String orderId=res.getOrderId();//订单id
+        BigDecimal actualPay=res.getActualPay();//实际退货价钱
+
         // 根据returnid找到订单，获取买卖双方的ID。（这一步顺便要检查user是不是订单中的卖家）
+        BuyerShopperIdDTO ids=getShopperAndBuyerId(orderId).getData();
+        String actualBuyer=ids.getBuyerId();
+        String actualStore=ids.getStoreId();
+        if(!actualBuyer.equals(userID)){
+            return Result.error(403,"传入的userid不是该订单的买家");
+        }
         // 根据买卖双方的ID，获取对应的钱包并扣款交易
-        // 调用支付子系统进行真实退款处理？
+        Result<Map<String,String>> refundres=refundFromSubsys(actualStore,actualBuyer,actualPay);
+        if(refundres.getCode()!=200){
+            return refundres;
+        }
+        // 调用支付子系统进行真实退款处理？没有
 
         Result<Map<String,String>> response;
         response=refundOrderItem(returnId);// 修改退货单状态为“已退款状态”
@@ -182,6 +242,19 @@ public class ReturnService {
         }
         response=endReturn(returnId);// 修改订单项状态为“售后结束”（调用外部子系统接口）
         return response;
+    }
+
+    //检查退货单是否为已收货
+    public Result<Boolean> hasRecieved(String returnId) {
+        Optional<Return> returnOrder = returnRepository.findByItemId(returnId);
+        if(returnOrder.isEmpty()){
+            return Result.error(404,"不存在该退货单");
+        }
+        Return temp=returnOrder.get();
+        if(temp.getReturnStatus().toString().equals("已收货")){
+            return Result.success(true);
+        }
+        return Result.success(false);
     }
 
 
