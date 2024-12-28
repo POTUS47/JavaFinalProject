@@ -31,7 +31,7 @@
                       class="product-item"
                       @click="handleProductClick(product.productId)"
                     >
-                      <img :src="product.productPic.imageUrl" :alt="product.productId" class="product-image" />
+                      <img :src="product.productPic" :alt="product.productId" class="product-image" />
                       <h2>{{ product.productName }}</h2>
                       <p>价格: ¥{{ product.productPrice }}</p>
                     </div>
@@ -60,7 +60,6 @@
                       <div class="store-content">
                         <div class="store-header">
                           <div class="store-info">
-                            <img :src="'data:image/png;base64,' + store.storePic" alt="Store Image" class="store-image" />
                             <!-- <img :src="store.storePic" alt="Store Image" class="store-image" /> -->
                             <h2 class="store-name">{{ store.storeName }}</h2>
                             <p class="store-rating">评分: {{ store.storeScore }}</p>
@@ -69,7 +68,7 @@
                         <div class="store-products">
                           <div v-for="product in store.products" :key="product.productId" class="product-item">
                             <!-- <img :src="'data:image/png;base64,' + product.productPic" alt="Product Image" class="product-image" /> -->
-                            <img :src="product.productPic.imageUrl" alt="Product Image" class="product-image" />
+                            <img :src="product.productPic" alt="Product Image" class="product-image" />
                             <p class="product-price">{{ product.productName }}</p>
                             <p class="product-price">¥{{ product.productPrice }}</p>
                           </div>
@@ -103,6 +102,7 @@ import 'element-plus/dist/index.css';
 import axiosInstance from '../router/axios';
 
 const router = useRouter();
+const token = localStorage.getItem('token');
 const userId =localStorage.getItem('userId');
 const isLoading = ref(false);
 
@@ -125,33 +125,24 @@ const filter = (category) => {
 
 //////商品相关
 const Products = reactive([]);
-const message01 = ref('');
 const fetchProducts = async () => {
+  console.log(token);
   try {
-    const response = await axiosInstance.post('/Favourite/GetFavoriteProducts', {
-      "userId": userId
-    });
-
-    response.data.forEach(product => {
-      if(!product.saleOrNot){
-        //product.productPic = `data:image/png;base64,${product.productPic}`;
-        Products.push(product);
+    const response = await axiosInstance.get('/shopping/favourite/get-favourite-products', {
+      headers: {
+        'Authorization': `${token}` 
       }
     });
-    message01.value = '已获取收藏商品数据';
+
+    response.data.data.forEach(product => {
+        Products.push(product);
+    });
     isLoading.value=false;
 
   } catch (error) {
-    if (error.response) {
-      message01.value = error.response.data;
-    } else {
-      message01.value = '获取数据失败';
-    }
-    // isLoading.value=false;
-    // if(response.status!=404)
-    //  ElMessage.info("获取数据失败，请稍后再试");
+    ElMessage.error(error.response.data.msg);
   }
-  console.log(message01.value);
+
 };
 
 // 设置表格页面大小及当前页数
@@ -183,31 +174,22 @@ const handleProductClick = (productId) => {
 
 ///// 店铺相关
 const Stores = reactive([]);
-const message02 = ref('');
 const fetchStores = async () => {
   isLoading.value=true;
   try {
-    const response = await axiosInstance.post('/Favourite/GetFavoriteStores', {
-      "userId": userId
+    const response = await axiosInstance.get('/shopping/favourite/get-favourite-stores', {
+      headers: {
+        'Authorization': `${token}` 
+      }
     });
-    // Stores.splice(0, Stores.length, ...response.data);
-    response.data.forEach(store => {
+    response.data.data.forEach(store => {
       Stores.push(store);
     });
     isLoading.value=false;
-    message02.value = '已获取收藏店铺数据';
-    console.log('收藏店铺数据：'+Stores.values);
   } catch (error) {
-    if (error.response) {
-      message02.value = error.response.data;
-    } else {
-      message02.value = '获取数据失败';
-    }
     isLoading.value=false;
-    // ElMessage.info("获取数据失败，请稍后再试");
-
+    ElMessage.error(error.response.data.msg);
   }
-  console.log(message02.value);
 };
 
 // 设置表格页面大小及当前页数
@@ -247,19 +229,8 @@ onMounted(() => {
 <style scoped>
   
 .main-container{
-  /* align-items: center;
-  background-color: #f4f6f8;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding-bottom: 48px;
-  position: relative; */
-  
   display: flex;
   height: 100vh;
-  /* background-color: #f8f8f8; */
-
 }
 
 .main-content{

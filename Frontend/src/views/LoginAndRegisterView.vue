@@ -247,10 +247,10 @@ const clearData=()=>{
         const role=response.data.data.type;
 
         //本地存储用户id
-        localStorage.setItem('token',response.JwtToken);
-        // localStorage.setItem('userId',response.data.userId);
-        // localStorage.setItem('role',response.data.role);
-        //router.push('/home');
+        localStorage.setItem('token',jwt);
+        localStorage.setItem('userId',id);
+        localStorage.setItem('role',role);
+
         if(role=='买家'){
           router.push('/home');
         }else if(role=='商家'){
@@ -259,7 +259,7 @@ const clearData=()=>{
           router.push('/merchant-certification');
         }  
       } catch (error) {
-        ElMessage.error(error.response.msg);
+        ElMessage.error(error.response.data.msg);
       }
  };
 }
