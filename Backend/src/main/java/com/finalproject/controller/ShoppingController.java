@@ -284,8 +284,10 @@ public class ShoppingController {
     //跨子系统用
     //根据orderid找到买卖双方id
     @GetMapping("/internal/getStoreBuyerId/{orderId}")
-    public Result<BuyerShopperIdDTO> getStoreBuyerId(@PathVariable("orderId") String orderId){
+    public Result<BuyerShopperIdDTO> getStoreBuyerId(@PathVariable("orderId") String orderId) {
         return orderItemService.getStoreBuyerId(orderId);
+    }
+
     //Result<CreditsDTO> payOrder (String userId, String orderId, BigDecimal actualPay)
     // 买家支付订单
     @PostMapping("/order/pay-order")
