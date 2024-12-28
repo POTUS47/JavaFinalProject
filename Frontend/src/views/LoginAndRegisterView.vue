@@ -239,20 +239,25 @@ const clearData=()=>{
           "password": password.value,
         });
         ElMessage.success("登录成功");
-        console.log(`response.data.userId${response.userId}`);
+        console.log(`response.data.userId${response.data.data.id}`);
+        console.log(`response.data.JwtToken${response.data.data.JwtToken}`);
+        console.log(`response.data.type${response.data.data.type}`);
+        const id=response.data.data.id;
+        const jwt=response.data.data.JwtToken;
+        const role=response.data.data.type;
 
         //本地存储用户id
         localStorage.setItem('token',response.JwtToken);
         // localStorage.setItem('userId',response.data.userId);
         // localStorage.setItem('role',response.data.role);
-        router.push('/home');
-        // if(response.data.role=='买家'){
-        //   router.push('/home');
-        // }else if(response.data.role=='商家'){
-        //   router.push('/merchantpage');
-        // }else{
-        //   router.push('/merchant-certification');
-        // }  
+        //router.push('/home');
+        if(role=='买家'){
+          router.push('/home');
+        }else if(role=='商家'){
+          router.push('/merchantpage');
+        }else{
+          router.push('/merchant-certification');
+        }  
       } catch (error) {
         ElMessage.error(error.response.msg);
       }
@@ -317,7 +322,7 @@ const getVerificationCode= async () =>{
       startCountdown();
       try {
         console.log(`开始发送验证码`);
-        const response = await axiosInstance.get(`/Account/send_verification_code/${encodeURIComponent(registerEmail.value)}`);
+        const response = await axiosInstance.get(`/users/send-code/${encodeURIComponent(registerEmail.value)}`);
         realVerificationCode.value=response.data.verificationCode;
 
         ElMessage.success('验证码发送成功');
