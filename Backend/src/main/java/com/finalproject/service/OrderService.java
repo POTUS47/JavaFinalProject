@@ -14,6 +14,7 @@ import com.finalproject.util.SnowflakeIdGenerator;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -293,36 +294,39 @@ public class OrderService {
 
     // 支付接口，包含买家支付，商家得利，修改订单状态，买家获得积分
     @Transactional
-    public Result<CreditsDTO> payOrder (String userId, String orderId, BigDecimal actualPay){
+    public Result<CreditsDTO> payOrder (String userId, String orderId, Integer usedCredits){
 
         Optional<Order> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isEmpty()) {
             return Result.error(404,"订单不存在");
         }
+        Order order = orderOpt.get();
+
+        // 计算实际价格
+// 计算实际价格
+        BigDecimal totalPay = order.getTotalPrice();  // 获取总价格
+        BigDecimal usedCreditsAmount = BigDecimal.valueOf(usedCredits).divide(BigDecimal.valueOf(100));  // 将积分转为金额
+        BigDecimal actualPay = totalPay.subtract(usedCreditsAmount);  // 总价格减去积分金额
 
         // 支付订单
-        Order order = orderOpt.get();
         Result<Map<String, String>> result=transferMoney(userId, order.getStoreId(), actualPay);
         if (result.getCode()!=200){
             return Result.error(result.getCode(),result.getMsg());
         }
 
         // 积分变化
-        BigDecimal totalPay =order.getTotalPrice();
-        BigDecimal difference = totalPay.subtract(actualPay);
-        Integer creditConsumption = difference.multiply(BigDecimal.valueOf(100)).intValue();
-        reduceCredit(userId,creditConsumption);
+        reduceCredit(userId,usedCredits);
         // 获取积分
-        Integer addamount=actualPay.multiply(BigDecimal.valueOf(100)).intValue();
-        addCredit(userId,creditConsumption);
+        Integer addAmount=actualPay.divide(BigDecimal.valueOf(1), RoundingMode.FLOOR).intValue();  // 除以100并取整
+        addCredit(userId,addAmount);
 
         CreditsDTO creditsDTO=new CreditsDTO();
-        creditsDTO.setBonus(addamount);
+        creditsDTO.setBonus(addAmount);
 
         // 修改订单状态
         order.setPaymentStatus(Order.PaymentStatus.已付款);
         order.setPaymentMethod(Order.PaymentMethod.钱包);
-        order.setBonusCredits(addamount);
+        order.setBonusCredits(addAmount);
         orderRepository.save(order);
 
         return Result.success(creditsDTO);

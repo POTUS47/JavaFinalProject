@@ -294,7 +294,7 @@ public class ShoppingController {
     @PostMapping("/order/pay-order")
     public ResponseEntity<Result<CreditsDTO>> payOrder(@RequestBody MoneyDTO moneyDTO,Authentication authentication){
         String userId = (String) authentication.getPrincipal();
-        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), BigDecimal.valueOf(moneyDTO.getActualPay()));
+        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), moneyDTO.getUsedCredits());
         return ResponseEntity.status(response.getCode()).body(response);
     }
 }
