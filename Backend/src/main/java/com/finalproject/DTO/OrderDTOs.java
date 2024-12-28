@@ -434,7 +434,7 @@ public class OrderDTOs {
 
     public static class MoneyDTO{
         String orderId;
-        BigDecimal actualPay;
+        Integer usedCredits;
 
         public String getOrderId() {
             return orderId;
@@ -443,12 +443,13 @@ public class OrderDTOs {
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
-        public BigDecimal getActualPay() {
-            return actualPay;
+
+        public Integer getUsedCredits() {
+            return usedCredits;
         }
 
-        public void setActualPay(BigDecimal actualPay) {
-            this.actualPay = actualPay;
+        public void setUsedCredits(Integer usedCredits) {
+            this.usedCredits = usedCredits;
         }
     }
 
