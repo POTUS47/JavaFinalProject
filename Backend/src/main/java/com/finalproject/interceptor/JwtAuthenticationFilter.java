@@ -31,6 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // 处理 OPTIONS 请求，设置跨域头
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // 设置具体的允许跨域的域名（不能是 *）
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); // 修改为实际前端域名
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
+            response.setHeader("Access-Control-Allow-Credentials", "true"); // 允许携带凭证（Cookies、Authorization等）
+            response.setHeader("Access-Control-Max-Age", "3600"); // 缓存时间（秒）
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+
         String token = request.getHeader("Authorization"); // 从请求头获取Token
         if (token == null || token.isEmpty()) {
             filterChain.doFilter(request, response); // 如果没有Token，直接放行（可能是公共API）
