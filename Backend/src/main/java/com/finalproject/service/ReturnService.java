@@ -196,11 +196,11 @@ public class ReturnService {
 
     //跨子系统的调用
     //根据双方id和金额进行退款
-    public Result<BuyerShopperIdDTO> refundFromSubsys(String storeId,String buyerId,BigDecimal actualPay) {
-        String url = baseUrl + "/api/shopping/internal/getStoreBuyerId/" + orderId;
-        ResponseEntity<Result<BuyerShopperIdDTO>> response = restTemplate.exchange(
+    public Result<Map<String,String>> refundFromSubsys(String storeId,String buyerId,BigDecimal actualPay) {
+        String url = baseUrl + "/api/users/"+buyerId+"/pay/"+storeId+"/"+actualPay;
+        ResponseEntity<Result<Map<String, String>>> response = restTemplate.exchange(
                 url,
-                HttpMethod.GET,
+                HttpMethod.PUT,
                 null,
                 new ParameterizedTypeReference<>() {}
         );
@@ -229,7 +229,11 @@ public class ReturnService {
             return Result.error(403,"传入的userid不是该订单的买家");
         }
         // 根据买卖双方的ID，获取对应的钱包并扣款交易
-        // 调用支付子系统进行真实退款处理？
+        Result<Map<String,String>> refundres=refundFromSubsys(actualStore,actualBuyer,actualPay);
+        if(refundres.getCode()!=200){
+            return refundres;
+        }
+        // 调用支付子系统进行真实退款处理？没有
 
         Result<Map<String,String>> response;
         response=refundOrderItem(returnId);// 修改退货单状态为“已退款状态”
