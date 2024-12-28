@@ -293,14 +293,15 @@ const log_out = async () => {
 };
 const isRegistered=async()=>{
   console.log(`进入isRegistered`);
-  try {
-      const response = await axiosInstance.get(`/Account/check_register/${encodeURIComponent(registerEmail.value)}`);
-      return false;
-    } catch (error) {
-      console.log('该邮箱已被注册');
-    }
-    message.value='';
-    return true;
+  // try {
+  //     const response = await axiosInstance.get(`/Account/check_register/${encodeURIComponent(registerEmail.value)}`);
+  //     return false;
+  //   } catch (error) {
+  //     console.log('该邮箱已被注册');
+  //   }
+  //   message.value='';
+  //   return true;
+  return false;
 }
 // 获取验证码前先检查该邮箱是否已经注册
 // 根据当前在注册还是修改密码来决定是否可以发送验证码
@@ -322,7 +323,7 @@ const getVerificationCode= async () =>{
       startCountdown();
       try {
         console.log(`开始发送验证码`);
-        const response = await axiosInstance.get(`/users/send-code/${encodeURIComponent(registerEmail.value)}`);
+        const response = await axiosInstance.post(`/users/send-code/${encodeURIComponent(registerEmail.value)}`);
         realVerificationCode.value=response.data.verificationCode;
 
         ElMessage.success('验证码发送成功');
