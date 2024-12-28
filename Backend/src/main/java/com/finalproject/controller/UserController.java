@@ -50,8 +50,8 @@ public class UserController {
     }
 
     // 发送验证码 (要改要改！！！不可以直接返回前端)
-    @PostMapping("/send-code")
-    public ResponseEntity<Result<Map<String, String>>> sendVerificationCode(@RequestBody String email) {
+    @PostMapping("/send-code/{email}")
+    public ResponseEntity<Result<Map<String, String>>> sendVerificationCode(@PathVariable String email) {
         Result<Map<String, String>> response=userService.sendVerificationCode(email);
         return ResponseEntity.status(response.getCode()).body(response);
     }
