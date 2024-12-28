@@ -27,7 +27,7 @@ public class AccountService {
 
     @Resource
     private AccountRepository accountRepository;
-
+    @Autowired
     private final JavaMailSender mailSender;
     private Map<String, String> verificationCodes; // 用于存储验证码
     @Autowired
@@ -231,5 +231,27 @@ public class AccountService {
 
     public Optional<Buyer> getBuyerByAccountId(String buyerId) {
         return buyerRepository.findByAccountId(buyerId);
+    }
+
+    public Integer addCredit(String userId, Integer amount) {
+        Optional<Buyer> buyerOptional = buyerRepository.findByAccountId(userId);
+        if (buyerOptional.isEmpty()) {
+            return 404;
+        }
+        Buyer buyer = buyerOptional.get();
+        buyer.setTotalCredits(buyer.getTotalCredits() + amount);
+        buyerRepository.save(buyer);
+        return 200;
+    }
+
+    public Integer reduceCredit(String userId, Integer amount) {
+        Optional<Buyer> buyerOptional = buyerRepository.findByAccountId(userId);
+        if (buyerOptional.isEmpty()) {
+            return 404;
+        }
+        Buyer buyer = buyerOptional.get();
+        buyer.setTotalCredits(buyer.getTotalCredits() - amount);
+        buyerRepository.save(buyer);
+        return 200;
     }
 }

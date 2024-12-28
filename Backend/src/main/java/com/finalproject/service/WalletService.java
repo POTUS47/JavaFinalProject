@@ -6,9 +6,13 @@ import com.finalproject.model.*;
 import com.finalproject.repository.WalletRepository;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.Resource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -22,6 +26,9 @@ public class WalletService {
     @Resource
     private WalletRepository walletRepository;
 
+    @Resource
+    private RestTemplate restTemplate;
+
     // 新建钱包
     public boolean createWallet(String userId) {
         Wallet wallet = new Wallet();
@@ -29,6 +36,21 @@ public class WalletService {
         wallet.setBalance(BigDecimal.valueOf(0));
         walletRepository.save(wallet);
         return true;
+    }
+
+    @Value("${api.base-url}")
+    private String baseUrl;
+
+    public Optional<Store> getStoreById(String storeId) {
+        String url = baseUrl + "/api/users/getStore/" + storeId;
+        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        return response.getBody();
     }
 
     // 充值
@@ -66,6 +88,23 @@ public class WalletService {
         data.put("ID", userId);
         data.put("new_balance", newBalance.toString());
         return Result.success(data);
+    }
+
+    // 买家支付，商家得利
+    public Result<Map<String, String>> transferMoney(String userId, String storeId, BigDecimal amount) {
+        Result<Map<String, String>> payResult = subtract(userId, amount);
+        if(payResult.getCode()!=200){
+            return payResult;
+        }
+        Optional<Store> storeOpt=getStoreById(storeId);
+        if (storeOpt.isEmpty()) {
+            return Result.error(404,"商家不存在");
+        }
+        Result<Map<String, String>> recharge = recharge(userId, amount);
+        if(recharge.getCode()!=200){
+            return recharge;
+        }
+        return Result.success(200,"支付成功");
     }
 
     // 查询余额

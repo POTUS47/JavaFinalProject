@@ -50,5 +50,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
     Optional<List<OrderItem>> findHistoryAfterSalesOrderItemsByStoreId(@Param("storeId") String buyerId);
 
 
-
+    Optional<OrderItem> findByItemId(String returnId);
 }
