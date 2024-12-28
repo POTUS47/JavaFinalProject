@@ -50,7 +50,7 @@ public class UserController {
     }
 
     // 发送验证码 (要改要改！！！不可以直接返回前端)
-    @PostMapping("/send-code/{email}")
+    @GetMapping("/send-code/{email}")
     public ResponseEntity<Result<Map<String, String>>> sendVerificationCode(@PathVariable String email) {
         Result<Map<String, String>> response=userService.sendVerificationCode(email);
         return ResponseEntity.status(response.getCode()).body(response);
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     // 修改密码
-    @PutMapping("/changePassword")
+    @PostMapping("/changePassword")
     public ResponseEntity<Result<Map<String, String>>>
     changePassword(@RequestParam String newPassword,Authentication authentication) {
         String userId = (String) authentication.getPrincipal();

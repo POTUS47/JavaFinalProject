@@ -189,7 +189,7 @@ const verificationCode = ref('');
 //后端返回验证码
 const realVerificationCode=ref('');
 //验证码倒计时相关
-const countdownTime = 60;
+const countdownTime = 0;
 const timeLeft = ref(countdownTime);//剩余时间
 const buttonText = ref('获取验证码');
 const isButtonDisabled = ref(false);
@@ -247,7 +247,7 @@ const clearData=()=>{
         const role=response.data.data.type;
 
         //本地存储用户id
-        localStorage.setItem('token',response.JwtToken);
+        localStorage.setItem('token',jwt);
         // localStorage.setItem('userId',response.data.userId);
         // localStorage.setItem('role',response.data.role);
         //router.push('/home');
@@ -259,7 +259,7 @@ const clearData=()=>{
           router.push('/merchant-certification');
         }  
       } catch (error) {
-        ElMessage.error(error.response.msg);
+        ElMessage.error(error.response.data.msg);
       }
  };
 }
@@ -269,8 +269,8 @@ const clearData=()=>{
 //     const response = await axiosInstance.get('/Account/protected');
 //     message.value = response.data.message;
 //   } catch (error) {
-//     if (error.response) {
-//       message.value = error.response.data.message;
+//     if (error.response.data.msg) {
+//       message.value = error.response.data.msg.data.message;
 //     } else {
 //       message.value = '访问受保护数据失败';
 //     }
@@ -279,17 +279,18 @@ const clearData=()=>{
 // };
 // ////////////////////////////////////////////登出功能测试，后续可加在别的地方
 const log_out = async () => {
-  try {
-    const response = await axiosInstance.post('/Account/logout');
-    message.value = response.data.message;
-  } catch (error) {
-    if (error.response) {
-      message.value = error.response.data.message;
-    } else {
-      message.value = '登出账号失败';
-    }
-  }
-  console.log(message.value);
+  localStorage.removeItem('token');
+  // try {
+  //   const response = await axiosInstance.post('/Account/logout');
+  //   message.value = response.data.message;
+  // } catch (error) {
+  //   if (error.response.data.msg) {
+  //     message.value = error.response.data.msg.data.message;
+  //   } else {
+  //     message.value = '登出账号失败';
+  //   }
+  // }
+  // console.log(message.value);
 };
 const isRegistered=async()=>{
   console.log(`进入isRegistered`);
@@ -323,17 +324,19 @@ const getVerificationCode= async () =>{
       startCountdown();
       try {
         console.log(`开始发送验证码`);
-        const response = await axiosInstance.post(`/users/send-code/${encodeURIComponent(registerEmail.value)}`);
-        realVerificationCode.value=response.data.verificationCode;
-
+        const response = await axiosInstance.get(`/users/send-code/${encodeURIComponent(registerEmail.value)}`);
+        //realVerificationCode.value=response.data.data.verificationCode;
         ElMessage.success('验证码发送成功');
       } catch (error) {
-        if (error.response) {
-          message.value = error.response.data;
+        if (error.response.data.msg) {
+          //message.value = error.response.data.msg;
+          console.log(`调试调试调试 ${error.response}`);
+          console.log(`调试--调试 ${error.response.data}`);
+          console.log(`调试调试调试 ${error.response}`);
         } else {
           message.value = '获取验证码失败，请检查邮箱后重试！';
         }
-        ElMessage.error( '获取验证码失败，请检查邮箱后重试！');
+        ElMessage.error( message.value);
       }
       message.value='';
     }
@@ -364,20 +367,22 @@ const register= async () =>{
         ElMessage.error('邮箱格式不正确');
       }else if(newPassword.value!==confirmPassword.value){
         ElMessage.error("两次输入密码不一致")
-      }else if(!verificationCode.value||verificationCode.value!==realVerificationCode.value){
+      }else if(!verificationCode.value){
         ElMessage.error("验证码错误");
       }else{
         try {
-          const response = await axiosInstance.post('/Account/register',{
-            'Email':registerEmail.value,
-            'Password':newPassword.value,
-            'Role':userType.value});
-            message.value=response.data.message;
+          const response = await axiosInstance.post('/users/register',{
+            'email':registerEmail.value,
+            'password':newPassword.value,
+            'type':userType.value,
+            'verificationCode':verificationCode.value
+          });
+            message.value=response.data.data.message;
             ElMessage.success('注册成功');
             changeToLogin();
         } catch (error) {
-          if (error.response) {
-            message.value = error.response.data;
+          if (error.response.data.msg) {
+            message.value = error.response.data.msg;
           } else {
             message.value = '注册失败';
           }
@@ -394,20 +399,20 @@ const changPsw=async ()=>{
         ElMessage.error('邮箱格式不正确');
       }else if(newPassword.value!==confirmPassword.value){
         ElMessage.error("两次输入密码不一致")
-      }else if(!verificationCode.value||verificationCode.value!==realVerificationCode.value){
+      }else if(!verificationCode.value){
         ElMessage.error("验证码错误");
       }else{
           try {
-          const response = await axiosInstance.post('/Account/password_reset',{
+          const response = await axiosInstance.post('/users/changePassword',{
             'username':registerEmail.value,
             'password':newPassword.value,
             });
-            message.value=response.data.message;
+            message.value=response.data.data.message;
             ElMessage.success(message.value);
             changeToLogin();
         } catch (error) {
-          if (error.response) {
-            message.value = error.response.data;
+          if (error.response.data.msg) {
+            message.value = error.response.data.msg;
           } else {
             message.value = '重置密码失败';
           }
