@@ -237,7 +237,7 @@
 
 <script >
 import { ref, computed ,onMounted,reactive } from 'vue';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import { useRouter } from 'vue-router';
 
 import { ElSelect, ElOption,ElMessageBox } from 'element-plus';

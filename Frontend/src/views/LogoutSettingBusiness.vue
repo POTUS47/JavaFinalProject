@@ -30,7 +30,7 @@ import SettingHeader from '../components/SettingHeader.vue'
 import { reactive, ref, computed, onMounted  } from 'vue';
 import { ElTable, ElTableColumn, ElPagination, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElRow, ElCol, ElSelect, ElOption, ElMessage } from 'element-plus';
 import 'element-plus/dist/index.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 export default {
     name:'LogoutSetting',

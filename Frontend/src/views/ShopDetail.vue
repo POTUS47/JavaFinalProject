@@ -163,7 +163,7 @@ import Navbar from '../components/Navbar.vue';
 import Loading from '../views/templates/LoadingView.vue';
 import { ElButton, ElMessage, ElInput } from 'element-plus';
 import 'element-plus/dist/index.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 const router = useRouter();
 const currentView = ref('products');

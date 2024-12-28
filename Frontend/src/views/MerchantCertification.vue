@@ -64,7 +64,7 @@ import AdminHeaderSec from '../components/AdminHeaderSec.vue'
 import { reactive, ref, computed, onMounted  } from 'vue';
 import { ElTable, ElTableColumn, ElPagination, ElButton, ElMessage, ElDialog, ElLoading } from 'element-plus';
 import 'element-plus/dist/index.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 const userId =localStorage.getItem('userId');
 // const userId ='1';

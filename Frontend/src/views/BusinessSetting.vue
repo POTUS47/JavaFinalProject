@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import eyeSvg from "@/assets/eye.svg"
 import eyeInSvg from "@/assets/eyeIn.svg"
 

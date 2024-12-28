@@ -89,7 +89,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue';
 import { ElSelect, ElOption, ElInput, ElButton, ElTable, ElTableColumn, ElPagination, ElButtonGroup, ElMessage } from 'element-plus';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import 'element-plus/dist/index.css';
 
 export default {

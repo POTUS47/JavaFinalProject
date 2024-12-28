@@ -219,7 +219,7 @@
 import { ref ,computed,onMounted,watch} from 'vue';
 import { ElDialog, ElButton ,ElMessage} from 'element-plus';
 import { regionData, codeToText } from 'element-china-area-data';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import { useRouter } from 'vue-router';
 import Loading from '../views/templates/LoadingView.vue';
 

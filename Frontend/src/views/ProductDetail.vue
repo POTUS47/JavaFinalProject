@@ -271,7 +271,7 @@
     import 'element-plus/dist/index.css';
     import { ElButton ,ElMessage} from 'element-plus';
     import { useRouter } from 'vue-router';
-    import axiosInstance from '../components/axios';
+    import axiosInstance from '../router/axios';
     
     //页面是否正在加载
     const isLoading=ref(true);

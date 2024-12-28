@@ -1,12 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Navbar from '../components/Navbar.vue'
 import Merchabdise from '../views/MerchandiseView.vue'
 import Bazaar from '../views/BazaarView.vue'
 import Cart from '../views/CartView.vue'
 import Ordercentre from '../views/OrdercentreView.vue'
 import Personalcentre from '../views/PersonalcentreView.vue'
-import Login from '../views/LoginView.vue'
 import LoginAndRegister from '../views/LoginAndRegisterView.vue'
 import AdminHeaderSec from '../components/AdminHeaderSec.vue'
 import PlatformInfo from '../views/PlatformInfo.vue';
@@ -74,11 +72,6 @@ const router = createRouter({
       path: '/personalcentre',
       name: 'Personalcentre',
       component: Personalcentre
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
     },
     {
       path: '/adminheadersec',

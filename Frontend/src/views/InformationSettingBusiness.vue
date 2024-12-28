@@ -95,7 +95,7 @@ import SettingHeader from '../components/SettingHeader.vue'
 import { ElButton, ElForm, ElFormItem, ElInput} from 'element-plus';
 import { Close } from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 export default {
     name:'InformationSettingBusiness',

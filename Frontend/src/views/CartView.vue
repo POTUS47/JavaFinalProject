@@ -100,7 +100,7 @@ import { ElMessage } from 'element-plus';
 import Navbar from '../components/Navbar.vue';
 import Loading from '../views/templates/LoadingView.vue';
 import 'element-plus/dist/index.css';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 
 const router = useRouter();
 const userId =localStorage.getItem('userId');

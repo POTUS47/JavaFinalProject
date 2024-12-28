@@ -71,7 +71,7 @@
 
 <script>
   import BusinessSetting from './BusinessSetting.vue';
-  import axiosInstance from '../components/axios';
+  import axiosInstance from '../router/axios';
   export default {
   
     name: 'Businessnav',

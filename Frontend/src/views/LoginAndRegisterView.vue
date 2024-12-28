@@ -175,7 +175,7 @@ import 'animate.css';
 import { ref ,reactive} from 'vue';
 import 'element-plus/dist/index.css';
 import { ElInput, ElButton ,ElMessage} from 'element-plus';
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 // 输入变量
@@ -232,34 +232,32 @@ const clearData=()=>{
     }
     else{
       try {
-        const response = await axiosInstance.post('/Account/login', {
-          "username": loginEmail.value,
+        console.log(loginEmail.value);
+        console.log(password.value);
+        const response = await axiosInstance.post('/users/login', {
+          "identifier": loginEmail.value,
           "password": password.value,
         });
-        message.value = response.data.message;
-        ElMessage.success(message.value);
-        console.log(`response.data.userId${response.data.userId}`);
+        ElMessage.success("登录成功");
+        console.log(`response.data.userId${response.userId}`);
+
         //本地存储用户id
-        localStorage.setItem('userId',response.data.userId);
-        localStorage.setItem('role',response.data.role);
-        if(response.data.role=='买家'){
-          router.push('/home');
-        }else if(response.data.role=='商家'){
-          router.push('/merchantpage');
-        }else{
-          router.push('/merchant-certification');
-        }  
+        localStorage.setItem('token',response.JwtToken);
+        // localStorage.setItem('userId',response.data.userId);
+        // localStorage.setItem('role',response.data.role);
+        router.push('/home');
+        // if(response.data.role=='买家'){
+        //   router.push('/home');
+        // }else if(response.data.role=='商家'){
+        //   router.push('/merchantpage');
+        // }else{
+        //   router.push('/merchant-certification');
+        // }  
       } catch (error) {
-        if (error.response) {
-          message.value = error.response.data.message;
-        } else {
-          message.value = '登录失败';
-        }
-        ElMessage.error(message.value);
-        }
-        message.value='';
+        ElMessage.error(error.response.msg);
       }
  };
+}
 // //////////////////////////访问受保护数据测试
 // const show_protected = async () => {
 //   try {

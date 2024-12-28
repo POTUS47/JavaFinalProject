@@ -145,7 +145,7 @@
 <script>
 import eyeSvg from "@/assets/eye.svg"
 import eyeInSvg from "@/assets/eyeIn.svg"
-import axiosInstance from '../components/axios';
+import axiosInstance from '../router/axios';
 // import { ref } from 'vue';
 import { ref, defineExpose } from 'vue';
 
