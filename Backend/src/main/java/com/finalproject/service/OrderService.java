@@ -303,7 +303,6 @@ public class OrderService {
         Order order = orderOpt.get();
 
         // 计算实际价格
-// 计算实际价格
         BigDecimal totalPay = order.getTotalPrice();  // 获取总价格
         BigDecimal usedCreditsAmount = BigDecimal.valueOf(usedCredits).divide(BigDecimal.valueOf(100));  // 将积分转为金额
         BigDecimal actualPay = totalPay.subtract(usedCreditsAmount);  // 总价格减去积分金额
@@ -331,6 +330,7 @@ public class OrderService {
 
         return Result.success(creditsDTO);
     }
+
     // 修改收货人信息
     @Transactional
     public Result<String> changeNameAndAddress(ChangeNameAndAddressDTO changeNameAndAddressDTO) {
@@ -361,7 +361,6 @@ public class OrderService {
         orderRepository.delete(order);
         return Result.success("订单删除成功");
     }
-
 
     // 根据订单实体获取单个订单信息
     @Transactional
@@ -436,6 +435,16 @@ public class OrderService {
         return Result.success(orderCenterDTO);
     }
 
+    // 根据一组订单号获取相关订单信息
+    @Transactional
+    public Result<List<OrderCenterDTO>> getOrders(List<String> orderIds){
+        List<OrderCenterDTO> orderInfos = new ArrayList<>();
+        for (String orderId : orderIds) {
+            OrderCenterDTO orderCenterDTO = getOneOrder(orderId).getData();
+            orderInfos.add(orderCenterDTO);
+        }
+        return Result.success(orderInfos);
+    }
     // 买家获取订单信息
     @Transactional
     public Result<List<OrderCenterDTO>> getBuyersAllOrders(String userId){

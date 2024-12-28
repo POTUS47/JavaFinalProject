@@ -252,6 +252,13 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 根据一组订单号获取单个订单信息
+    @GetMapping("/order/getOrders")
+    public ResponseEntity<Result<List<OrderCenterDTO>>> getOrders(@RequestParam List<String> orderIds) {
+        Result<List<OrderCenterDTO>> response = orderService.getOrders(orderIds);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
     // 确认收货
     @PostMapping("/order/receive-order")
     public ResponseEntity<Result<String>> receiveOrder(@RequestBody OrderIdDTO orderIdDTO) {

@@ -19,10 +19,10 @@ public class BookmarkStore implements Serializable {
 //    @JoinColumn(name = "store_id", referencedColumnName = "account_id", insertable = false, updatable = false)
 //    private Store store;
 
-    @Id
     @Column(name = "buyer_id", nullable = false)
     private String buyerId;
 
+    @Id
     @Column(name = "store_id", nullable = false)
     private String storeId;
 

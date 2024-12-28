@@ -248,9 +248,9 @@ const clearData=()=>{
 
         //本地存储用户id
         localStorage.setItem('token',jwt);
-        // localStorage.setItem('userId',response.data.userId);
-        // localStorage.setItem('role',response.data.role);
-        //router.push('/home');
+        localStorage.setItem('userId',id);
+        localStorage.setItem('role',role);
+
         if(role=='买家'){
           router.push('/home');
         }else if(role=='商家'){
