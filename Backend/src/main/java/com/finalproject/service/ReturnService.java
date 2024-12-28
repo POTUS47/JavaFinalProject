@@ -5,17 +5,29 @@ import com.finalproject.DTO.Result;
 import com.finalproject.model.Return;
 import com.finalproject.repository.ReturnRepository;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.logging.log4j.message.Message;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@RestController
-@RequestMapping("/returns")
+@Service
 public class ReturnService {
     @Resource
     private ReturnRepository returnRepository;
+    @Value("${api.base-url}")
+    private String baseUrl;
+
+    private final RestTemplate restTemplate;
+
+    public ReturnService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     // 创建退货申请
     public Result<Map<String, String>> applyReturn(String orderItemId,String reason) {
@@ -116,5 +128,173 @@ public class ReturnService {
         data.put("message","退款状态修改成功！");
         return Result.success(data);
     }
+
+    // 检查退货单是否为已被拒绝状态（是否可申诉）
+    public Result<Map<String,String>> checkReturnForComplain(String returnId) {
+        AfterSellDTOs.ReturnDTO returns=getReturnDetail(returnId).getData();
+        String returnStatus=returns.getReturnStatus();
+        if(!returnStatus.equals("申请被拒绝") ){
+            return Result.error(500,"无可申诉内容！");
+        }
+        String sellerReason=returns.getResultReason();
+        Map<String, String> data = new HashMap<>();
+        data.put("message","退货单可被申诉！");
+        data.put("seller_reason",sellerReason);
+        return Result.success(data);
+    }
+
+    // 检查买家身份填写退货单快递单号信息
+    public Result<Map<String,String>> checkAndAddShippingInfo(String userID,String returnId,String shippingNumber) {
+        Result<Map<String,String>> response;
+        response=checkBuyerForItem(userID,returnId);
+        if(response.getCode()!=200){
+            return response;
+        }
+        response=addExpressNumber(returnId,shippingNumber);
+        return response;
+    }
+
+    // 检查卖家身份并确认退货单的收货
+    public Result<Map<String,String>> checkAndConfirmReceive(String userID,String returnId) {
+        Result<Map<String,String>> response;
+        response=checkStoreForItem(userID,returnId);
+        if(response.getCode()!=200){
+            return response;
+        }
+        response=confirmReceive(returnId);
+        return response;
+    }
+
+    // 退款相关
+    public Result<Map<String,String>> refund(String userID,String returnId) {
+        //逻辑待补充。。。。。。。。
+        // refund函数待完成：
+        // 检查退货单状态是否为“已收货”。
+        // 根据returnid找到相应的订单项，获取退货价格。
+        // 根据returnid找到订单，获取买卖双方的ID。（这一步顺便要检查user是不是订单中的卖家）
+        // 根据买卖双方的ID，获取对应的钱包并扣款交易
+        // 调用支付子系统进行真实退款处理？
+
+        Result<Map<String,String>> response;
+        response=refundOrderItem(returnId);// 修改退货单状态为“已退款状态”
+        if(response.getCode()!=200){
+            return response;
+        }
+        response=endReturn(returnId);// 修改订单项状态为“售后结束”（调用外部子系统接口）
+        return response;
+    }
+
+
+
+
+    //用于子系统沟通(买家申请退货)
+    public Result<Map<String,String>> checkBuyerReturn(String userId,String itemId){
+        String url = baseUrl + "/api/shopping/order/return/" + userId+"/"+itemId;
+        ResponseEntity<Result<Map<String,String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（商家审批退货）
+    public Result<Map<String,String>> checkStoreReturn(String userId,String itemId,Boolean isApprove){
+        String url = baseUrl + "/api/shopping/order/approve_return/" + userId+"/"+itemId+"/"+isApprove;
+        ResponseEntity<Result<Map<String,String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（卖家查看售后中订单项）
+    public Result<List<String>> getSellerReturnRequests(String userId){
+        String url = baseUrl + "/api/shopping/order/store/current_return/" + userId;
+        ResponseEntity<Result<List<String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（卖家查看历史售后订单项）
+    public Result<List<String>> getSellerHistoryReturnRequests(String userId){
+        String url = baseUrl + "/api/shopping/order/store/history_return/" + userId;
+        ResponseEntity<Result<List<String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（买家查看售后中订单项）
+    public Result<List<String>> getBuyerReturnRequests(String userId){
+        String url = baseUrl + "/api/shopping/order/buyer/current_return/" + userId;
+        ResponseEntity<Result<List<String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（买家查看历史售后订单项）
+    public Result<List<String>> getBuyerHistoryReturnRequests(String userId){
+        String url = baseUrl + "/api/shopping/order/buyer/history_return/" + userId;
+        ResponseEntity<Result<List<String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（查看买家是否有订单项修改权限）
+    public Result<Map<String,String>> checkBuyerForItem(String userId,String itemId){
+        String url = baseUrl + "/api/shopping/order/buyer/have_item/" + userId+"/"+itemId;
+        ResponseEntity<Result<Map<String,String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（查看卖家是否有订单项修改权限）
+    public Result<Map<String,String>> checkStoreForItem(String userId,String itemId){
+        String url = baseUrl + "/api/shopping/order/store/have_item/" + userId+"/"+itemId;
+        ResponseEntity<Result<Map<String,String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+    //用于子系统沟通（更改订单项的状态为售后结束）
+    public Result<Map<String,String>> endReturn(String itemId){
+        String url = baseUrl + "/api/shopping/order/end_return/"+itemId;
+        ResponseEntity<Result<Map<String,String>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<>() {
+                } );
+        return response.getBody();
+    }
+
+
 
 }

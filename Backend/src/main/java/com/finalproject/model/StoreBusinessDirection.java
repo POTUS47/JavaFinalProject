@@ -21,14 +21,14 @@ public class StoreBusinessDirection implements Serializable {
     @JoinColumn(name = "store_id", insertable = false, updatable = false)
     private Store store;
 
+    public StoreBusinessDirection(){
+
+    }
+
     public StoreBusinessDirection(String storeId, String businessTag, int linkCount) {
         this.storeId = storeId;
         this.businessTag = businessTag;
         this.linkCount = linkCount;
-    }
-
-    public StoreBusinessDirection() {
-
     }
 
     public int addLinkCount(){
