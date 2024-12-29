@@ -70,17 +70,17 @@ public class ShoppingController {
 
     // 检查是否收藏店铺
     @GetMapping("/favourite/is-store-bookmarked")
-    public ResponseEntity<Result<Boolean>> isStoreBookmarked(@RequestParam StoreIdDTO model, Authentication authentication) {
+    public ResponseEntity<Result<Boolean>> isStoreBookmarked(@RequestParam String storeId, Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<Boolean>response = favouriteService.isStoreBookmarked(userId, model.getStoreId());
+        Result<Boolean>response = favouriteService.isStoreBookmarked(userId, storeId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
     // 检查是否收藏商品
     @GetMapping("/favourite/is-product-bookmarked")
-    public ResponseEntity<Result<Boolean>> isProductBookmarked(@RequestParam ProductIdDTO model, Authentication authentication) {
+    public ResponseEntity<Result<Boolean>> isProductBookmarked(@RequestParam String productId, Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<Boolean>response = favouriteService.isProductBookmarked(userId, model.getProductId());
+        Result<Boolean>response = favouriteService.isProductBookmarked(userId, productId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -127,9 +127,8 @@ public class ShoppingController {
 
     // 获取店铺所有订单评论
     @GetMapping("/order/get-store-remarks")
-    public ResponseEntity<Result<List<GetStoreRemarkDTO>>> getStoreRemarks(Authentication authentication) {
-        String userId = (String) authentication.getPrincipal();
-        Result<List<GetStoreRemarkDTO>> response = orderItemService.getStoreRemarks(userId);
+    public ResponseEntity<Result<List<GetStoreRemarkDTO>>> getStoreRemarks(@RequestParam String storeId) {
+        Result<List<GetStoreRemarkDTO>> response = orderItemService.getStoreRemarks(storeId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 

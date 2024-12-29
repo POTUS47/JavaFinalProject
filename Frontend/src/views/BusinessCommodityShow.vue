@@ -70,7 +70,7 @@
 
       <!-- 上传图片和输入描述 -->
       <div v-for="(file, index) in fileList" :key="index" class="upload-item">
-        <el-upload :file-list="[file]" :show-file-list="false" :http-request="submitUpload"
+        <el-upload :file-list="[file]" :show-file-list="false" :http-request="submitUploadPD"
           :before-upload="beforeUpload" :on-success="handleUploadSuccess(index)" :on-error="handleUploadError">
           <el-button type="primary">上传图片</el-button>
         </el-upload>
@@ -375,6 +375,10 @@ export default {
         uploadImagesDialogVisible.value = false; // 关闭上传图片弹窗
       }
     };
+
+    const submitUploadPD = async () => {
+      
+    }
 
     // 组件加载时调用获取商品数据
     onMounted(() => {

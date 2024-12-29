@@ -29,7 +29,7 @@
         <div class="shop-title">
           <div style="display: flex; gap: 10px">
             <div class="shop-avatar">
-              <img :src="shopinfo.avatar" alt="Shop Avatar" class="shop-avatar" />
+              <img src="../assets/mmy/avatar.jpeg" alt="Shop Avatar" class="shop-avatar" />
             </div>
             <div class="shop-info">
                 <div class="shop-name">
@@ -77,15 +77,6 @@
             </div>
           </div>
           <div class="product-display">
-            <div class="search-box">
-              <el-input
-                placeholder="搜索本店商品"
-                v-model="searchQuery"
-                @keyup.enter="filterProducts(null,'Button')"
-              >
-              </el-input>
-              <el-button @click="filterProducts(null,'Button')">搜索</el-button>
-            </div>
             <div class="product" v-if="products.length!==0">
               <div class="display-items">
                 <div 
@@ -96,8 +87,7 @@
                   <div @click="handleProductClick(product.productId)">
                     <!-- <img :src="product.productPics.imageUrl" :alt="product.productId" class="product-image" /> -->
                     <img 
-                      :src="product.productPics.length > 0 ? product.productPics[0].imageUrl : 'default-image-url.jpg'" 
-                      :alt="product.productId" 
+                      src="../assets/wall.jpg"
                       class="product-image" 
                     />
                     <div class="product-text">
@@ -129,7 +119,7 @@
                 class="remarks">
                 <div class="remark-header">
                   <div class='remark-avatar'>
-                    <img :src="remark.buyerAvatar.imageUrl" :alt="buyerAvatar" class='remark-avatar'/>
+                    <img src="../assets/mmy/avatar2.jpg" :alt="buyerAvatar" class='remark-avatar'/>
                   </div>
                   <div class="remark-buyerName" style="font-size: 16px; font-weight: bold; "> {{ remark.buyerName }} </div>
                 </div>
@@ -167,9 +157,7 @@ import axiosInstance from '../router/axios';
 
 const router = useRouter();
 const currentView = ref('products');
-const userId =localStorage.getItem('userId');
 const role=localStorage.getItem('role');
-// const role="商家";
 const storeId = localStorage.getItem('storeIdOfDetail');
 
 const shopinfo = reactive({avatar:"",storeId:"",storeName:"",storeScore:0,Address:"",description:""});
@@ -182,79 +170,19 @@ const products = reactive([]);
 const remarks = reactive([]);
 
 const isLoading = ref(true);
-let loadedCount = ref(0);  // 用于跟踪完成的请求数
-const totalFetches = 5;  // 总共需要完成的请求数量
 
 const checkLoadingStatus = () => {
-  loadedCount.value += 1;
-  if (role=='买家'&&loadedCount.value === totalFetches) {
-    isLoading.value = false;  // 所有请求完成后，设置 isLoading 为 false
-    loadedCount.value=0;
-  }
-  else if(role!='买家'&&loadedCount.value === totalFetches-1){
-    isLoading.value = false;  // 所有请求完成后，设置 isLoading 为 false
-    loadedCount.value=0;
-  }
+  isLoading.value = false;
 };
 
 const enterSellerHome=()=>{
   router.push('/businesshomepage');
 }
   
-const searchQuery = ref('');
+
 const selectedCategory = ref(1);
-const filterProducts = (category, source) => {
-  if(source=='Button'){
-    console.log('搜索内容:', searchQuery.value);
-    //搜索商品
-    fetchProductsBySearch(searchQuery.value)
-  }
-  else if(source=='Sider'){
-    selectedCategory.value = category.id;
-    console.log(`分类 ${category.name} 被点击`);
-    //检测侧边栏内容进行筛选商品
-    if(selectedCategory.value==1){
-      fetchAllProducts();
-    }
-    else{
-      fetchProductsByTag(category.name);
-    }
-  }
-}
 
-const tags = ref([]);
-const message = ref('');
-const fetchTags = async () => {
-  try {
-    const response = await axiosInstance.get('/Shopping/GetStoreTags', {
-      params: {
-        storeId: shopinfo.storeId
-      }
-    });
-    tags.value = response.data;
-    message.value = '已获取自定义分类';
-    addCategory(); 
-    checkLoadingStatus(); //检查加载状态
-  } catch (error) {
-    if (error.response) {
-      message.value = error.response.data;
-    } else {
-      message.value = '获取分类数据失败';
-    }
-  }
-  console.log(message.value);
-};
 
-const addCategory = () => {
-  tags.value.forEach((categoryName) => {
-    categories.value.push({
-      id: categories.value.length + 1,
-      name: categoryName,
-    });
-  });
-  console.log(categories.value);
-
-};
 
 const handleProductClick = (productId) => {
   localStorage.setItem('productIdOfDetail',productId);
@@ -265,22 +193,18 @@ const handleProductClick = (productId) => {
 const message1 = ref('');
 const fetchStoreInfo = async () => {
   try {
-    const response = await axiosInstance.get('/Shopping/GetStoreInfo', {
-      params: {
-        storeId: shopinfo.storeId
-      }
-    });
-    console.log('获取商家id '+shopinfo.storeId);
-    shopinfo.storeName = response.data.name;
-    shopinfo.storeScore = response.data.score;
-    shopinfo.Address = response.data.address;
-    shopinfo.avatar = response.data.picture.imageUrl;
-    shopinfo.description = response.data.description;
+    const response = await axiosInstance.get(`/users/store/Info/${storeId}`);
+    const data = response.data;
+    shopinfo.storeName = data.data.userName;
+    shopinfo.storeScore = data.data.storeScore;
+    shopinfo.Address = data.data.address;
+    shopinfo.avatar = data.data.photoId;
+    shopinfo.description = data.data.description;
     message1.value = '已获取店铺信息';
     checkLoadingStatus(); //检查加载状态
   } catch (error) {
     if (error.response) {
-      message1.value = error.response.data;
+      message1.value = error.response.data.msg;
     } else {
       message1.value = '获取店铺信息失败';
     }
@@ -291,18 +215,17 @@ const fetchStoreInfo = async () => {
 const message2 = ref('');
 const fetchIsBookmarked = async () => {
   try {
-    const response = await axiosInstance.get('/Favourite/IsStoreBookmarked', {
+    const response = await axiosInstance.get('shopping/favourite/is-store-bookmarked', {
       params: {
-        userId: userId,
         storeId: shopinfo.storeId
       }
     });
-    isFavorite.value = response.data;
+    isFavorite.value = response.data.data;
     message2.value = '已获取收藏信息';
     checkLoadingStatus(); //检查加载状态
   } catch (error) {
     if (error.response) {
-      message2.value = error.response.data;
+      message2.value = error.response.data.msg;
     } else {
       message2.value = '获取收藏信息失败';
     }
@@ -314,21 +237,16 @@ const fetchIsBookmarked = async () => {
 const message3= ref('');
 const fetchAllProducts = async () => {
   try {
-    const response = await axiosInstance.get('/StoreViewProduct/GetProductsByStoreIdAndViewType', {
-      params: {
-        storeId: shopinfo.storeId,
-        ViewType: 3
-      }
+    const response = await axiosInstance.get(`/productController/products/${shopinfo.storeId}`, {
     });
     if (products.length > 0) {
       products.splice(0, products.length);//清空数组
     }
     response.data.forEach(product => {
-      // product.productPic = `data:image/png;base64,${product.productPic}`;
       products.push(product);
     });
     message3.value = '已获取全部商品信息';
-    checkLoadingStatus(); //检查加载状态
+    checkLoadingStatus(); 
   } catch (error) {
     if (error.response) {
       message3.value = error.response.data;
@@ -340,125 +258,45 @@ const fetchAllProducts = async () => {
 };
 
 const clickFavorite = () => {
-  if(isFavorite.value==false){
     bookmarkStore();
-  }
-  else{
-    unbookmarkStore();
-  }
 };
 
-const message4 = ref('');
 const bookmarkStore = async () => {
   try {
-    const response = await axiosInstance.post('/Favourite/BookmarkStore', null, {
-      params: {
-        userId: userId,
-        storeId: shopinfo.storeId
-      }
-    });
-    message4.value = response.data;
-  } catch (error) {
-    if (error.response) {
-      message4.value = error.response.data;
-    } else {
-      message4.value = '操作失败';
+    const response = await axiosInstance.post('/shopping/favourite/bookmark-store',{
+      "storeId": shopinfo.storeId
     }
+    );
+    if (response.data.code == 200) {
+      isFavorite.value=!isFavorite.value;
+    } 
+  } catch (error) {
+    ElMessage.error(error.response.data.msg);
   }
-  if(message4.value){
-    ElMessage.info(message4.value);
-  }
-  fetchIsBookmarked();
 };
 
-const message5 = ref('');
-const unbookmarkStore = async () => {
-  try {
-    const response = await axiosInstance.delete('/Favourite/UnbookmarkStore',  {
-      params: {
-        userId: userId,
-        storeId: shopinfo.storeId
-      }
-    });
-    message5.value = response.data;
-  } catch (error) {
-    if (error.response) {
-      message5.value = error.response.data;
-    } else {
-      message5.value = '操作失败';
-    }
-  }
-  if(message5.value){
-    ElMessage.info(message5.value);
-  }
-  fetchIsBookmarked();
-};
-
-
-const message6= ref('');
 const fetchProductsByTag = async (tag) => {
   try {
-    const response = await axiosInstance.get('/StoreViewProduct/searchByStoreTag', {
-      params: {
-        storeId: shopinfo.storeId,
-        storeTag: tag
-      }
+    const response = await axiosInstance.get(`/productController/products/${shopinfo.storeId}`, {
     });
     if (products.length > 0) {
-      products.splice(0, products.length);
+      products.splice(0, products.length);//清空数组
     }
     response.data.forEach(product => {
-      if(product.saleOrNot==false){
-        //product.productPic = `data:image/png;base64,${product.productPic}`;
+      if(product.storeTag==tag){
         products.push(product);
       }
     });
-    message6.value = '已获取'+tag+'分类商品信息';
+    checkLoadingStatus(); 
   } catch (error) {
-    if (error.response) {
-      message6.value = error.response.data;
-    } else {
-      message6.value = '获取分类商品信息失败';
-    }
+    ElMessage.error(error.response.data.msg);
   }
-  console.log(message6.value);
 };
-
-
-const message7= ref('');
-const fetchProductsBySearch = async (word) => {
-  try {
-    const response = await axiosInstance.get('/StoreViewProduct/search', {
-      params: {
-        storeId: shopinfo.storeId,
-        keyword: word
-      }
-    });
-    if (products.length > 0) {
-      products.splice(0, products.length);
-    }
-    response.data.forEach(product => {
-      if(product.saleOrNot==false){
-        //product.productPic = `data:image/png;base64,${product.productPic}`;
-        products.push(product);
-      }
-    });
-    message7.value = '已获取搜索商品信息';
-  } catch (error) {
-    if (error.response) {
-      message7.value = error.response.data;
-    } else {
-      message7.value = '获取搜索商品信息失败';
-    }
-  }
-  console.log(message7.value);
-};
-
 
 const message8= ref('');
 const fetchRemarks = async () => {
   try {
-    const response = await axiosInstance.get('/Shopping/GetStoreRemarks', {
+    const response = await axiosInstance.get('/shopping/order/get-store-remarks', {
       params: {
         storeId: shopinfo.storeId
       }
@@ -466,9 +304,8 @@ const fetchRemarks = async () => {
     if (remarks.length > 0) {
       remarks.splice(0, remarks.length);
     }
-    response.data.forEach(remark => {
+    response.data.data.forEach(remark => {
       if(remark.orderRemark){
-        // remark.buyerAvatar = `data:image/png;base64,${remark.buyerAvatar}`;
         remarks.push(remark);
       }
     });
@@ -490,7 +327,6 @@ onMounted(() => {
   if(role=='买家'){
     fetchIsBookmarked();
   }
-  fetchTags();
   fetchAllProducts();
   fetchRemarks();
 });
