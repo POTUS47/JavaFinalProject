@@ -330,6 +330,7 @@ public class OrderService {
         order.setPaymentStatus(Order.PaymentStatus.已付款);
         order.setPaymentMethod(Order.PaymentMethod.钱包);
         order.setBonusCredits(addAmount);
+        order.setPayTime(LocalDateTime.now());
         orderRepository.save(order);
 
         return Result.success(creditsDTO);
