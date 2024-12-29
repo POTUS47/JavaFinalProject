@@ -407,8 +407,15 @@ public class ProductService {
         return 200;
     }
 
-    public Result<List<ProductDTO>> getAllProduct(String storeId) {
-        List<Product> res=productRepository.findByStoreId(storeId);
+    public Result<List<ProductDTO>> getAllProduct(String userId,String storeId,Boolean isBuyer) {
+        String inputId="";
+        if(isBuyer){
+            inputId=storeId;
+        }
+        else{
+            inputId=userId;
+        }
+        List<Product> res=productRepository.findByStoreId(inputId);
         List<ProductDTO> response=new ArrayList<>();
         if(res.isEmpty()){
             return Result.error(404,"本店没有商品");

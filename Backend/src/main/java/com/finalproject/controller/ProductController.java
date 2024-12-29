@@ -32,9 +32,11 @@ public class ProductController {
 
     //通过id获取本店所有商品
     @GetMapping("/GetProductsByStoreIdAndViewType")
-    public ResponseEntity<List<ProductDTO>> getProductsByStoreIdAndViewType(Authentication auth) {
+    public ResponseEntity<List<ProductDTO>> getProductsByStoreIdAndViewType(@RequestParam("storeId") String storeId,
+                                                                            @RequestParam("isBuyer") Boolean isBuyer,
+                                                                            Authentication auth) {
         String userId = (String) auth.getPrincipal();
-        Result<List<ProductDTO>> response= productService.getAllProduct(userId);
+        Result<List<ProductDTO>> response= productService.getAllProduct(userId,storeId,isBuyer);
         return ResponseEntity.status(response.getCode()).body(response.getData());
     }
 
