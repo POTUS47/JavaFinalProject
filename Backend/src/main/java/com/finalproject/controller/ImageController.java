@@ -26,4 +26,5 @@ public class ImageController {
     public ResponseEntity<Resource> getImage(@PathVariable String imageId) {
         return imageService.loadImageAsResource(imageId);
     }
+
 }

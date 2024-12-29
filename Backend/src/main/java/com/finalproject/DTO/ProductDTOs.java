@@ -1,5 +1,6 @@
 package com.finalproject.DTO;
 
+import com.finalproject.model.SubCategory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -63,6 +64,68 @@ public class ProductDTOs {
         }
 
 
+    }
+
+    public static class ProductDTO{
+        private String ProductId;
+        private String ProductName;
+        private BigDecimal ProductPrice ;
+        private String Tag ;
+        private String SubTag ;
+        private String Description;
+        private String StoreTag ;
+        private Integer Quantity ;
+
+        public String getProductName() {
+            return ProductName;
+        }
+        public void setProductName(String ProductName) {
+            this.ProductName = ProductName;
+        }
+        public BigDecimal getProductPrice() {
+            return ProductPrice;
+        }
+        public void setProductPrice(BigDecimal ProductPrice) {
+            this.ProductPrice = ProductPrice;
+        }
+        public String getTag() {
+            return Tag;
+        }
+        public void setTag(String Tag) {
+            this.Tag = Tag;
+        }
+        public String getSubTag() {
+            return SubTag;
+        }
+        public void setSubTag(String SubTag) {
+            this.SubTag = SubTag;
+        }
+        public String getDescription() {
+            return Description;
+        }
+        public void setDescription(String Description) {
+            this.Description = Description;
+        }
+        public String getStoreTag() {
+            return StoreTag;
+        }
+        public void setStoreTag(String StoreTag) {
+            this.StoreTag = StoreTag;
+        }
+        public Integer getQuantity() {
+            return Quantity;
+        }
+        public void setQuantity(Integer Quantity) {
+            this.Quantity = Quantity;
+        }
+
+
+        public String getProductId() {
+            return ProductId;
+        }
+        public void setProductId(String ProductId) {
+            this.ProductId = ProductId;
+        }
     }
     public static class DesPic{
         private String Url;
@@ -314,6 +377,38 @@ public class ProductDTOs {
 
         public String getDescription() {
             return Description;
+        }
+    }
+
+    public static class CatSubDTO{
+        private String LargeCategoryName;
+        private List<CategoryDTO> SubCategories;
+
+        public CatSubDTO(String LargeCategoryName, List<CategoryDTO> SubCategories) {
+            this.LargeCategoryName = LargeCategoryName;
+            this.SubCategories = SubCategories;
+        }
+        public String getLargeCategoryName() {
+            return LargeCategoryName;
+        }
+        public List<CategoryDTO> getSubCategories() {
+            return SubCategories;
+        }
+    }
+
+    public static class CategoryDTO{
+        private String SubCategoryName;
+        private String SubCategoryId;
+
+        public CategoryDTO(String SubCategoryName, String SubCategoryId) {
+            this.SubCategoryName = SubCategoryName;
+            this.SubCategoryId = SubCategoryId;
+        }
+        public String getSubCategoryName() {
+            return SubCategoryName;
+        }
+        public String getSubCategoryId() {
+            return SubCategoryId;
         }
     }
 

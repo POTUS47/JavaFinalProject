@@ -17,10 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -192,13 +189,22 @@ public class ProductService {
     }
 
     public Result<List<DesPic>> getDesPic(String productId) {
-        List<DesPic> productDetails = productDetailRepository.findByProductId(productId).stream()
-                .map(detail -> new DesPic(detail.getImageId(), detail.getDescription()))  // 映射为DesPic对象
-                .toList();
-        if(productDetails.isEmpty()){
-            return Result.error(404);
+        Collection<ProductDetail> productDetails = productDetailRepository.findByProductId(productId);
+        List<DesPic> pro = new ArrayList<>();
+        for(ProductDetail productDetail : productDetails){
+            String id=productDetail.getImageId();
+            String url=baseUrl+"/images/"+id;
+            DesPic ne=new DesPic(url,productDetail.getDescription());
+            pro.add(ne);
         }
-        return Result.success(productDetails);
+        if(pro.isEmpty()){
+            String defaultDes="本商品暂无详情介绍";
+            String defaultId="1";
+            String url = baseUrl + "/images/" + defaultId;
+            DesPic temp=new DesPic(url,defaultDes);
+            pro.add(temp);
+        }
+        return Result.success(pro);
     }
 
     public Result<String> updateDescription(UpdateDescriptionRequest request){
@@ -337,10 +343,12 @@ public class ProductService {
         List<String> res=new ArrayList<>();
         if(images.isEmpty()){
             String defaultId="1";
-            res.add(defaultId);
+            String url = baseUrl + "/images/" + defaultId;
+            res.add(url);
         }
         for(ProductImage image:images){
-            res.add(image.getImageId());
+            String url = baseUrl + "/images/" + image.getImageId();
+            res.add(url);
         }
         return Result.success(res);
     }
@@ -399,32 +407,46 @@ public class ProductService {
         return 200;
     }
 
+    public Result<List<ProductDTO>> getAllProduct(String storeId, String viewType) {
+        List<Product> res=productRepository.findByStoreId(storeId);
+        List<ProductDTO> response=new ArrayList<>();
+        if(res.isEmpty()){
+            return Result.error(404,"本店没有商品");
+        }
+        for(Product product:res){
+            ProductDTO dto=new ProductDTO();
+            dto.setProductName(product.getProductName());
+            dto.setProductPrice(product.getProductPrice());
+            dto.setQuantity(product.getQuantity());
+            dto.setTag(product.getTag());
+            dto.setDescription(product.getDescription());
+            dto.setStoreTag(product.getStoreTag());
+            dto.setProductId(product.getProductId());
+            response.add(dto);
+        }
+        return Result.success(response);
+    }
 
-//    private void saveProductDetails(String productId, List<ProductDetailDTO> details) {
-//        if (details != null && !details.isEmpty()) {
-//            details.forEach(detail -> {
-//                ProductDetail pd = new ProductDetail(productId, detail);
-//                productDetailRepository.save(pd);
-//            });
-//        }
-//    }
+    public  Result<List<CatSubDTO>> getAllCategoriesWithSubcategories() {
+        // 查询所有大分类
+        List<Category> largeCategories = categoryRepository.findAll();
 
-//    private void manageStoreBusinessDirection(addProductDTO newProduct)  {
-//        Optional<SubCategory> subCategory = subCategoryRepository.findById(newProduct.getSubTag());
-//        if (subCategory.isEmpty()) {
-//            throw new BusinessTagException("SUBCATEGORY_NOT_FOUND", "子类别不存在");
-//        }
-//
-//        // 检查该商家的TAG是否已经存在
-//        String businessTag = newProduct.getTag() + subCategory.get().getSubcategoryName();
-//        Optional<StoreBusinessDirection> existingTag = storeBusinessDirectionRepository.findByStoreIdAndBusinessTag(
-//                newProduct.getStoreId(), businessTag);
-//
-//        existingTag.orElseGet(() -> {
-//            StoreBusinessDirection newStoreTag = new StoreBusinessDirection(
-//                    newProduct.getStoreId(), businessTag, 0);
-//            return storeBusinessDirectionRepository.save(newStoreTag);
-//        }).addLinkCount();
-//
-//    }
+        // 为每个大分类查询其子分类
+        List<CatSubDTO> result = new ArrayList<>();
+
+        for (Category lc : largeCategories) {
+            List<SubCategory> subCategories = subCategoryRepository.findBycategoryName(lc.getCategoryName());
+
+            List<CategoryDTO> subCategoryDTOs = subCategories.stream()
+                    .map(sc -> new CategoryDTO(sc.getSubcategoryName(), sc.getSubcategoryId()))
+                    .collect(Collectors.toList());
+
+            CatSubDTO temp= new CatSubDTO(lc.getCategoryName(),subCategoryDTOs);
+            result.add(temp);
+        }
+
+        return Result.success(result);
+    }
+
+
 }

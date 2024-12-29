@@ -189,4 +189,11 @@ public class UserController {
                              @PathVariable Integer amount                             ){
         return userService.reduceCredit(userId,amount);
     }
+
+    @PostMapping("/UserInfo/GetPhotoAndDescribtion")
+    public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescribtion(@RequestParam("userId") String userId, Authentication authentication) {
+        //String userId = (String) authentication.getPrincipal();
+        Result<AccountDTOs.PandDDTO>response=userService.getPandD(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }

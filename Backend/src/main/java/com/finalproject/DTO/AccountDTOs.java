@@ -88,5 +88,23 @@ public class AccountDTOs {
         }
     }
 
+    public static class PandDDTO{
+        private String imageUrl;
+        private String describtion;
+        public String getImageUrl(){
+            return this.imageUrl;
+        }
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public String getDescribtion() {
+            return describtion;
+        }
+        public void setDescribtion(String describtion) {
+            this.describtion = describtion;
+        }
+    }
+
 
 }
