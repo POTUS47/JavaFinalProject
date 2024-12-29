@@ -94,8 +94,9 @@ public class FavouriteService {
         return response.getBody();
     }
 
+    // 可以根据productId获取商品的所有图片的url!
     @Transactional
-    public List<ProductImage> getProductImagesById(String productId) {
+    public List<String> getProductImagesById(String productId) {
         // 获取商品的图片信息
         String url = baseUrl + "/api/productController/productImages/" + productId;
         ResponseEntity<List<ProductImage>> response = restTemplate.exchange(
@@ -104,8 +105,21 @@ public class FavouriteService {
                 null,
                 new ParameterizedTypeReference<List<ProductImage>>() {
                 });
-        return response.getBody();
+
+        List<ProductImage>productImages = response.getBody();
+        List<String>imageUrls=new ArrayList<>();
+        if (productImages != null) {
+            for (ProductImage productImage : productImages){
+                String imageUrl=baseUrl+"/images/"+productImage.getImageId();
+                imageUrls.add(imageUrl);
+            }
+        }
+        if(imageUrls.isEmpty()){
+            imageUrls.add(baseUrl+"/images/1");
+        }
+        return imageUrls;
     }
+
 
     /////////////////////////////////////////////////////////////////////////以下是面向外部接口
 
@@ -149,12 +163,9 @@ public class FavouriteService {
                     productDTO.setProductPrice(product.getProductPrice());
 
                     // 获取商品的图片信息
-                    List<ProductImage> productImages = getProductImagesById(product.getProductId());
-
-                    if (!productImages.isEmpty()) {
-                        // 取第一张图片
-                        String imageId = productImages.getFirst().getImageId();
-                        productDTO.setProductPic(imageId);
+                    List<String> productImageUrls = getProductImagesById(product.getProductId());
+                    if (!productImageUrls.isEmpty()) {
+                        productDTO.setProductPic(productImageUrls.getFirst());
                     }
 
                     productDTOList.add(productDTO);
@@ -194,12 +205,9 @@ public class FavouriteService {
             Store store = product.getStore();
             favouriteProductsDTO.setStoreId(store.getAccountId());
 
-            // 获取商品的图片信息
-            List<ProductImage> productImages = getProductImagesById(product.getProductId());
-            if (!productImages.isEmpty()) {
-                // 取第一张图片
-                String imageId = productImages.getFirst().getImageId();
-                favouriteProductsDTO.setProductPic(imageId);
+            List<String> productImageUrls = getProductImagesById(product.getProductId());
+            if (!productImageUrls.isEmpty()) {
+                favouriteProductsDTO.setProductPic(productImageUrls.getFirst());
             }
 
             favouriteProducts.add(favouriteProductsDTO);

@@ -112,8 +112,9 @@ public class OrderService {
         return response.getBody();
     }
 
+    // 可以根据productId获取商品的所有图片的url!
     @Transactional
-    public List<ProductImage> getProductImagesById(String productId) {
+    public List<String> getProductImagesById(String productId) {
         // 获取商品的图片信息
         String url = baseUrl + "/api/productController/productImages/" + productId;
         ResponseEntity<List<ProductImage>> response = restTemplate.exchange(
@@ -122,7 +123,19 @@ public class OrderService {
                 null,
                 new ParameterizedTypeReference<List<ProductImage>>() {
                 });
-        return response.getBody();
+
+        List<ProductImage>productImages = response.getBody();
+        List<String>imageUrls=new ArrayList<>();
+        if (productImages != null) {
+            for (ProductImage productImage : productImages){
+                String imageUrl=baseUrl+"/images/"+productImage.getImageId();
+                imageUrls.add(imageUrl);
+            }
+        }
+        if(imageUrls.isEmpty()){
+            imageUrls.add(baseUrl+"/images/1");
+        }
+        return imageUrls;
     }
 
     // 买家支付订单
@@ -268,9 +281,9 @@ public class OrderService {
                 OrderItemDTO orderItemDTO = new OrderItemDTO();
                 orderItemDTO.setProductId(productId);
                 orderItemDTO.setProductName(product.getProductName());
-                List<ProductImage> productImages = getProductImagesById(productId);
-                if (!productImages.isEmpty()) {
-                    orderItemDTO.setProductImage(productImages.getFirst().getImageId());
+                List<String> productImageUrls = getProductImagesById(productId);
+                if (!productImageUrls.isEmpty()) {
+                    orderItemDTO.setProductImage(productImageUrls.getFirst());
                 }
                 orderItemDTO.setProductPrice(product.getProductPrice());
                 orderItemDTOList.add(orderItemDTO);
@@ -405,9 +418,9 @@ public class OrderService {
             orderItemDTO.setProductPrice(product.getProductPrice());
 
             // 获取商品图片信息
-            List<ProductImage> productImages = getProductImagesById(product.getProductId());
-            if (!productImages.isEmpty()) {
-                orderItemDTO.setProductImage(baseUrl+"/images/" + productImages.getFirst().getImageId());
+            List<String> productImageUrls = getProductImagesById(product.getProductId());
+            if (!productImageUrls.isEmpty()) {
+                orderItemDTO.setProductImage(productImageUrls.getFirst());
             }
 
             orderItemDTOList.add(orderItemDTO);
