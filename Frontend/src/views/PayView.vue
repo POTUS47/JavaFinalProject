@@ -118,10 +118,10 @@
             <p class="text_pay_isSuccess">支付成功</p>
             <p class="text_pay">获得积分：&#8201;&#8201;{{ bonusCredits }}</p>
           </div>
-          <div v-show="isPaySuccess === false">
+          <!-- <div v-show="isPaySuccess === false">
             <p class="text_pay_isSuccess">支付失败</p>
             <p class="text_pay">钱包余额不足，请及时充值</p>
-          </div>
+          </div> -->
 
         </el-dialog>
       </div>

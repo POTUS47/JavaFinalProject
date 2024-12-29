@@ -29,7 +29,7 @@
         <div class="shop-title">
           <div style="display: flex; gap: 10px">
             <div class="shop-avatar">
-              <img src="../assets/Background.png" alt="Shop Avatar" class="shop-avatar" />
+              <img src="../assets/mmy/avatar.jpeg" alt="Shop Avatar" class="shop-avatar" />
             </div>
             <div class="shop-info">
                 <div class="shop-name">
@@ -77,15 +77,6 @@
             </div>
           </div>
           <div class="product-display">
-            <div class="search-box">
-              <el-input
-                placeholder="搜索本店商品"
-                v-model="searchQuery"
-                @keyup.enter="filterProducts(null,'Button')"
-              >
-              </el-input>
-              <el-button @click="filterProducts(null,'Button')">搜索</el-button>
-            </div>
             <div class="product" v-if="products.length!==0">
               <div class="display-items">
                 <div 
@@ -128,7 +119,7 @@
                 class="remarks">
                 <div class="remark-header">
                   <div class='remark-avatar'>
-                    <img :src="remark.buyerAvatar.imageUrl" :alt="buyerAvatar" class='remark-avatar'/>
+                    <img src="../assets/mmy/avatar2.jpg" :alt="buyerAvatar" class='remark-avatar'/>
                   </div>
                   <div class="remark-buyerName" style="font-size: 16px; font-weight: bold; "> {{ remark.buyerName }} </div>
                 </div>
@@ -179,8 +170,6 @@ const products = reactive([]);
 const remarks = reactive([]);
 
 const isLoading = ref(true);
-let loadedCount = ref(0);  // 用于跟踪完成的请求数
-const totalFetches = 5;  // 总共需要完成的请求数量
 
 const checkLoadingStatus = () => {
   isLoading.value = false;
@@ -190,47 +179,10 @@ const enterSellerHome=()=>{
   router.push('/businesshomepage');
 }
   
-const searchQuery = ref('');
+
 const selectedCategory = ref(1);
-const filterProducts = (category, source) => {
-  if(source=='Button'){
-    console.log('搜索内容:', searchQuery.value);
-    //搜索商品
-    fetchProductsBySearch(searchQuery.value)
-  }
-  else if(source=='Sider'){
-    selectedCategory.value = category.id;
-    console.log(`分类 ${category.name} 被点击`);
-    //检测侧边栏内容进行筛选商品
-    if(selectedCategory.value==1){
-      fetchAllProducts();
-    }
-    else{
-      fetchProductsByTag(category.name);
-    }
-  }
-}
 
-const tags = ref([]);
-const message = ref('');
 
-const fetchTags = async () => {
-    for(let i=0;i<products.length;i++){
-      tags.value.push(products[i].storeTag);
-    }
-    addCategory(); 
-};
-
-const addCategory = () => {
-  tags.value.forEach((categoryName) => {
-    categories.value.push({
-      id: categories.value.length + 1,
-      name: categoryName,
-    });
-  });
-  console.log(categories.value);
-
-};
 
 const handleProductClick = (productId) => {
   localStorage.setItem('productIdOfDetail',productId);
@@ -243,7 +195,6 @@ const fetchStoreInfo = async () => {
   try {
     const response = await axiosInstance.get(`/users/store/Info/${storeId}`);
     const data = response.data;
-    console.log('获取商家id '+shopinfo.accountId);
     shopinfo.storeName = data.data.userName;
     shopinfo.storeScore = data.data.storeScore;
     shopinfo.Address = data.data.address;
@@ -377,7 +328,6 @@ onMounted(() => {
     fetchIsBookmarked();
   }
   fetchAllProducts();
-  fetchTags();
   fetchRemarks();
 });
   
