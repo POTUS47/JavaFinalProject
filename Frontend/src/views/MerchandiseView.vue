@@ -125,7 +125,13 @@ import { useRoute, useRouter } from 'vue-router';
 import axiosInstance from '../router/axios';
 
 const text=ref('');
-const picUrl=ref('');
+const picUrl = ref('');
+const categoryUrl = "/src/assets/categories/"
+const detailDescription1 = "匠心器皿，承载着东方美学与实用主义的完美结合。从细腻温润的瓷器到质朴自然的陶器；从光泽如镜的铜器到坚韧耐用的铁器；从光泽流转的漆器到晶莹剔透的琉璃；每一项技艺背后都有一个故事，每一件作品都是一个时代的缩影。这里不仅有古典家具的优雅，也有铸铁技艺的精湛，更有紫砂陶与陶瓷彩瓷的缤纷色彩。每一种材质都在诉说着属于自己的历史。"
+const detailDescription2 = "墨香文房，汇集了中华千年文脉之精华。从一管宣笔的精挑细选，到一滴徽墨的研磨；从一张楮皮纸的轻薄透明，到一方砚台的沉稳厚重。这里不仅有书写工具的传承与发展，更有如书画毡、简牍等文化载体的再现。每一款产品，都是对古代文人雅士生活方式的复刻，让使用者在挥毫泼墨间，感受那份独有的宁静与深远。"
+const detailDescription3 = "织艺锦缎，传承千年的织造艺术，在这里得以重现其辉煌。从锦绣成衣到丝绸布匹，每一件作品都承载着匠人的心血与智慧。无论是细腻的缂丝，还是典雅的香港中式长衫；不论是庄重的满族旗袍，还是雍容的龙凤旗袍；亦或是苗族织锦的多彩斑斓，地毯织造的精妙绝伦，每一道工序都是对传统技艺的致敬。更有蚕丝织造技艺与古老的蜡染、扎染工艺，在这里交织出一幅幅绚丽多彩的历史画卷。"
+const detailDescription4 = "欢迎来到“逸趣风雅”，一个寻找传统韵味与现代生活完美融合的理想之地。在这里，传统与现代交融，艺术与实用并重。从细致入微的手绘扇面，对弈黑白的棋盘，到精致典雅的绸伞…物品不仅承载了古朴历史的记忆，更点缀着当下生活的典雅。"
+const detailDescription5 = "金彩流光汇集了各种精美的金属工艺品，从华丽的花丝镶嵌到优雅的金漆工艺，再到细腻的金银细工与璀璨的苗族银饰。每一件作品都是匠人们卓越技艺的结晶，将传统金属工艺之美展现得淋漓尽致，让人感受到金属艺术的无限魅力。"
 
 // const nowSubCategoryId=ref('05000')
 
@@ -282,25 +288,28 @@ const handleProductClick = (productId) => {
 
 
 const getCategoryDetail = async (name) => {
-  try {
-  const response = await axiosInstance.get('/Classification/GetCategoryByName', {
-      params: {
-        categoryName: name
-      }
-    });
-  
-  text.value = response.data.categoryDescription;
-  picUrl.value = response.data.categoryPhoto.imageUrl;
-
-  // console.log(`CategoryDetail is ${JSON.stringify(response, null, 2)}`)
-  } catch (error) {
-    if (error.response) {
-      message.value = error.response.data;
-    } else {
-      message.value = '获取分类描述失败';
-    }
+  picUrl.value = categoryUrl + name + '.jpg';
+  if(name=='金彩流光'){
+    text.value = detailDescription5;
+    return;
   }
-  console.log(message.value);
+  if(name=='逸趣风雅'){
+    text.value = detailDescription4;
+    return;
+  }
+  if(name=='织艺锦缎'){
+    text.value = detailDescription3;
+    return;
+  }
+  if(name=='墨香文房'){
+    text.value = detailDescription2;
+    return;
+  }
+  if(name=='匠心器皿'){
+    text.value = detailDescription1;
+    return;
+  }
+  
 };
 
 
