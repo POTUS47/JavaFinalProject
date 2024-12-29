@@ -32,7 +32,7 @@
                 <template v-if="item.itemStatus === '无售后'">
                   <span>无</span>
                 </template>
-                <template v-else-if="item.itemStatus === '售后中' && item.result===true">
+                <template v-else-if="item.itemStatus === '售后中' && item.result===true && item.returnResult!=null">
                   <el-button
                       size="small"
                       type="warning"
@@ -40,6 +40,8 @@
                   >
                     同意退货
                   </el-button>
+                </template>
+                <template v-else-if="item.itemStatus === '售后中' && item.result===true && item.returnResult!=null">
                   <el-button
                       size="small"
                       type="warning"
@@ -48,15 +50,15 @@
                     拒绝退货
                   </el-button>
                 </template>
-<!--                <template v-else-if="item.itemStatus === '售后中' && item.result===false">-->
-<!--                  <el-button-->
-<!--                      size="small"-->
-<!--                      type="warning"-->
-<!--                      @click="showArbitrateDialog(item.itemId)"-->
-<!--                  >-->
-<!--                    申请仲裁-->
-<!--                  </el-button>-->
-<!--                </template>-->
+                <template v-else-if="item.itemStatus === '售后中' && item.result===false">
+                  <el-button
+                      size="small"
+                      type="warning"
+                      @click="showArbitrateDialog(item.itemId)"
+                  >
+                    申请仲裁
+                  </el-button>
+                </template>
                 <template v-else-if="item.itemStatus === '售后结束'">
                   <span class="finished-status">已售后结束</span>
                 </template>
@@ -67,7 +69,7 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button-group>
-<!--              <el-button size="mini" type="primary" @click="handleCheck(scope.row)">买家评价</el-button>-->
+              <!--              <el-button size="mini" type="primary" @click="handleCheck(scope.row)">买家评价</el-button>-->
               <el-button
                   v-if="scope.row.orderStatus === '处理中'"
                   size="mini"
@@ -83,13 +85,13 @@
     </div>
 
     <!-- 买家评价 -->
-<!--    <div v-if="dialogVisible" class="SettingPopUp">-->
-<!--      <div v-if="currentProduct" class="SettingContent">-->
-<!--        <span class="close" @click="dialogVisible = false">&times;</span>-->
-<!--        <p>买家评分: {{ currentProduct.score }}</p>-->
-<!--        <p>评价内容: {{ currentProduct.remark }}</p>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div v-if="dialogVisible" class="SettingPopUp">-->
+    <!--      <div v-if="currentProduct" class="SettingContent">-->
+    <!--        <span class="close" @click="dialogVisible = false">&times;</span>-->
+    <!--        <p>买家评分: {{ currentProduct.score }}</p>-->
+    <!--        <p>评价内容: {{ currentProduct.remark }}</p>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
 
     <!-- 快递单号 -->
@@ -235,6 +237,7 @@ export default {
                     productPrice: item.productPrice,
                     itemStatus:item.itemStatus,
                     result:true,
+                    returnResult:null
                   })) || [],
                 };
               })
@@ -405,8 +408,8 @@ export default {
 
         // 发送请求到后端更新快递单号
         const response = await axiosInstance.put('/shopping/order/update-delivery-number', {
-            orderId: orderId,
-            deliveryNumber: deliveryNumber
+          orderId: orderId,
+          deliveryNumber: deliveryNumber
         });
 
         if (response.status === 200) {
@@ -434,43 +437,42 @@ export default {
 
     //同意退货请求
     const handleReturnRequest = async (item,result) => {
-        try {
-          console.log(result);
-          const requestBody = {
-            reason: '好的',
-            result: result
-          };
-          item.result = result
-          // 发送请求到后端确认退货
-          const response = await axiosInstance.post( `/afterSell/returns/${item.itemId}/approveReturn`,
-              requestBody,
-              {
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              });
-
-          if (response.status === 200) {
-
-            row.returnStatus = '已完成';
-            ElMessage({
-              message: '退货请求已处理。',
-              type: 'success'
+      try {
+        console.log(result);
+        const requestBody = {
+          reason: '好的',
+          isApproved: result
+        };
+        item.result = result
+        item.returnRequested = true
+        // 发送请求到后端确认退货
+        const response = await axiosInstance.post( `/afterSell/returns/${item.itemId}/approveReturn`,
+            requestBody,
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
             });
-            fetchOrders();
-          } else {
-            ElMessage({
-              message: '退货请求确认失败',
-              type: 'error'
-            });
-          }
-        } catch (error) {
-          console.error('确认退货时发生错误:', error.response ? error.response.data : error.message);
+
+        if (response.data.code === 200) {
           ElMessage({
-            message: '退货请求确认失败: ' + error.message,
+            message: '退货请求已处理。',
+            type: 'success'
+          });
+          fetchOrders();
+        } else {
+          ElMessage({
+            message: '退货请求确认失败',
             type: 'error'
           });
         }
+      } catch (error) {
+        console.error('确认退货时发生错误:', error.response.data.msg ? error.response.data.msg : error.message);
+        ElMessage({
+          message: '退货请求确认失败: ' + error.message,
+          type: 'error'
+        });
+      }
     };
     const showArbitrateDialog = (itemId) => {
       arbitrateForm.value.itemId = itemId
