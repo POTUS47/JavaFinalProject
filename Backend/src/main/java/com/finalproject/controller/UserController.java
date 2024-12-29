@@ -60,6 +60,9 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Result<Map<String, String>>> register(@RequestBody AccountDTOs.UserRegisterDTO dto) {
         Result<Map<String, String>> response = userService.registerUser(dto);
+        if(response.getCode()!=200){
+            return ResponseEntity.status(response.getCode()).body(response);
+        }
         walletService.createWallet(response.getData().get("ID"));
         return ResponseEntity.status(response.getCode()).body(response);
     }
@@ -116,6 +119,24 @@ public class UserController {
     updateDescription(@RequestParam String newDescription,Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
         Result<Map<String, String>> result = userService.updateDescription(userId, newDescription);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    // 修改卖家地址
+    @PutMapping("/store/updateAddress")
+    public ResponseEntity<Result<Map<String, String>>>
+    updateStoreAdress(@RequestParam String newAdress,Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<Map<String, String>> result = userService.updateStoreAdress(userId, newAdress);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    // 修改卖家店铺名
+    @PutMapping("/store/updateStoreName")
+    public ResponseEntity<Result<Map<String, String>>>
+    updateStoreName(@RequestParam String newName,Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<Map<String, String>> result = userService.updateStoreName(userId, newName);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
