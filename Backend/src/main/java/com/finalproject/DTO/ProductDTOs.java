@@ -75,6 +75,7 @@ public class ProductDTOs {
         private String Description;
         private String StoreTag ;
         private Integer Quantity ;
+        private String imageurl;
 
         public String getProductName() {
             return ProductName;
@@ -125,6 +126,14 @@ public class ProductDTOs {
         }
         public void setProductId(String ProductId) {
             this.ProductId = ProductId;
+        }
+
+        public String getImageurl() {
+            return imageurl;
+        }
+
+        public void setImageurl(String imageurl) {
+            this.imageurl = imageurl;
         }
     }
     public static class DesPic{
