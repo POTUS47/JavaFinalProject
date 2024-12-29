@@ -407,7 +407,7 @@ public class OrderService {
             // 获取商品图片信息
             List<ProductImage> productImages = getProductImagesById(product.getProductId());
             if (!productImages.isEmpty()) {
-                orderItemDTO.setProductImage("http://47.97.59.189:8080/images/" + productImages.get(0).getImageId());
+                orderItemDTO.setProductImage(baseUrl+"/images/" + productImages.getFirst().getImageId());
             }
 
             orderItemDTOList.add(orderItemDTO);
