@@ -13,12 +13,6 @@
       <button @click="changeView(4)" id="Button4" class="Ty">
         <span class="Buttondes">已完成订单</span>
       </button>
-      <button @click="changeView(5)"id="Button5" class="Ty">
-        <span class="Buttondes">售后中订单</span>
-      </button>
-      <button @click="changeView(6)" id="Button6" class="Ty">
-        <span class="Buttondes">售后结束订单</span>
-      </button>
     </div>
   </template>
   
