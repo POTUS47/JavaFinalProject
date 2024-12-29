@@ -223,45 +223,45 @@ const clearData=()=>{
   realVerificationCode.value='';
 }
 ///////////////////////通信最终版
- const login = async () => {
-    if(!loginEmail.value||!password.value){
-      ElMessage.error('请保证不为空');
-    } 
-    else if(!validateEmail(loginEmail.value)){
-      ElMessage.error('邮箱格式不正确');
-    }
-    else{
-      try {
-        console.log(loginEmail.value);
-        console.log(password.value);
-        const response = await axiosInstance.post('/users/login', {
-          "identifier": loginEmail.value,
-          "password": password.value,
-        });
-        ElMessage.success("登录成功");
-        console.log(`response.data.userId${response.data.data.id}`);
-        console.log(`response.data.JwtToken${response.data.data.JwtToken}`);
-        console.log(`response.data.type${response.data.data.type}`);
-        const id=response.data.data.id;
-        const jwt=response.data.data.JwtToken;
-        const role=response.data.data.type;
+const login = async () => {
+  if (!loginEmail.value || !password.value) {
+    ElMessage.error('请保证不为空');
+  }
+  else if (!validateEmail(loginEmail.value)) {
+    ElMessage.error('邮箱格式不正确');
+  }
+  else {
+    try {
+      console.log(loginEmail.value);
+      console.log(password.value);
+      const response = await axiosInstance.post('/users/login', {
+        "identifier": loginEmail.value,
+        "password": password.value,
+      });
+      ElMessage.success("登录成功");
+      console.log(`response.data.userId${response.data.data.id}`);
+      console.log(`response.data.JwtToken${response.data.data.JwtToken}`);
+      console.log(`response.data.type${response.data.data.type}`);
+      const id = response.data.data.id;
+      const jwt = response.data.data.JwtToken;
+      const role = response.data.data.type;
 
-        //本地存储用户id
-        localStorage.setItem('token',jwt);
-        localStorage.setItem('userId',id);
-        localStorage.setItem('role',role);
+      //本地存储用户id
+      localStorage.setItem('token', jwt);
+      localStorage.setItem('userId', id);
+      localStorage.setItem('role', role);
 
-        if(role=='买家'){
-          router.push('/home');
-        }else if(role=='商家'){
-          router.push('/merchantpage');
-        }else{
-          router.push('/merchant-certification');
-        }  
-      } catch (error) {
-        ElMessage.error(error.response.data.msg);
+      if (role == '买家') {
+        router.push('/home');
+      } else if (role == '商家') {
+        router.push('/merchantpage');
+      } else {
+        router.push('/merchant-certification');
       }
- };
+    } catch (error) {
+      ElMessage.error(error.response.data.msg);
+    }
+  };
 }
 // //////////////////////////访问受保护数据测试
 // const show_protected = async () => {

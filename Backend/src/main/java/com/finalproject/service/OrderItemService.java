@@ -2,11 +2,11 @@ package com.finalproject.service;
 import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
+import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import com.finalproject.service.OrderService;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -106,13 +106,23 @@ public class OrderItemService {
     // 判断是否存在当前商品的订单项
     @Transactional
     public Result<Boolean> isExistProductOrder(String productId){
-        Optional<Product>product=productRepository.findById(productId);
+        Optional<Product>product=orderService.getProductById(productId);
         if (product.isEmpty()) {
             return Result.error(404,"商品不存在");
         }
         List<OrderItem> orderItems=orderItemRepository.findByProductId(product.get().getProductId());
         // 订单项不空
         return Result.success(!orderItems.isEmpty());
+    }
+
+    // 判断是否存在某订单
+    @Transactional
+    public Result<Boolean> isExistOrder(String orderId){
+        Optional<Order>order=orderRepository.findById(orderId);
+        if (order.isEmpty()) {
+            return Result.error(404,"订单不存在");
+        }
+        return Result.success(true);
     }
 
     @Transactional

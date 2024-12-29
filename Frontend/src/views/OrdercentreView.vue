@@ -1,285 +1,254 @@
 <!-- 卖家用户的订单中心页面 -->
-<script setup lang="ts">
-import { ref ,computed} from 'vue';
-import { ElMenu,ElButton, ElInput,ElRate,ElMessage} from 'element-plus';
+<script setup>
+import { ref, computed } from 'vue';
+import { ElMenu, ElButton, ElInput, ElRate, ElMessage } from 'element-plus';
 import 'element-plus/dist/index.css';
 import Navbar from '../components/Navbar.vue';
 import axiosInstance from '../router/axios';
 import router from '@/router';
 import Loading from '../views/templates/LoadingView.vue';
 
-const userId =localStorage.getItem('userId');
-console.log('id',userId);
-const option=ref(1);
-const isNoData=ref(false);
-const currentRow_cancel=ref(null);
+const userId = localStorage.getItem('userId');
+console.log('id', userId);
+const option = ref(1);
+const isNoData = ref(false);
+const currentRow_cancel = ref(null);
 const isLoading = ref(true);
-const currentRow_return=ref(null);
-const currentRow_star=ref(null);
-const returnO=ref('');
-interface Order {
-  id: string;
-  product: string;
-  productId: string;
-  time: string;
-  store: string;
-  status: string;
-  price:number;
-  totalPay: number;
-  actualPay: number;
-  pic: string;
-  picId:string;
-  dialogVisible: boolean;
-  dialogVisible_order: boolean;
-  isStar:boolean,
-  star: number | null;
-  starVisible: boolean;
-}
+const currentRow_return = ref(null);
+const currentRow_star = ref(null);
+const returnO = ref('');
+const myOrders = ref([]);
 
 const filteredOrders = computed(() => {
-      if (option.value==1) {
-        return myOrders.value;
-      }
-      const statusMapping: { [key: number]: string } = {
-        2: '待付款',
-        3: '已付款', 
-        4: '运输中',
-        5: '已签收',
-        6: '待退货',
-        7: '已退货',
-      };
-      return myOrders.value.filter(order => order.status === statusMapping[option.value]);
-    });
-const myOrders = ref<Order[]>([]);
-  const getMyOrder = async () => {
+  if (option.value == 1) {
+    return myOrders.value;
+  }
+  const statusMapping = {
+    2: '待付款',
+    3: '处理中',
+    4: '运输中',
+    5: '已签收',
+    6: '待退货',
+    7: '已退货',
+  };
+  return myOrders.value.filter(order => order.status === statusMapping[option.value]);
+});
+
+const getMyOrder = async () => {
   axiosInstance.get('/Payment/GetAllOrders', {
-        params: {
-       buyerId: userId
-     }
-      })
-    .then(response => {
-        const data = response.data;
-        console.log('Raw response data: ', response.data);
-        if (data && Array.isArray(data)) {
-          myOrders.value = data.map((order: any) => ({
-            id: order.orderId || '',
-            product: order.productName || '',
-            productId:order.productId,
-            time: order.createTime || '',
-            store: order.storeName || '',
-            status: order.orderStatus || '',
-            price:order.price||0,
-            totalPay: order.totalPay || 0,
-            actualPay: order.actualPay || 0,
-            pic: order.picture?.imageUrl || '', // 使用可选链操作符来安全地访问 imageUrl
-            picId:order.picture?.imageId || '',
-            star: null,
-            dialogVisible: false,
-            dialogVisible_order:false,
-            starVisible: false,
-            isStar:false,
+    params: {
+      buyerId: userId
+    }
+  })
+  .then(response => {
+    const data = response.data.data;  // 取数据部分
+    console.log('Raw response data: ', data);
 
-            }));
-            console.log("成功获得订单");
-            console.log(myOrders.value);
-            myOrders.value.forEach(order => {
-            isStarred(order);
-            isLoading.value=false;
-          });
-
-        } else {
-            console.error('Invalid data format.');
-        }
-    }).catch(error => {
-        console.error(error);
-        if (error.response && error.response.status === 404) {
-          isNoData.value=true;
-          isLoading.value=false;
-        }
-    });
+    if (data && Array.isArray(data)) {
+      myOrders.value = data.map(order => ({
+        id: order.orderId || '',
+        storeName: order.storeName || '',
+        address: order.address || '',
+        createTime: order.createTime || '',
+        totalPay: order.totalPay || 0,
+        orderStatus: order.orderStatus || '',
+        orderItems: order.orderItems.map(item => ({
+          productId: item.productId || '',
+          productName: item.productName || '',
+          productPrice: item.productPrice || 0,
+          productImage: item.productImage || null
+        })),
+        paid: order.paid || false
+      }));
+      console.log("Successfully fetched orders", myOrders.value);
+      isLoading.value = false;
+    } else {
+      console.error('Invalid data format.');
+    }
+  }).catch(error => {
+    console.error(error);
+    if (error.response && error.response.status === 404) {
+      isNoData.value = true;
+      isLoading.value = false;
+    }
+  });
 };
+
 getMyOrder();
-const isStarred = async (order: Order) => {
+
+const isStarred = async (order) => {
   axiosInstance.get('/Shopping/CheckOrderRemark', {
-        params: {
-        orderId: order.id
-     }
-      })
-    .then(response => {
-      const isStarred = response.data; // 直接获取布尔结果
-      order.isStar = isStarred;
-    }).catch(error => {
-        console.error(error);
-    });
+    params: {
+      orderId: order.id
+    }
+  })
+  .then(response => {
+    const isStarred = response.data;  // 获取布尔结果
+    order.isStar = isStarred;
+  }).catch(error => {
+    console.error(error);
+  });
 };
-const returnProduct=ref('');
-const returnProduct_else=ref('');
-const comment=ref('');
-// const admit = (order) => {
-//   order.dialogVisible = false;
-//   resetForm(order);
-// }
+
+const returnProduct = ref('');
+const returnProduct_else = ref('');
+const comment = ref('');
+
 const admit = async (order) => {
-  if(returnProduct.value=='其他'){
-    returnProduct.value=returnProduct_else.value;
+  if (returnProduct.value === '其他') {
+    returnProduct.value = returnProduct_else.value;
   }
-    axiosInstance.post('/Payment/AddReturn', {
-      orderId: order.id,
-      returnReason: returnProduct.value
-    }, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-   })
+  axiosInstance.post('/Payment/AddReturn', {
+    orderId: order.id,
+    returnReason: returnProduct.value
+  }, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
   .then(response => {
     resetForm(order);
-    console.log('submitting return:成功');
+    console.log('Return request submitted successfully');
     ElMessage({
-        message: '申请退货成功',
-        type: 'success',
-        });
-        getMyOrder();
-    }).catch(error => {
-      console.error('Error submitting return:', error);
+      message: '申请退货成功',
+      type: 'success',
     });
+    getMyOrder();
+  }).catch(error => {
+    console.error('Error submitting return:', error);
+  });
 };
+
 const admitOrder = async (order) => {
-  if(returnProduct.value=='其他'){
-    returnProduct.value=returnProduct_else.value;
+  if (returnProduct.value === '其他') {
+    returnProduct.value = returnProduct_else.value;
   }
-    axiosInstance.delete('/Payment/DeleteOrders', {
-      params: {
-        orderId: order.id
-      }
-   })
+  axiosInstance.delete('/Payment/DeleteOrders', {
+    params: {
+      orderId: order.id
+    }
+  })
   .then(response => {
     resetForm(order);
-    console.log('取消订单:成功');
+    console.log('Order cancelled successfully');
     ElMessage({
-        message: '成功取消订单',
-        type: 'success',
-        });
-        getMyOrder();
-    }).catch(error => {
-      console.error('Error submitting return:', error);
+      message: '成功取消订单',
+      type: 'success',
     });
+    getMyOrder();
+  }).catch(error => {
+    console.error('Error submitting return:', error);
+  });
 };
-// function confirmStar(order)
-// {
-//   row.starVisible = false;
-//   row.orderStatus = '交易成功';
-// }
+
 const confirmStar = async (order) => {
-    axiosInstance.put('/Shopping/OrderRemark', {
-      orderId: order.id,
-      remark: comment.value,
-      score: order.star,
-    }, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-})
+  axiosInstance.put('/Shopping/OrderRemark', {
+    orderId: order.id,
+    remark: comment.value,
+    score: order.star,
+  }, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
   .then(response => {
     console.log('Rating submitted:', response.data);
-    order.starVisible=false;
-    comment.value='';
+    order.starVisible = false;
+    comment.value = '';
     ElMessage({
-        message: '评价成功',
-        type: 'success',
-        });
-        getMyOrder();
-    }).catch(error => {
-      console.error('Error submitting rating:', error);
+      message: '评价成功',
+      type: 'success',
     });
+    getMyOrder();
+  }).catch(error => {
+    console.error('Error submitting rating:', error);
+  });
 };
-function startRating(order) {
+
+const startRating = (order) => {
   order.starVisible = true;
-  currentRow_star.value=order;
+  currentRow_star.value = order;
 };
-function returnOrder(order) {
+
+const returnOrder = (order) => {
   order.dialogVisible = true;
-  currentRow_return.value=order;
+  currentRow_return.value = order;
 };
-function cancelOrder(order) {
+
+const cancelOrder = (order) => {
   order.dialogVisible_order = true;
-  currentRow_cancel.value=order;
+  currentRow_cancel.value = order;
 };
+
 const resetForm = (order) => {
   order.dialogVisible = false;
-  order.dialogVisible_order=false;
+  order.dialogVisible_order = false;
   returnProduct.value = '';
-  returnProduct_else.value=''
-}
-function resetStar(order)
-{
-  order.star=null;
-  order.starVisible=false;
-}
-function confirmArrive(order)
-{
-  console.log(order.id)
-  axiosInstance.put('/Payment/MarkOrderReceived',null, {
-      params: {
-        orderId: order.id
-      }
-   })
+  returnProduct_else.value = '';
+};
+
+const resetStar = (order) => {
+  order.star = null;
+  order.starVisible = false;
+};
+
+const confirmArrive = (order) => {
+  axiosInstance.put('/Payment/MarkOrderReceived', null, {
+    params: {
+      orderId: order.id
+    }
+  })
   .then(response => {
-    console.log('签收成功');
+    console.log('Order received');
     ElMessage({
-        message: '成功签收',
-        type: 'success',
-        });
-        getMyOrder();
-    }).catch(error => {
-      console.error('Error confirm:', error);
+      message: '成功签收',
+      type: 'success',
     });
-}
-// function deleteRow(order) {
-//   this.orders = this.orders.filter(order => order !== row);
-//   this.filteredOrders = this.filteredOrders.filter(order => order !== row);
-// }
+    getMyOrder();
+  }).catch(error => {
+    console.error('Error confirming receipt:', error);
+  });
+};
+
 const product = ref({
   name: '',
-  pictures: [ // 将 picture 改为 pictures 数组
-    {
-      imageId: '',
-      imageUrl: ''
-    }
-  ],
-  price: 0, // 原价格
+  pictures: [{
+    imageId: '',
+    imageUrl: ''
+  }],
+  price: 0,
   storeName: '',
-  discountPrice: 0, // 折后价格
-  finalPrice: 0, // 最终支付的价格，考虑到会有积分使用
+  discountPrice: 0,
+  finalPrice: 0,
 });
-function gotoDetail(order:Order){
-  product.value.name=order.product;
-  product.value.pictures[0].imageId=order.picId;
-  product.value.pictures[0].imageUrl=order.pic;
-  product.value.price=order.price;
-  product.value.storeName=order.store;
-  
-  product.value.finalPrice=order.actualPay;
+
+const gotoDetail = (order) => {
+  product.value.name = order.product;
+  product.value.pictures[0].imageId = order.picId;
+  product.value.pictures[0].imageUrl = order.pic;
+  product.value.price = order.price;
+  product.value.storeName = order.store;
+  product.value.finalPrice = order.actualPay;
 
   var totalPay = order.totalPay;
   var price = order.price;
 
-// 计算折扣力度
   var discountRate = (totalPay / price).toFixed(2);
   product.value.discountPrice = parseFloat(discountRate);
-   
-  console.log("折扣力度",product.value.discountPrice);
-  const productStr = JSON.stringify(product.value);//序列化对象
-  console.log("序列化",productStr);
-  localStorage.setItem('productIdOfDetail',order.productId);
-  localStorage.setItem('routerPath','/ordercentre');
-  if(order.status=='待付款'){
-    router.push({path:'/pay',query:{product: productStr,isPaid:'false'}});
+
+  console.log("Discount rate", product.value.discountPrice);
+  const productStr = JSON.stringify(product.value);
+  console.log("Serialized product", productStr);
+  localStorage.setItem('productIdOfDetail', order.productId);
+  localStorage.setItem('routerPath', '/ordercentre');
+  if (order.status === '待付款') {
+    router.push({ path: '/pay', query: { product: productStr, isPaid: 'false' } });
+  } else {
+    router.push({ path: '/pay', query: { product: productStr, isPaid: 'true' } });
   }
-  else{
-    router.push({path:'/pay',query:{product: productStr,isPaid:'true'}});
-  }
-}
-const  colors=['#99A9BF', '#F7BA2A', '#FF9900'] ;// 等同于 { 2: '#99A9BF', 4: { value: '#F7BA2A', excluded: true }, 5: '#FF9900' }
+};
+
+const colors = ['#99A9BF', '#F7BA2A', '#FF9900'];
 const activeIndex = ref('1');
 const menuItems = ref([
   { index: 1, title: '全部' },
@@ -290,6 +259,7 @@ const menuItems = ref([
   { index: 6, title: '待退货' },
   { index: 7, title: '已退货' },
 ]);
+
 const menuChange = (index) => {
   activeIndex.value = index.toString();
   option.value = parseInt(index);

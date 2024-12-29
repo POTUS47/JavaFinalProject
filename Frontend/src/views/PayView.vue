@@ -25,7 +25,7 @@
         <div class="text1">寄送至&#8201;&#8201;&#8201;&#8201;</div>
         <div class="customerAddress">{{ customer.address }}&#8201;&#8201;({{ customer.name }}&#8201;收)&#8201;&#8201;
         </div>
-        <el-button v-show='isPaid === false' @click="openDialog" class="changeAddress" style="
+        <el-button @click="openDialog" class="changeAddress" style="
               font-size: 20px;
               border-radius: 5px;
               border: 2px solid #a61b29;
@@ -37,7 +37,7 @@
               padding-left:20px;
               padding-right:20px;
               right:40px;
-              position: absolute">修改地址</el-button>
+              position: absolute">修改信息</el-button>
       </div>
       <el-dialog v-model="dialogVisible" width="35%" :style="{ borderRadius: '15px' }">
         <div class="dialog-content">
@@ -66,7 +66,7 @@
               width: 20%;
               height:40px;
               font-size:20px;">取 消</el-button>
-          <el-button @click="handleSave" style="border: 2px solid rgba(0,0,0,0.4);
+          <el-button @click="changeBuyerInfo" style="border: 2px solid rgba(0,0,0,0.4);
                background-color:rgba(0,0,0,0.4);
                color:white;
                width: 20%;
@@ -76,7 +76,7 @@
       </el-dialog>
 
     </div>
-    <div class="orderInfo">
+    <!-- <div class="orderInfo">
       <div class="storeArea">
         <img src="@/assets/mmy/store-active.svg" class="storeImage" @click="enterStore">
         <div class="text2" @click="enterStore">{{ product.storeName }}&#8201;&#8201;></div>
@@ -90,27 +90,38 @@
           <div class="text-p1">创建时间:&#8201;&#8201;{{ order.createTime }}</div>
         </div>
       </div>
+    </div> -->
+
+    <div v-for="order in orderInfo" :key="order.orderId" class="orderInfo">
+      <!-- 遍历该订单的商品 -->
+      <div class="productArea" v-for="item in order.orderItems" :key="item.productId">
+        <img :src="item.productImage ? item.productImage : ''" class="productImage" alt="图片加载失败">
+        <div class="orderDetail">
+          <div class="text-p">{{ item.productName }}</div>
+          <div class="text-p2">￥{{ item.productPrice }}</div>
+        </div>
+      </div>
+      <div class="text-p1">订单编号:&#8201;&#8201;{{ order.orderId }}</div>
+      <div class="text-p1">创建时间:&#8201;&#8201;{{ order.createTime }}</div>
     </div>
-    <div class="price" v-show="isPaid === false">
+
+    <div class="price" v-show="isNew === true">
       <div class="storeArea">
-        <img src="@/assets/mmy/price.svg" class="storeImage" @click="enterStore">
         <div class="text-price1">价格明细</div>
       </div>
-      <div class="text-price">商品原价：&#8201;&#8201;{{ (product.price) }}元</div>
-      <div class="text-price">折后价格：&#8201;&#8201;{{ parseFloat((product.price * product.discountPrice).toFixed(2)) }}元
-      </div>
-      <div v-show="creditPrice !== 0">
+      <div class="text-price">商品原价：&#8201;&#8201;{{ (totalOriginalPrice) }}元</div>
+      <!-- 写不完了，去他妈的逻辑 -->
+      <div>
         <div class="useCredit">
           <div class="text-price-active">是否使用积分</div>
-          <el-radio-group v-model="isUseCredits" style="margin-left: 10px;margin-bottom:0px" @change="priceCalculate">
+          <el-radio-group v-model="isUseCredits" style="margin-left: 10px;margin-bottom:0px">
             <el-radio label="yes">是</el-radio>
             <el-radio label="no">否</el-radio>
           </el-radio-group>
         </div>
-        <div class="text-price-active-small">当前积分{{ customer.credits }},可抵扣{{ creditPrice }}元</div>
+        <div class="text-price-active-small">当前积分{{ 10024 }},可抵扣{{ 10 }}元</div>
       </div>
-      <div class="text-price" v-show="creditPrice === 0">积分抵扣：当前积分{{ customer.credits }},可抵扣{{ creditPrice }}元</div>
-      <div class="text-price-active">价格合计：{{ product.finalPrice }}元</div>
+      <div class="text-price-active">价格合计：{{ finalPrice }}元</div>
       <div class="pay">
         <el-button @click="checkPay" class="payMoney" style="
               font-size: 20px;
@@ -122,12 +133,11 @@
               height:43px;
               right:60px;
               bottom:20px;
-              position: absolute">支付￥{{ product.finalPrice }}</el-button>
+              position: absolute">支付￥{{ finalPrice }}</el-button>
         <el-dialog v-model="payVisible" width="20%" :style="{ borderRadius: '15px' }">
           <div v-show="isPaySuccess === true">
             <p class="text_pay_isSuccess">支付成功</p>
             <p class="text_pay">获得积分：&#8201;&#8201;{{ bonusCredits }}</p>
-            <p class="text_pay">积分余额：&#8201;&#8201;{{ finalCredits }}</p>
           </div>
           <div v-show="isPaySuccess === false">
             <p class="text_pay_isSuccess">支付失败</p>
@@ -136,18 +146,6 @@
 
         </el-dialog>
       </div>
-    </div>
-    <div class="price" v-show="isPaid === true">
-      <div class="storeArea">
-        <img src="@/assets/mmy/price.svg" class="storeImage" @click="enterStore">
-        <div class="text-price1">价格明细</div>
-      </div>
-      <div class="text-price">商品原价：&#8201;&#8201;{{ (product.price) }}元</div>
-      <div class="text-price">折后价格：&#8201;&#8201;{{ parseFloat((product.price * product.discountPrice).toFixed(2)) }}元
-      </div>
-      <div class="text-price-active">积分抵扣：&#8201;&#8201;{{
-        parseFloat((product.price * product.discountPrice).toFixed(2)) - product.finalPrice }}元</div>
-      <div class="text-price-active">价格合计：{{ product.finalPrice }}元</div>
     </div>
     <el-dialog v-model="payChoiceVisible" width="20%" :style="{ borderRadius: '15px' }">
       <h2>请选择支付方式</h2>
@@ -189,19 +187,10 @@ import { useRoute } from 'vue-router';
 const isLoading = ref(true);
 const isAlipayLoading = ref(false);
 const route = useRoute();
-// const productId='555555';
-const productid = localStorage.getItem('productIdOfDetail');
-const userid = localStorage.getItem('userId');
-const userId = userid ? userid : '000000';
-const productId = productid ? productid : '555555';
-const product = ref({});
-// const product = computed(() => {
-// const productStr = route.query.product ;
-// return productStr ? JSON.parse(productStr) : null;
-// });
-//根据是否已经付款订单会显示不同状态
-const isPaid = route.query.isPaid === 'true';
-// const isPaid =false;
+
+// 是否是新建订单
+const isNew = route.query.isNew === 'true';
+
 const order = ref({ id: '', createTime: '' });
 //收货人相关信息
 const customer = ref({
@@ -223,7 +212,6 @@ const selectedOptions = ref(['110000', '110100', '110101']);
 
 //支付后获得积分以及剩余积分
 const bonusCredits = ref(0);
-const finalCredits = ref(0);
 //支付方式
 const payWay = ref('wallet');
 //是否支付成功
@@ -241,26 +229,64 @@ watch(payVisible, (newValue, oldValue) => {
     router.push(path);
   }
 });
+
+const productIds = ref([]);
+const orderIds = ref([]);
+const orderInfo = ref([]);
 onMounted(async () => {
-  const productStr = route.query.product;
-  if (productStr) {
-    product.value = JSON.parse(productStr);
-    console.log(`product.value is ${JSON.stringify(product.value, null, 2)}`)
-    if (isPaid === false) {
-      product.value.finalPrice = parseFloat((product.value.price * product.value.discountPrice).toFixed(2));
-    }
-  } else {
-    product.value = {}; // 确保对象是初始化的
+  const productIdStr = route.query.product;
+  if (productIdStr) {
+    productIds.value = JSON.parse(productIdStr);
+    console.log(`productIds.value is ${JSON.stringify(productIds.value, null, 2)}`)
   }
-  const formData = new FormData();
-  formData.append('BuyerId', userId);
-  formData.append('ProductId', productId);
+  const orderIdStr = route.query.orderIds;
+  if (orderIdStr) {
+    orderIds = JSON.parse(orderIdStr);
+    console.log(`orderIds is ${JSON.stringify(orderIds, null, 2)}`)
+  }
+  if (isNew == true) {
+    addOrders();
+  } else {
+    getOrders();
+  }
+}
+)
+
+const totalOriginalPrice = computed(() => {
+  return orderInfo.value.reduce((total, order) => {
+    return total + order.orderItems.reduce((subTotal, item) => subTotal + item.productPrice, 0);
+  }, 0);
+});
+
+const finalPrice = computed(() => {
+  if (isUseCredits.value === 'yes') {
+    return totalOriginalPrice.value - 10; // 计算最终价格并保留两位小数
+  } else {
+    return totalOriginalPrice.value; // 如果不使用积分，最终价格就是折扣价格
+  }
+});
+const openDialog = () => {
+  dialogVisible.value = true;
+}
+const addOrders = async () => {
   try {
-    const response = await axiosInstance.post('Payment/AddOrders', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    const response = await axiosInstance.post(`/shopping/order/add-orders`, {
+      // "productIds": productIds.value
+      "productIds": [
+        "p587121065594885",
+        "p587123104530437",
+        "p587124488126469",
+        "p587173063831557",
+        "p587176093687813",
+        "p587180477075461"
+      ]
     });
-    order.value.id = response.data.orderId;
-    order.value.createTime = response.data.createTime;
+    isLoading.value = false;
+    orderInfo.value = response.data.data;
+    ElMessage.info(response.data.msg);
+    console.log(`orderInfo is ${JSON.stringify(orderInfo.value, null, 2)}`);
+
+    // 收货人信息
     customer.value.name = response.data.username;
     console.log(`customer.value.name is ${customer.value.name}`)
     if (customer.value.name == null) {
@@ -270,17 +296,40 @@ onMounted(async () => {
     if (customer.value.address == null) {
       customer.value.address = '未知地';
     }
-    isLoading.value = false;
-    customer.value.credits = response.data.credits;
-    creditPrice.value = parseInt(Math.floor(customer.value.credits / 100).toFixed(0));
+
   } catch (error) {
-    console.log('订单生成失败');
+    ElMessage.error(error.response.data.msg);
   }
-})
-const openDialog = () => {
-  dialogVisible.value = true;
+
 }
-const handleSave = () => {
+const getOrders = async () => {
+  try {
+    const response = await axiosInstance.get(`/shopping/order/getOrders`, {
+      params: {
+        "orderIds": orderIds
+      }
+    });
+    isLoading.value = false;
+    orderInfo.value = response.data.data;
+    ElMessage.info(response.data.msg);
+    console.log(`orderInfo is ${JSON.stringify(orderInfo.value, null, 2)}`);
+
+    // 收货人信息
+    customer.value.name = response.data.username;
+    console.log(`customer.value.name is ${customer.value.name}`)
+    if (customer.value.name == null) {
+      customer.value.name = '未知收货人';
+    }
+    customer.value.address = response.data.address;
+    if (customer.value.address == null) {
+      customer.value.address = '未知地';
+    }
+
+  } catch (error) {
+    ElMessage.error(error.response.data.msg);
+  }
+};
+const changeBuyerInfo = async () => {
   if (!address1.value || !address2.value) {
     ElMessage.error('请保证地址不为空');
   } else {
@@ -288,6 +337,21 @@ const handleSave = () => {
     customer.value.address = address1.value + address2.value;
     console.log(`customer.value.address is ${customer.value.address}`);
   }
+
+  for (let i = 0; i < orderInfo.value.length; i++) {
+    try {
+      const response = await axiosInstance.post(`/shopping/order/change-buyer-info`, {
+        "orderId": orderInfo.value[i].orderId,
+        "name": customer.value.name,
+        "address": customer.value.address
+      });
+      ElMessage.success(response.data.msg);
+    } catch (error) {
+      ElMessage.error(error.response.data.msg);
+    }
+  }
+
+
 };
 // 将地址编号转换为汉字
 const addressChange = () => {
@@ -295,142 +359,30 @@ const addressChange = () => {
   address1.value = codeToText[arr[0]] + codeToText[arr[1]] + codeToText[arr[2]];
   console.log(address1);
 }
-//根据积分计算最终价格
-const priceCalculate = () => {
-  // 确保 discountPrice 和 creditPrice 是数字进行计算
-  const afterDiscount = parseFloat((product.value.price * product.value.discountPrice).toFixed(2));
-  const credits = creditPrice.value;
-  console.log(`isUseCredits.value is ${isUseCredits.value}`);
-  if (isUseCredits.value === 'yes') {
-    product.value.finalPrice = afterDiscount - credits; // 计算最终价格并保留两位小数
-  } else {
-    product.value.finalPrice = afterDiscount; // 如果不使用积分，最终价格就是折扣价格
-  }
-  if (product.value.finalPrice < 0) {
-    product.value.finalPrice = 0;
-  }
-  console.log(`product.value.finalPrice is ${product.value.finalPrice}`);
 
-}
-const enterStore = () => {
-  localStorage.setItem('storeIdOfDetail', product.value.storeId);
-  router.push('/shopdetail');
-}
 const checkPay = () => {
   if (customer.value.name === "未知收货人" || customer.value.address === "未知地") {
     ElMessage.error("请补充收货信息");
   } else {
     payChoiceVisible.value = true;
-    // openPay();
   }
 }
-const aliPay = async () => {
 
-  const formData1 = new FormData();
-  formData1.append('orderId', order.value.id);
-  formData1.append('order_address', customer.value.address);
-  formData1.append('username', customer.value.name);
-  formData1.append('actual_pay', product.value.finalPrice);//使用积分后的价格
-  formData1.append('total_pay', parseFloat((product.value.price * product.value.discountPrice).toFixed(2)));//打折后的价格
-  //打印测试
-  formData1.forEach((value, key) => {
-    console.log(key, value);
-  });
-  try {
-    const response = await axiosInstance.put('Payment/ConfirmOrders', formData1, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-  } catch (error) {
-    if (error.response) {
-      // 请求已发出，服务器返回了状态码
-      console.error('响应错误状态码:', error.response.status);
-      console.error('响应错误数据:', error.response.data);
-      console.error('响应错误头:', error.response.headers);
-    } else if (error.request) {
-      // 请求已发出，但没有响应
-      console.error('请求错误:', error.request);
-    } else {
-      // 其他错误
-      console.error('错误信息:', error.message);
-    }
-  }
-
-  const path = routerPath ? routerPath : '/home';
-  // if(path==='/ordercentre'){
-  //   returnUrl.value='http://47.97.5.21:17990/ordercentre';
-  // }else{
-  //   returnUrl.value='http://47.97.5.21:17990/merchandise/1';
-  // }
-  returnUrl.value = 'http://47.97.5.21:17990/ordercentre';
-  console.log(`orderID is ${order.value.id}`);
-  console.log(`actualPay is ${product.value.finalPrice}`);
-  console.log(`returnUrl is ${returnUrl.value.toString()}`);
-  const formData = new FormData();
-  formData.append('orderID', order.value.id);
-  formData.append('actualPay', product.value.finalPrice.toString());
-  formData.append('returnUrl', returnUrl.value);
-
-  try {
-    const response = await axiosInstance.post('/Alipay', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    console.log(response.data);
-    window.location.assign(response.data);
-  } catch (error) {
-    //检查是否重定向
-    if (error.response && error.response.status === 302) {
-      const location = error.response.headers.location;
-      //手动处理重定向
-      window.location.href = location;
-    } else {
-      console.error('error:', error.message);
-    }
-    // ElMessage.error(message.value);
-  }
-  message.value = '';
-}
-
-//确认订单信息并完成支付
+//钱包支付
 const openPay = async () => {
-  if (payWay.value === 'wallet') {
-    const formData = new FormData();
-    formData.append('orderId', order.value.id);
-    formData.append('order_address', customer.value.address);
-    formData.append('username', customer.value.name);
-    formData.append('actual_pay', product.value.finalPrice);//使用积分后的价格
-    formData.append('total_pay', parseFloat((product.value.price * product.value.discountPrice).toFixed(2)));//打折后的价格
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
+  payChoiceVisible.value = false;
+  payVisible.value = true;
+  for (let i = 0; i < orderInfo.value.length; i++) {
     try {
-      const response = await axiosInstance.put('Payment/ConfirmOrders', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const response = await axiosInstance.post(`/shopping/order/pay-order`, {
+        "orderId": orderInfo.value[i].orderId,
+        "usedCredits": isUseCredits.value === 'yes' ? 200 : 0,
       });
-      bonusCredits.value = response.data.bonusCredits;
-      finalCredits.value = response.data.credits;
+      bonusCredits.value += response.data.bonus;
       isPaySuccess.value = true;
     } catch (error) {
       isPaySuccess.value = false;
-      if (error.response) {
-        // 请求已发出，服务器返回了状态码
-        console.error('响应错误状态码:', error.response.status);
-        console.error('响应错误数据:', error.response.data);
-        console.error('响应错误头:', error.response.headers);
-      } else if (error.request) {
-        // 请求已发出，但没有响应
-        console.error('请求错误:', error.request);
-      } else {
-        // 其他错误
-        console.error('错误信息:', error.message);
-      }
     }
-    message.value = '';
-    payChoiceVisible.value = false;
-    payVisible.value = true;
-  } else {
-    isAlipayLoading.value = true;
-    console.log(`isLoading||(!isLoading&&isAlipayLoading) is ${isLoading.value || (!isLoading.value && isAlipayLoading.value)}`)
-    aliPay();
   }
 }
 
@@ -594,7 +546,7 @@ div {
 .orderInfo {
   display: flex;
   flex-direction: column;
-  height: 250px;
+  /* height: 250px; */
   padding-left: 20px;
 }
 

@@ -1,4 +1,5 @@
 package com.finalproject.controller;
+import com.finalproject.DTO.FavouriteDTOs;
 import com.finalproject.DTO.ProductDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.exception.BusinessTagException;
@@ -27,6 +28,15 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+
+
+    //通过id获取本店所有商品
+    @GetMapping("/GetProductsByStoreIdAndViewType")
+    public ResponseEntity<List<ProductDTO>> getProductsByStoreIdAndViewType(@RequestParam("ViewType") String viewType,Authentication auth) {
+        String userId = (String) auth.getPrincipal();
+        Result<List<ProductDTO>> response= productService.getAllProduct(userId,viewType);
+        return ResponseEntity.status(response.getCode()).body(response.getData());
+    }
 
     // 根据 productId 获取 Product 信息
     @GetMapping("/product/{productId}")
@@ -99,21 +109,21 @@ public class ProductController {
 
     }
 
-    //获取商品的图文描述 todo test
+    //获取商品的图文描述
     @GetMapping("/getProductDetails/{productId}")
     public ResponseEntity<Result<List<DesPic>>> getDesPic(@PathVariable("productId") String productId){
         Result<List<DesPic>> response = productService.getDesPic(productId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //用户在商家中根据关键词搜索商品todo test
+    //用户在商家中根据关键词搜索商品
     @GetMapping("/search")
     public ResponseEntity<Result<List<ShowProductDTO>>> search(@RequestParam String storeId, @RequestParam String keyword) {
         Result<List<ShowProductDTO>> response=productService.searchInStore(storeId, keyword);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //修改某个图文详情中的文字描述 todo test
+    //修改某个图文详情中的文字描述
     @PostMapping("/updateProductDescription")
     public ResponseEntity<Result<String>> updateProductDescription(@RequestBody UpdateDescriptionRequest request){
         Result<String> response = productService.updateDescription(request);
@@ -129,7 +139,7 @@ public class ProductController {
     }
 
     //获得某商品的所有图片
-    //没有图片会返回默认图片的id todo test
+    //没有图片会返回默认图片的url
     @GetMapping("/getProductImages/{productId}")
     public ResponseEntity<Result<List<String>>> getProductImages(@PathVariable("productId") String productId) {
         Result<List<String>> response=productService.getProductImages(productId);
@@ -150,6 +160,12 @@ public class ProductController {
         String userId = (String) auth.getPrincipal();
         Result<productDetailDTO> response=productService.getProductDetail(productId,userId);
         return ResponseEntity.status(response.getCode()).body(response);}
+
+    @GetMapping("/GetAllCategories")
+    public ResponseEntity<Result<List<CatSubDTO>>> getAllCategoriesWithSubcategories() {
+        Result<List<CatSubDTO>> response = productService.getAllCategoriesWithSubcategories();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 
 
 }

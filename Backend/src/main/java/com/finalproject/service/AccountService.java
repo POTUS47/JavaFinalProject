@@ -1,22 +1,17 @@
 package com.finalproject.service;
 import com.finalproject.DTO.AccountDTOs;
 import com.finalproject.DTO.Result;
-import com.finalproject.model.Administrator;
-import com.finalproject.model.Buyer;
-import com.finalproject.model.Store;
-import com.finalproject.repository.BuyerRepository;
-import com.finalproject.repository.StoreRepository;
-import com.finalproject.repository.WalletRepository;
+import com.finalproject.model.*;
+import com.finalproject.repository.*;
 import com.finalproject.util.JwtTokenUtil;
 import com.finalproject.util.SnowflakeIdGenerator;
 import jakarta.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import com.finalproject.model.Account;
-import com.finalproject.repository.AccountRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +25,8 @@ public class AccountService {
 
     @Resource
     private StoreRepository storeRepository;
+    @Value("${api.base-url}")
+    private String baseUrl;
 
     @Autowired
     private final JavaMailSender mailSender;
@@ -37,6 +34,8 @@ public class AccountService {
     private final Map<String, String> verificationCodes; // 用于存储验证码
     @Autowired
     private BuyerRepository buyerRepository;
+    @Autowired
+    private ImageRepository imageRepository;
 
     public AccountService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -320,5 +319,27 @@ public class AccountService {
         buyer.setTotalCredits(buyer.getTotalCredits() - amount);
         buyerRepository.save(buyer);
         return 200;
+    }
+
+    public Result<AccountDTOs.PandDDTO> getPandD(String userId) {
+        Optional<Account>temp= accountRepository.findByAccountId(userId);
+        if (temp.isEmpty()) {
+            return Result.error(404,"该用户不存在");
+        }
+        Account user = temp.get();
+        String avartarId=user.getPhotoId();
+        String des=user.getDescription();
+        AccountDTOs.PandDDTO re=new AccountDTOs.PandDDTO();
+        String url = baseUrl;
+        if(avartarId==null){
+            String defaultId="1";
+            url = url + "/images/" + defaultId;
+        }
+        else{
+            url = url + "/images/" + avartarId;
+        }
+        re.setDescribtion(des);
+        re.setImageUrl(url);
+        return Result.success(re);
     }
 }
