@@ -26,7 +26,6 @@ import BusinessPassword from '../views/PasswordSettingBusiness.vue'
 import BusinessLogout from '../views/LogoutSettingBusiness.vue'
 //商家界面
 import BusinessHomePage from '../views/BusinessHomePage.vue';
-import BusinessMarket from '../views/BusinessMarket.vue';
 import BusinessOrder from '../views/BusinessOrderManage.vue';
 import BusinessCommodity from '../views/BusinessCommodity.vue';
 
@@ -114,11 +113,6 @@ const router = createRouter({
       component: () => import('../views/BusinessCommodity.vue')
     },
     {
-      path: '/businessmarket',
-      name: 'BusinessMarket',
-      component: () => import('../views/BusinessMarket.vue')
-    },
-    {
       path: '/viewpost',
       name: 'ViewPost',
       component: () => import('../views/ViewPost.vue')
@@ -195,10 +189,6 @@ const router = createRouter({
     { path: '/BusinessHomePage', 
       name: 'BusinessHomePage', 
       component: BusinessHomePage
-    },
-    { path: '/BusinessMarket', 
-      name: 'BusinessMarket', 
-      component: BusinessMarket
     },
     { path: '/BusinessOrder', 
       name: 'BusinessOrder', 

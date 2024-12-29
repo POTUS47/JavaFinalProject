@@ -38,9 +38,6 @@
       </span>
       <ul>
           <li>
-            <!-- <router-link to="/BusinessInformation">
-              <img src="@/assets/setting.svg" alt="Setting" id="Setting">
-            </router-link> -->
           <img src="@/assets/setting.svg" alt="Setting" id="Setting" @click="enterBusinessInformation">
 
           </li>
@@ -106,7 +103,7 @@
         this.userimades.ima = photo.imageUrl;
         this.userimades.descri = describtion;
       } catch (error) {
-        this.$message.error('获取头像和简介描述失败，请稍后再试');
+        
       }
     },
     //获取店铺评分和名称
