@@ -89,6 +89,7 @@ public class OrderItemDTOs {
 
     // 每个订单项返回信息
     public static class OrderItemDTO {
+        private String itemId;
         private String productId;
         private String productName;
         private String productImage;
@@ -125,6 +126,14 @@ public class OrderItemDTOs {
 
         public void setProductPrice(BigDecimal productPrice) {
             this.productPrice = productPrice;
+        }
+
+        public String getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
         }
     }
 

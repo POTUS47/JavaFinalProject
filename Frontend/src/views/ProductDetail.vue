@@ -241,7 +241,10 @@ const starStore = async () => {
   }
 };
 const enterPay = () => {
-  const productStr = JSON.stringify(product.value);//序列化对象
+  const productIds = ref([]);
+  productIds.value.push(productId);
+  console.log(productIds.value);
+  const productStr = JSON.stringify(productIds.value);//序列化对象
   router.push({
     path: '/pay', query: {
       product: productStr,

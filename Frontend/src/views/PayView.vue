@@ -12,11 +12,6 @@
         <img src="@/assets/mmy/number2.svg" class="number" />
         <div class="text">&nbsp2.支付&nbsp&nbsp</div>
       </div>
-      <div class="line" v-show="isPaid === true">———————</div>
-      <div class="procedure3" v-show="isPaid === true">
-        <img src="@/assets/mmy/number3.svg" class="number" />
-        <div class="text-active">3.查看订单信息</div>
-      </div>
     </div>
     <div class="address">
       <div class="highlight-text">收货信息</div>
@@ -76,21 +71,6 @@
       </el-dialog>
 
     </div>
-    <!-- <div class="orderInfo">
-      <div class="storeArea">
-        <img src="@/assets/mmy/store-active.svg" class="storeImage" @click="enterStore">
-        <div class="text2" @click="enterStore">{{ product.storeName }}&#8201;&#8201;></div>
-      </div>
-      <div class="productArea">
-        <img :src="product.pictures ? product.pictures[0].imageUrl : ''" class="productImage" alt="图片加载失败">
-        <div class="orderDetail">
-          <div class="text-p">{{ product.name }}</div>
-          <div class="text-p2">￥{{ product.price }}</div>
-          <div class="text-p1">订单编号:&#8201;&#8201;{{ order.id }}</div>
-          <div class="text-p1">创建时间:&#8201;&#8201;{{ order.createTime }}</div>
-        </div>
-      </div>
-    </div> -->
 
     <div v-for="order in orderInfo" :key="order.orderId" class="orderInfo">
       <!-- 遍历该订单的商品 -->
@@ -110,7 +90,6 @@
         <div class="text-price1">价格明细</div>
       </div>
       <div class="text-price">商品原价：&#8201;&#8201;{{ (totalOriginalPrice) }}元</div>
-      <!-- 写不完了，去他妈的逻辑 -->
       <div>
         <div class="useCredit">
           <div class="text-price-active">是否使用积分</div>
@@ -139,10 +118,10 @@
             <p class="text_pay_isSuccess">支付成功</p>
             <p class="text_pay">获得积分：&#8201;&#8201;{{ bonusCredits }}</p>
           </div>
-          <div v-show="isPaySuccess === false">
+          <!-- <div v-show="isPaySuccess === false">
             <p class="text_pay_isSuccess">支付失败</p>
             <p class="text_pay">钱包余额不足，请及时充值</p>
-          </div>
+          </div> -->
 
         </el-dialog>
       </div>
@@ -220,6 +199,7 @@ const isPaySuccess = ref(false);
 const returnUrl = ref('');
 const router = useRouter();
 const routerPath = localStorage.getItem('routerPath');
+
 watch(payVisible, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     // 当 `isPaySuccess` 变为 `false` 时执行操作
@@ -260,7 +240,7 @@ const totalOriginalPrice = computed(() => {
 
 const finalPrice = computed(() => {
   if (isUseCredits.value === 'yes') {
-    return totalOriginalPrice.value - 10; // 计算最终价格并保留两位小数
+    return totalOriginalPrice.value>10?(totalOriginalPrice.value-10):0; // 计算最终价格并保留两位小数
   } else {
     return totalOriginalPrice.value; // 如果不使用积分，最终价格就是折扣价格
   }
@@ -271,15 +251,7 @@ const openDialog = () => {
 const addOrders = async () => {
   try {
     const response = await axiosInstance.post(`/shopping/order/add-orders`, {
-      // "productIds": productIds.value
-      "productIds": [
-        "p587121065594885",
-        "p587123104530437",
-        "p587124488126469",
-        "p587173063831557",
-        "p587176093687813",
-        "p587180477075461"
-      ]
+      "productIds": productIds.value
     });
     isLoading.value = false;
     orderInfo.value = response.data.data;
@@ -287,12 +259,12 @@ const addOrders = async () => {
     console.log(`orderInfo is ${JSON.stringify(orderInfo.value, null, 2)}`);
 
     // 收货人信息
-    customer.value.name = response.data.username;
+    customer.value.name = response.data.data.username;
     console.log(`customer.value.name is ${customer.value.name}`)
     if (customer.value.name == null) {
       customer.value.name = '未知收货人';
     }
-    customer.value.address = response.data.address;
+    customer.value.address = response.data.data.address;
     if (customer.value.address == null) {
       customer.value.address = '未知地';
     }
@@ -373,12 +345,13 @@ const openPay = async () => {
   payChoiceVisible.value = false;
   payVisible.value = true;
   for (let i = 0; i < orderInfo.value.length; i++) {
+    console.log(`正在支付订单 ${orderInfo.value[i].orderId}`); 
     try {
       const response = await axiosInstance.post(`/shopping/order/pay-order`, {
         "orderId": orderInfo.value[i].orderId,
         "usedCredits": isUseCredits.value === 'yes' ? 200 : 0,
       });
-      bonusCredits.value += response.data.bonus;
+      bonusCredits.value += response.data.data.bonus;
       isPaySuccess.value = true;
     } catch (error) {
       isPaySuccess.value = false;
@@ -481,7 +454,8 @@ div {
 }
 
 .orderInfo {
-  padding: 5px;
+  padding: 10px;
+  padding-bottom:20px;
 }
 
 .address {
@@ -600,6 +574,7 @@ div {
 .text-p1 {
   font-size: 20px;
   color: rgba(0, 0, 0, 0.6);
+  text-align: left;
 }
 
 .text-p2 {

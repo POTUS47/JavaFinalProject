@@ -14,18 +14,6 @@
                 <el-form-item label="用户名" :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' }]">
                   <el-input v-model="userInfo.username" placeholder="请输入用户名"></el-input>
                 </el-form-item>
-                <el-form-item label="性别" :rules="[{ required: true, message: '请选择性别', trigger: 'change' }]">
-                  <el-select v-model="userInfo.gender" placeholder="请选择性别">
-                    <el-option label="男" value="male"></el-option>
-                    <el-option label="女" value="female"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="年龄" :rules="[{ required: true, message: '请输入年龄', trigger: 'blur' }]">
-                  <el-input v-model.number="userInfo.age" type="number" placeholder="请输入年龄"></el-input>
-                </el-form-item>
-                <el-form-item label="收货地址" :rules="[{ required: true, message: '请输入收货地址', trigger: 'blur' }]">
-                  <el-input v-model="address.detail" placeholder="请输入收货地址"></el-input>
-                </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="updateUserInfo">保存</el-button>
                 </el-form-item>
@@ -217,9 +205,9 @@ export default {
     },
   },
   methods: {
-    async getUserInfo(userId) {
+    async getUserInfo() {
       try {
-        const response = await axiosInstance.get(`/Account/get_user_message/${userId}`);
+        const response = await axiosInstance.get(`/users/myInfo`);
         
         if (response.data.message === '用户查找成功！') {
           this.userInfo = {
@@ -492,7 +480,7 @@ async resetPassword() {
   //   this.$message.error('原密码不正确');
   //   return;
   // }
-  const userId = localStorage.getItem('userId'); // 获取当前用户 ID
+  //const userId = localStorage.getItem('userId'); // 获取当前用户 ID
   if (this.password.new !== this.password.confirm) {
     this.$message.error('新密码和确认密码不匹配');
     return;
@@ -538,17 +526,10 @@ async resetPassword() {
     }
   },
   mounted() {
-    
-    const userId = localStorage.getItem('userId');  // 替换为实际的用户 ID
-    console.log('Stored User ID:', localStorage.getItem('userId'));
-    if (userId) {
-    this.getUserInfo(userId);
-    this.getWalletBalance(userId);
-    this.getBuyerCredits(userId); // 调用获取买家积分的方法
-    this.fetchImageAndText(userId)
-  } else {
-    this.$message.error('用户ID不存在，请登录后再试');
-  }
+    this.getUserInfo();
+    this.getWalletBalance();
+    this.getBuyerCredits(); // 调用获取买家积分的方法
+    this.fetchImageAndText()
   }
 };
 </script>

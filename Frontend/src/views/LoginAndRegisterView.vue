@@ -329,10 +329,7 @@ const getVerificationCode= async () =>{
         ElMessage.success('验证码发送成功');
       } catch (error) {
         if (error.response.data.msg) {
-          //message.value = error.response.data.msg;
-          console.log(`调试调试调试 ${error.response}`);
-          console.log(`调试--调试 ${error.response.data}`);
-          console.log(`调试调试调试 ${error.response}`);
+          message.value = error.response.data.msg;
         } else {
           message.value = '获取验证码失败，请检查邮箱后重试！';
         }
@@ -404,8 +401,9 @@ const changPsw=async ()=>{
       }else{
           try {
           const response = await axiosInstance.post('/users/changePassword',{
-            'username':registerEmail.value,
+            'email':registerEmail.value,
             'password':newPassword.value,
+            'verificationCode':verificationCode.value
             });
             message.value=response.data.data.message;
             ElMessage.success(message.value);
