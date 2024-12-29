@@ -95,7 +95,7 @@ public class OrderItemService {
                     getStoreRemarkDTO.setOrderRemark(orderItem.getRemark());
                     getStoreRemarkDTO.setBuyerName(order.getUsername());
                     // order关联buyer,可调用父类getPhotoId()获取头像id
-                    getStoreRemarkDTO.setBuyerAvatar("http://47.97.59.189:8080/images/"+order.getBuyer().getPhotoId());
+                    getStoreRemarkDTO.setBuyerAvatar(order.getBuyer().getPhotoId());
                     getStoreRemarkDTOs.add(getStoreRemarkDTO);
                 }
             }

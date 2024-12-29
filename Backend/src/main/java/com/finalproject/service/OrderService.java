@@ -394,6 +394,7 @@ public class OrderService {
             }
             Product product = productOpt.get();
             OrderItemDTO orderItemDTO = new OrderItemDTO();
+            orderItemDTO.setItemId(orderItem.getItemId());
             orderItemDTO.setProductId(product.getProductId());
             orderItemDTO.setProductName(product.getProductName());
             orderItemDTO.setProductPrice(product.getProductPrice());
