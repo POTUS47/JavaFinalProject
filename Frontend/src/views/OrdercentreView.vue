@@ -1,265 +1,347 @@
 <!-- 卖家用户的订单中心页面 -->
-<script setup>
-import { ref, computed } from 'vue';
-import { ElMenu, ElButton, ElInput, ElRate, ElMessage } from 'element-plus';
+<script setup lang="ts">
+import { ref ,computed} from 'vue';
+import { ElMenu,ElButton, ElInput,ElRate,ElMessage} from 'element-plus';
 import 'element-plus/dist/index.css';
 import Navbar from '../components/Navbar.vue';
 import axiosInstance from '../router/axios';
 import router from '@/router';
 import Loading from '../views/templates/LoadingView.vue';
 
-const userId = localStorage.getItem('userId');
-console.log('id', userId);
-const option = ref(1);
-const isNoData = ref(false);
-const currentRow_cancel = ref(null);
+const userId =localStorage.getItem('userId');
+console.log('id',userId);
+const option=ref(1);
+const isNoData=ref(false);
+const currentRow_cancel=ref(null);
 const isLoading = ref(true);
-const currentRow_return = ref(null);
+const currentRow_return=ref(null);
 const currentRow_star = ref(null);
-const returnO = ref('');
-const myOrders = ref([]);
+const returnO=ref('');
+const comment=ref(null);
+const starVisible=ref(false);
+const dialogVisible=ref(false);
+const star=ref(null);
+const returnProduct=ref('');
+const returnProduct_else=ref('');
 
+
+interface OrderItemDTO {
+  itemId:string;
+  productId?: string;
+  productName?: string;
+  productImage?: string;
+  productPrice?: number;
+  itemStatus?:string;
+}
+// 前端使用的 Order 类型
+interface Order {
+  id: string;
+  store: string;
+  time: string;
+  totalPay: number;
+  status: string;
+  paid: boolean;
+  orderItems: OrderItemDTO[];
+  // UI 相关字段
+}
 const filteredOrders = computed(() => {
-  if (option.value == 1) {
-    return myOrders.value;
-  }
-  const statusMapping = {
-    2: '待付款',
-    3: '处理中',
-    4: '运输中',
-    5: '已签收',
-    6: '待退货',
-    7: '已退货',
-  };
-  return myOrders.value.filter(order => order.status === statusMapping[option.value]);
-});
+      if (option.value==1) {
+        return myOrders.value;
+      }
+      const statusMapping: { [key: number]: string } = {
+        2: '待付款',
+        3: '处理中',
+        4: '运输中',
+        5: '已完成',
+        6: '售后中',
+        7: '售后结束',
+      };
+      return myOrders.value.filter(order => order.status === statusMapping[option.value]);
+    });
+const myOrders = ref<Order[]>([])
+//   const getMyOrder = async () => {
+//   axiosInstance.get('/shopping/order/get-all-buyer-orders', {
+//       })
+//     .then(response => {
+//         const data = response.data;
+//         console.log('Raw response data: ', response.data);
+//         if (data && Array.isArray(data)) {
+//           myOrders.value = data.map((order: any) => ({
+//             id: order.orderId || '',
+//             time: order.createTime || '',
+//             store: order.storeName || '',
+//             status: order.orderStatus || '',
+//             price:order.price||0,
+//             totalPay: order.totalPay || 0,
+//             orderItems: order.orderItems.map(item => ({
+//               productId: item.productId || '',
+//               productName:item.productName.imageUrl||'',
+//               productImage: item.productImage || '',
+//               productPrice:item.productPrice|| 0,
+//             })),
+//             star: null,
+//             dialogVisible: false,
+//             dialogVisible_order:false,
+//             starVisible: false,
+//             isStar:false,
+//             }));
+//             console.log("成功获得订单");
+//             console.log(myOrders.value);
+//             myOrders.value.forEach(order => {
+//             isStarred(order);
+//             isLoading.value=false;
+//           });
+//
+//         } else {
+//             console.error('Invalid data format.');
+//         }
+//     }).catch(error => {
+//         console.error(error);
+//         if (error.response && error.response.status === 404) {
+//           isNoData.value=true;
+//           isLoading.value=false;
+//         }
+//     });
+// };
+// 获取订单数据
+const getOrders = async () => {
+  try {
+    const response = await axiosInstance.get('/shopping/order/get-all-buyer-orders')
+    console.log('Raw response:', response.data)
 
-const getMyOrder = async () => {
-  axiosInstance.get('/Payment/GetAllOrders', {
-    params: {
-      buyerId: userId
-    }
-  })
-  .then(response => {
-    const data = response.data.data;  // 取数据部分
-    console.log('Raw response data: ', data);
-
-    if (data && Array.isArray(data)) {
-      myOrders.value = data.map(order => ({
+    if (response.data.code === 200 && response.data.data) {
+      myOrders.value = response.data.data.map(order => ({
         id: order.orderId || '',
-        storeName: order.storeName || '',
-        address: order.address || '',
-        createTime: order.createTime || '',
+        store: order.storeName || '',
+        time: order.createTime || '',
         totalPay: order.totalPay || 0,
-        orderStatus: order.orderStatus || '',
-        orderItems: order.orderItems.map(item => ({
+        status: order.orderStatus || '',
+        paid: order.paid || false,
+        orderItems: (order.orderItems || []).map(item => ({
+          itemId: item.itemId || '',
           productId: item.productId || '',
           productName: item.productName || '',
+          productImage: item.productImage || '',
           productPrice: item.productPrice || 0,
-          productImage: item.productImage || null
+          itemStatus: item.itemStatus || '无'
         })),
-        paid: order.paid || false
-      }));
-      console.log("Successfully fetched orders", myOrders.value);
-      isLoading.value = false;
-    } else {
-      console.error('Invalid data format.');
+        // UI 状态字段
+        star: null,
+        dialogVisible: false,
+        dialogVisible_order: false,
+        starVisible: false,
+        isStar: false
+      }))
+    console.log("成功获得订单", myOrders.value)
+      isLoading.value=false;
     }
-  }).catch(error => {
-    console.error(error);
-    if (error.response && error.response.status === 404) {
-      isNoData.value = true;
-      isLoading.value = false;
-    }
-  });
-};
-
-getMyOrder();
-
-const isStarred = async (order) => {
-  axiosInstance.get('/Shopping/CheckOrderRemark', {
-    params: {
-      orderId: order.id
-    }
-  })
-  .then(response => {
-    const isStarred = response.data;  // 获取布尔结果
-    order.isStar = isStarred;
-  }).catch(error => {
-    console.error(error);
-  });
-};
-
-const returnProduct = ref('');
-const returnProduct_else = ref('');
-const comment = ref('');
-
+  } catch (error) {
+    console.error('获取订单失败:', error)
+    isNoData.value=true;
+    isLoading.value=false;
+  }
+}
+ getOrders();
+// const isStarred = async (order: Order) => {
+//   axiosInstance.get('/Shopping/CheckOrderRemark', {
+//         params: {
+//         orderId: order.id
+//      }
+//       })
+//     .then(response => {
+//       const isStarred = response.data; // 直接获取布尔结果
+//       order.isStar = isStarred;
+//     }).catch(error => {
+//         console.error(error);
+//     });
+// };
+// const returnProduct=ref('');
+// const returnProduct_else=ref('');
+// const comment=ref('');
+// const admit = (order) => {
+//   order.dialogVisible = false;
+//   resetForm(order);
+// }
 const admit = async (order) => {
-  if (returnProduct.value === '其他') {
-    returnProduct.value = returnProduct_else.value;
+  console.log(order);
+  if(returnProduct.value=='其他'){
+    returnProduct.value=returnProduct_else.value;
   }
-  axiosInstance.post('/Payment/AddReturn', {
-    orderId: order.id,
-    returnReason: returnProduct.value
-  }, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+  axiosInstance.post(`/afterSell/orderItem/${order}/return`, {
+    reason: returnProduct.value === '其他' ? returnProduct_else.value : returnProduct.value
   })
   .then(response => {
     resetForm(order);
-    console.log('Return request submitted successfully');
+    console.log('submitting return:成功');
     ElMessage({
-      message: '申请退货成功',
-      type: 'success',
+        message: '申请退货成功',
+        type: 'success',
+        });
+        getOrders();
+        resetForm ()
+    }).catch(error => {
+      console.error('Error submitting return:', error);
     });
-    getMyOrder();
-  }).catch(error => {
-    console.error('Error submitting return:', error);
-  });
 };
-
-const admitOrder = async (order) => {
-  if (returnProduct.value === '其他') {
-    returnProduct.value = returnProduct_else.value;
-  }
-  axiosInstance.delete('/Payment/DeleteOrders', {
-    params: {
-      orderId: order.id
-    }
-  })
-  .then(response => {
-    resetForm(order);
-    console.log('Order cancelled successfully');
-    ElMessage({
-      message: '成功取消订单',
-      type: 'success',
-    });
-    getMyOrder();
-  }).catch(error => {
-    console.error('Error submitting return:', error);
-  });
-};
-
+// const admitOrder = async (order) => {
+//   if(returnProduct.value=='其他'){
+//     returnProduct.value=returnProduct_else.value;
+//   }
+//     axiosInstance.delete('/Payment/DeleteOrders', {
+//       params: {
+//         orderId: order.id
+//       }
+//    })
+//   .then(response => {
+//     resetForm(order);
+//     console.log('取消订单:成功');
+//     ElMessage({
+//         message: '成功取消订单',
+//         type: 'success',
+//         });
+//         getMyOrder();
+//     }).catch(error => {
+//       console.error('Error submitting return:', error);
+//     });
+// };
+// // function confirmStar(order)
+// // {
+// //   row.starVisible = false;
+// //   row.orderStatus = '交易成功';
+// // }
 const confirmStar = async (order) => {
-  axiosInstance.put('/Shopping/OrderRemark', {
-    orderId: order.id,
-    remark: comment.value,
-    score: order.star,
-  }, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
-  .then(response => {
-    console.log('Rating submitted:', response.data);
-    order.starVisible = false;
-    comment.value = '';
-    ElMessage({
-      message: '评价成功',
-      type: 'success',
+  try {
+    const response = await axiosInstance.put('/shopping/order/remark-order-item', {
+      orderItemId: String(order),
+      remark: comment.value,
+      score: star.value,
     });
-    getMyOrder();
-  }).catch(error => {
-    console.error('Error submitting rating:', error);
-  });
-};
 
-const startRating = (order) => {
-  order.starVisible = true;
-  currentRow_star.value = order;
-};
-
-const returnOrder = (order) => {
-  order.dialogVisible = true;
-  currentRow_return.value = order;
-};
-
-const cancelOrder = (order) => {
-  order.dialogVisible_order = true;
-  currentRow_cancel.value = order;
-};
-
-const resetForm = (order) => {
-  order.dialogVisible = false;
-  order.dialogVisible_order = false;
-  returnProduct.value = '';
-  returnProduct_else.value = '';
-};
-
-const resetStar = (order) => {
-  order.star = null;
-  order.starVisible = false;
-};
-
-const confirmArrive = (order) => {
-  axiosInstance.put('/Payment/MarkOrderReceived', null, {
-    params: {
-      orderId: order.id
+    if (response.data.code === 200) {
+      starVisible.value = false;
+      star.value = null;
+      comment.value = '';
+      ElMessage({
+        message: response.data.msg || '评价成功',
+        type: 'success',
+      });
+      await getOrders();
     }
-  })
-  .then(response => {
-    console.log('Order received');
+
+  } catch (error) {
+    console.error('Error submitting rating:', error);
     ElMessage({
-      message: '成功签收',
-      type: 'success',
+      message: '评价失败',
+      type: 'error',
     });
-    getMyOrder();
-  }).catch(error => {
-    console.error('Error confirming receipt:', error);
-  });
-};
-
-const product = ref({
-  name: '',
-  pictures: [{
-    imageId: '',
-    imageUrl: ''
-  }],
-  price: 0,
-  storeName: '',
-  discountPrice: 0,
-  finalPrice: 0,
-});
-
-const gotoDetail = (order) => {
-  product.value.name = order.product;
-  product.value.pictures[0].imageId = order.picId;
-  product.value.pictures[0].imageUrl = order.pic;
-  product.value.price = order.price;
-  product.value.storeName = order.store;
-  product.value.finalPrice = order.actualPay;
-
-  var totalPay = order.totalPay;
-  var price = order.price;
-
-  var discountRate = (totalPay / price).toFixed(2);
-  product.value.discountPrice = parseFloat(discountRate);
-
-  console.log("Discount rate", product.value.discountPrice);
-  const productStr = JSON.stringify(product.value);
-  console.log("Serialized product", productStr);
-  localStorage.setItem('productIdOfDetail', order.productId);
-  localStorage.setItem('routerPath', '/ordercentre');
-  if (order.status === '待付款') {
-    router.push({ path: '/pay', query: { product: productStr, isPaid: 'false' } });
-  } else {
-    router.push({ path: '/pay', query: { product: productStr, isPaid: 'true' } });
   }
 };
 
-const colors = ['#99A9BF', '#F7BA2A', '#FF9900'];
+// function startRating(order) {
+//   order.starVisible = true;
+//   currentRow_star.value=order;
+// }
+function startRating(id) {
+  starVisible.value = true;
+  currentRow_star.value=id;
+}
+function returnOrder(order) {
+  dialogVisible.value = true;
+  currentRow_return.value=order;
+};
+// function cancelOrder(order) {
+//   order.dialogVisible_order = true;
+//   currentRow_cancel.value=order;
+// };
+function resetForm () {
+  dialogVisible.value = false;
+  currentRow_return.value=null;
+  // dialogVisible_order.value=null;
+  returnProduct.value = '';
+  returnProduct_else.value=''
+}
+function resetStar(order)
+{
+  star.value=null;
+  starVisible.value=false;
+}
+
+function confirmArrive(order)
+{
+  console.log(order.id)
+  axiosInstance.post('/shopping/order/receive-order',{
+    orderId: order.id
+   })
+  .then(response => {
+    console.log('签收成功');
+    ElMessage({
+        message: '成功签收',
+        type: 'success',
+        });
+        getOrders();
+    }).catch(error => {
+      console.error('Error confirm:', error);
+    });
+}
+
+// function deleteRow(order) {
+//   this.orders = this.orders.filter(order => order !== row);
+//   this.filteredOrders = this.filteredOrders.filter(order => order !== row);
+// }
+
+// const product = ref({
+//   name: '',
+//   pictures: [ // 将 picture 改为 pictures 数组
+//     {
+//       imageId: '',
+//       imageUrl: ''
+//     }
+//   ],
+//   price: 0, // 原价格
+//   storeName: '',
+//   discountPrice: 0, // 折后价格
+//   finalPrice: 0, // 最终支付的价格，考虑到会有积分使用
+// });
+
+// function gotoDetail(order:Order){
+//   product.value.name=order.product;
+//   product.value.pictures[0].imageId=order.picId;
+//   product.value.pictures[0].imageUrl=order.pic;
+//   product.value.price=order.price;
+//   product.value.storeName=order.store;
+//
+//   product.value.finalPrice=order.actualPay;
+//
+//   var totalPay = order.totalPay;
+//   var price = order.price;
+//
+// // 计算折扣力度
+//   var discountRate = (totalPay / price).toFixed(2);
+//   product.value.discountPrice = parseFloat(discountRate);
+//
+//   console.log("折扣力度",product.value.discountPrice);
+//   const productStr = JSON.stringify(product.value);//序列化对象
+//   console.log("序列化",productStr);
+//   localStorage.setItem('productIdOfDetail',order.productId);
+//   localStorage.setItem('routerPath','/ordercentre');
+//   if(order.status=='待付款'){
+//     router.push({path:'/pay',query:{product: productStr,isPaid:'false'}});
+//   }
+//   else{
+//     router.push({path:'/pay',query:{product: productStr,isPaid:'true'}});
+//   }
+// }
+const  colors=['#99A9BF', '#F7BA2A', '#FF9900'] ;// 等同于 { 2: '#99A9BF', 4: { value: '#F7BA2A', excluded: true }, 5: '#FF9900' }
 const activeIndex = ref('1');
 const menuItems = ref([
   { index: 1, title: '全部' },
   { index: 2, title: '待付款' },
-  { index: 3, title: '已付款' },
+  { index: 3, title: '处理中' },
   { index: 4, title: '运输中' },
-  { index: 5, title: '已签收' },
-  { index: 6, title: '待退货' },
-  { index: 7, title: '已退货' },
+  { index: 5, title: '已完成' },
+  { index: 6, title: '售后中' },
+  { index: 7, title: '售后结束' },
 ]);
-
 const menuChange = (index) => {
   activeIndex.value = index.toString();
   option.value = parseInt(index);
@@ -271,9 +353,9 @@ const menuChange = (index) => {
     <el-container>
       <el-aside width="18vh" style="background-color:  #82111f; ">
   <div class="big-title" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />
+<!--    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />-->
     <span>订单</span>
-    <img class="flipped-image" src="@/assets/czw/aside.svg" alt="Flipped Image" />
+<!--    <img class="flipped-image" src="@/assets/czw/aside.svg" alt="Flipped Image" />-->
   </div>
   <div style="width: 100%;">
     <el-menu
@@ -301,11 +383,11 @@ const menuChange = (index) => {
     <div style="line-height: 6vh;">
       <span v-if="option === 1" style="font-size: 2vh; color: #333;">全部</span>
       <span v-if="option === 2" style="font-size: 2vh; color: #333;">待付款</span>
-      <span v-if="option === 3" style="font-size: 2vh; color: #333;">已付款</span>
+      <span v-if="option === 3" style="font-size: 2vh; color: #333;">处理中</span>
       <span v-if="option === 4" style="font-size: 2vh; color: #333;">运输中</span>
-      <span v-if="option === 5" style="font-size: 2vh; color: #333;">已签收</span>
-      <span v-if="option === 6" style="font-size: 2vh; color: #333;">待退货</span>
-      <span v-if="option === 7" style="font-size: 2vh; color: #333;">已退货</span>
+      <span v-if="option === 5" style="font-size: 2vh; color: #333;">已完成</span>
+      <span v-if="option === 6" style="font-size: 2vh; color: #333;">售后中</span>
+      <span v-if="option === 7" style="font-size: 2vh; color: #333;">售后结束</span>
     </div>
   </el-header>
   <Loading v-if="isLoading" />
@@ -316,41 +398,64 @@ const menuChange = (index) => {
       <div class="order-header">
         <p>{{ scope.row.time }} 订单号: {{ scope.row.id }}</p>
       </div>
-      <div style="display: flex;">
-        <!-- <img :src="`data:image/png;base64,${scope.row.pic}`" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" /> -->
-        <img :src="scope.row.pic" alt="Order Image" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />
-        <div style="margin-left: 10px;">
-          <p>{{ scope.row.productName }}</p>
-          <p>价格:{{ scope.row.actualPay }}</p>
+      <div style="display: flex; flex-direction: column;">
+<!--         <img :src="`data:image/png;base64,${scope.row.pic}`" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
+<!--        <img :src="scope.row.orderItems[0].productImage" alt="Order Image" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
+<!--        <div style="margin-left: 10px;">-->
+<!--          <p>{{ scope.row.orderItems[0].productName }}</p>-->
+<!--          <p>价格:{{ scope.row.orderItems[0].productPrice }}</p>-->
+<!--        </div>-->
+        <div  v-for="item in scope.row.orderItems" :key="item.productId" style="display: flex; margin-bottom: 10px;">
+          <img
+              :src="item.productImage"
+              alt="Order Image"
+              style="max-width: 100px; max-height: 100px;"
+          />
+          <div style="margin-left: 10px;">
+            <p>{{ item.productName }}</p>
+            <p>价格: {{ item.productPrice }}</p>
+          </div>
         </div>
       </div>
     </template>
   </el-table-column>
     <el-table-column prop="store" label="店铺" width="160"></el-table-column>
-    <el-table-column prop="province" label="商品操作" width="160">
-      <template  v-slot="scope">
-      <div>
-      <el-button type="text" v-if="scope.row.status === '已签收'" @click="returnOrder(scope.row)">退货</el-button>
-      </div>
-      <div>
-      <el-button type="text" v-if="scope.row.status === '已付款'" @click="cancelOrder(scope.row)">取消订单</el-button>
-      </div>
-    </template>
+    <el-table-column prop="province" label="商品状态" width="160">
+      <template v-slot="scope">
+        <div v-for="item in scope.row.orderItems" :key="'status-' + (item?.itemId || '')">
+          <!-- 当状态为"无售后"时显示按钮 -->
+          <el-button
+              type="text"
+              v-if="scope.row.status === '已完成' && item?.itemStatus === '无售后'"
+              @click="returnOrder(item.itemId)"
+          >申请退货</el-button>
+          <!-- 其他情况显示状态文本 -->
+          <span v-else>{{ item?.itemStatus || '无' }}</span>
+        </div>
+      </template>
     </el-table-column>
-    <el-table-column prop="actualPay" label="实付款" width="160"></el-table-column>
-    <el-table-column prop="status" label="交易状态" width="160"></el-table-column>
+    <el-table-column prop="totalPay" label="实付款" width="160"></el-table-column>
+    <el-table-column prop="status" label="订单状态" width="160"></el-table-column>
     <el-table-column prop="zip" label="操作" width="160">
     <template v-slot="scope">
-      <el-button type="text" v-if="scope.row.isStar === false&&scope.row.status === '已签收'" @click="startRating(scope.row)">去评价</el-button>
+<!--      <el-button type="text" v-if="scope.row.isStar === false&&scope.row.status === '已完成'" @click="startRating(scope.row)">去评价</el-button>-->
+      <el-button
+          type="text"
+          v-for="item in scope.row.orderItems"
+          :key="'rating-' + item.itemId"
+          v-if="scope.row.status === '已完成'"
+          @click="startRating(item.itemId)"
+      >去评价
+      </el-button>
       <el-button type="text" v-if="scope.row.status === '运输中'" @click="confirmArrive(scope.row)">确认收货</el-button>
     </template>
   </el-table-column>
-  <el-table-column prop="o" label="订单详情" width="160">
-    <template v-slot="scope">
-    <el-button type="text" v-if="scope.row.status === '待付款'" @click="gotoDetail(scope.row)">去付款</el-button>
-    <el-button type="text" v-else @click="gotoDetail(scope.row)">点击详情</el-button>
-    </template>
-  </el-table-column>
+<!--  <el-table-column prop="o" label="订单详情" width="160">-->
+<!--    <template v-slot="scope">-->
+<!--    <el-button type="text" v-if="scope.row.orderStatus === '待付款'" @click="gotoDetail(scope.row)">去付款</el-button>-->
+<!--    <el-button type="text" v-else @click="gotoDetail(scope.row)">点击详情</el-button>-->
+<!--    </template>-->
+<!--  </el-table-column>-->
   </el-table>
   </el-container>
   <div v-if="currentRow_star!=null">
@@ -360,44 +465,43 @@ const menuChange = (index) => {
         :style="{ zIndex: 9999 }"
        :model-append-to-body="true"
         :modal="false"
-        v-model="currentRow_star.starVisible"
+        v-model="starVisible"
         title="评价"
         width="460px"
         @close="resetStar(currentRow_star)"
          :z-index="2000"
       >
-        <el-rate v-if="currentRow_star.starVisible" v-model="currentRow_star.star" :colors="colors"></el-rate>
-        <el-input v-if="currentRow_star.starVisible" v-model="comment" placeholder="请输入评价" class="oo"></el-input>
+        <el-rate v-if="starVisible" v-model="star" :colors="colors"></el-rate>
+        <el-input v-if="starVisible" v-model="comment" placeholder="请输入评价" class="oo"></el-input>
         <el-button type="primary" @click="confirmStar(currentRow_star)">确定</el-button>
       </el-dialog>
     </div>
-    <div v-if="currentRow_cancel!=null">
-    <el-dialog
-      customClass="custom-dialog"
-      :draggable="true"
-      :modalAppendToBody="false" 
-      :modal="false"
-       v-model="currentRow_cancel.dialogVisible_order" title="取消订单原因" width="460px" @close="resetForm(currentRow_cancel)">
-     <el-select v-model="returnProduct" placeholder="请选择原因">
-        <el-option label="买错了" value="买错了"></el-option>
-        <el-option label="不想要了" value="不想要了"></el-option>
-        <el-option label="其他" value="其他"></el-option>
-      </el-select>
-      <div style="margin-top: 10px;"></div>
-      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>
-      <el-divider></el-divider>
-      <div slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="admitOrder(currentRow_cancel)">确 定</el-button>
-    </div>
-      </el-dialog>
-    </div>
+<!--    <div v-if="currentRow_cancel!=null">-->
+<!--    <el-dialog-->
+<!--      customClass="custom-dialog"-->
+<!--      :draggable="true"-->
+<!--      :modalAppendToBody="false" -->
+<!--      :modal="false"-->
+<!--       v-model="currentRow_cancel.dialogVisible_order" title="取消订单原因" width="460px" @close="resetForm(currentRow_cancel)">-->
+<!--     <el-select v-model="returnProduct" placeholder="请选择原因">-->
+<!--        <el-option label="买错了" value="买错了"></el-option>-->
+<!--        <el-option label="不想要了" value="不想要了"></el-option>-->
+<!--        <el-option label="其他" value="其他"></el-option>-->
+<!--      </el-select>-->
+<!--      <div style="margin-top: 10px;"></div>-->
+<!--      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>-->
+<!--      <el-divider></el-divider>-->
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--    <el-button type="primary" @click="admitOrder(currentRow_cancel)">确 定</el-button>-->
+<!--    </div>-->
+<!--      </el-dialog>-->
     <div v-if="currentRow_return!=null">
     <el-dialog
       customClass="custom-dialog"
       :draggable="true"
-      :modalAppendToBody="false" 
+      :modalAppendToBody="false"
       :modal="false"
-       v-model="currentRow_return.dialogVisible" title="退货原因" width="460px" @close="resetForm(currentRow_return)">
+       v-model="dialogVisible" title="退货原因" width="460px" @close="resetForm()">
      <el-select v-model="returnProduct" placeholder="请选择原因">
         <el-option label="商品与图片不符" value="商品与图片不符"></el-option>
         <el-option label="商品破损" value="商品破损"></el-option>
@@ -407,8 +511,6 @@ const menuChange = (index) => {
       </el-select>
       <div style="margin-top: 10px;"></div>
       <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>
-      <el-input v-model="returnO" placeholder="请输入单号"></el-input>
-      <el-divider></el-divider>
       <div slot="footer" class="dialog-footer">
     <el-button type="primary" @click="admit(currentRow_return)">确 定</el-button>
     </div>
