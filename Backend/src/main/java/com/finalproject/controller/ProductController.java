@@ -125,6 +125,13 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    //用户根据关键词搜索全部商品
+    @GetMapping("/searchAll")
+    public ResponseEntity<Result<List<ShowProductDTO>>> search( @RequestParam String keyword) {
+        Result<List<ShowProductDTO>> response=productService.searchAll(keyword);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
     //修改某个图文详情中的文字描述
     @PostMapping("/updateProductDescription")
     public ResponseEntity<Result<String>> updateProductDescription(@RequestBody UpdateDescriptionRequest request){

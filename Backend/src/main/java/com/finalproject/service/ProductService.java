@@ -177,6 +177,29 @@ public class ProductService {
         return Result.success(result);
     }
 
+    public Result<List<ShowProductDTO>> searchAll(String keyword){
+        String likePattern = "%" + String.join("%", keyword.split("")) + "%";
+        List<Product> products = productRepository.searchAllProducts(keyword, likePattern);
+        List<ShowProductDTO> result = new ArrayList<>();
+
+        //todo 默认图片id
+        for (Product product : products) {
+            Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
+            String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
+            ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
+                    product.getProductName(),
+                    product.getProductPrice(),
+                    product.getQuantity(),
+                    product.getTag(),
+                    product.getSubCategory(),
+                    product.getDescription(),
+                    imageId,
+                    product.getStoreTag());
+            result.add(dto);
+        }
+        return Result.success(result);
+    }
+
     public Result<String> deleteProImage(String productId,String imageId) {
         Optional<ProductImage> productImage=productImageRepository.findById(imageId);
         if(productImage.isEmpty()){

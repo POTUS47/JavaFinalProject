@@ -23,4 +23,9 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     List<Product> findBysubCategory(String subCategory);
 
     List<Product> findBytag(String name);
+
+    @Query("SELECT p FROM Product p WHERE " +
+            "(p.productName LIKE %:keyword% OR p.productName LIKE %:likePattern%)")
+    List<Product> searchAllProducts(@Param("keyword") String keyword,
+                                    @Param("likePattern") String likePattern);
 }
