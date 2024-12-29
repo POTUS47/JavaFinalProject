@@ -448,5 +448,30 @@ public class ProductService {
         return Result.success(result);
     }
 
+    public Result<List<GCDDTO>> getProductsBySubTagId(String subId){
+        List<Product> products =productRepository.findBysubCategory(subId);
+        List<GCDDTO>response=new ArrayList<>();
+        for(Product pro:products){
+            GCDDTO product=new GCDDTO();
+            product.setProductName(pro.getProductName());
+            product.setProductPrice(pro.getProductPrice());
+            product.setProductId(pro.getProductId());
+            Optional<ProductImage> temp=productImageRepository.findFirstByProductId(pro.getProductId());
+            if(temp.isPresent()){
+                ProductImage image=temp.get();
+                String imageId = (image.getImageId() != null) ? image.getImageId() : "1";
+                String url=baseUrl + "/images/" + imageId;
+                product.setImageUrl(url);
+            }
+            else{
+                String url=baseUrl + "/images/1";
+                product.setImageUrl(url);
+            }
+            response.add(product);
+        }
+        return Result.success(response);
+
+    }
+
 
 }

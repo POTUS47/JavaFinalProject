@@ -9,10 +9,10 @@ public class Buyer extends Account {
     private String gender;
 
     @Column(name = "age")
-    private Integer age; // 对应 C# 中的 int?，可为空
+    private Integer age=18; // 对应 C# 中的 int?，可为空
 
     @Column(name = "total_credits", nullable = false)
-    private int totalCredits;
+    private int totalCredits=0;
 
     @Column(name = "address")
     private String address;

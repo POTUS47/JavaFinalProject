@@ -412,5 +412,43 @@ public class ProductDTOs {
         }
     }
 
+    public static class GCDDTO{
+        private String productId;
+        private String productName;
+        private String imageUrl;
+        private BigDecimal productPrice;
+
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public BigDecimal getProductPrice() {
+            return productPrice;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+        public void setProductPrice(BigDecimal productPrice) {
+            this.productPrice = productPrice;
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+    }
+
 
 }

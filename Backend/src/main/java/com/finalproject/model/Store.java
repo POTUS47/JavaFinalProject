@@ -13,19 +13,19 @@ public class Store extends Account implements Serializable {
     @Column(name = "store_name")
     private String storeName;
 
-    @Column(name = "store_score")
-    private BigDecimal storeScore;
+    @Column(name = "store_score",nullable = false, precision = 2, scale = 1, columnDefinition = "decimal(2,1) default 0.0")
+    private BigDecimal storeScore = BigDecimal.valueOf(0.0);
 
     @Column(name = "certification")
-    private Integer certification;
+    private Integer certification=0;
 
     @Column(name = "address")
     private String address;
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-//    private List<StoreBusinessDirection> storeBusinessDirections = new ArrayList<>();
-
-    // Getters and Setters
+    ////    private List<StoreBusinessDirection> storeBusinessDirections = new ArrayList<>();
+    //
+    //    // Getters and Setters
 
     public String getStoreName() {
         return storeName;

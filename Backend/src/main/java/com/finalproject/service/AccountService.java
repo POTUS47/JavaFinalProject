@@ -69,7 +69,12 @@ public class AccountService {
     // 获取验证码（后期需要改成redis缓存）
     public boolean verifyCode(String email, String code) {
         // 校验验证码
+        System.out.println("VerificationCodes content: " + verificationCodes);///////
         String storedCode = verificationCodes.get("\""+email+"\"");
+        if(storedCode==null){
+            storedCode = verificationCodes.get(email);
+        }
+        System.out.println("根据"+email+"提取内容" + storedCode);///////
         return storedCode != null && storedCode.equals(code);
     }
 
@@ -204,6 +209,34 @@ public class AccountService {
         accountRepository.save(user);
         Map<String, String> data = new HashMap<>();
         data.put("message", userId+"简介修改成功！");
+        return Result.success(data);
+    }
+
+    // 修改卖家地址
+    public Result<Map<String, String>> updateStoreAdress(String userId, String newAddress) {
+        Optional<Store> userOptional= storeRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改地址的卖家账号不存在");
+        }
+        Store user = userOptional.get();
+        user.setAddress(newAddress);
+        storeRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"地址修改成功！");
+        return Result.success(data);
+    }
+
+    // 修改卖家店铺名
+    public Result<Map<String, String>> updateStoreName(String userId, String newName) {
+        Optional<Store> userOptional= storeRepository.findByAccountId(userId);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改店铺名的卖家账号不存在");
+        }
+        Store user = userOptional.get();
+        user.setStoreName(newName);
+        storeRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", userId+"店铺名修改成功！");
         return Result.success(data);
     }
 

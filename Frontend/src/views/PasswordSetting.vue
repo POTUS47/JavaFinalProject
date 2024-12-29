@@ -98,7 +98,7 @@ export default {
             isButtonDisabled: false,
             buttonText: '获取验证码',
             timeLeft: 0,
-            countdownTime: 60, // 倒计时时间
+            countdownTime: 0, // 倒计时时间
             password: {
                 new: '',
                 confirm: ''
@@ -132,7 +132,8 @@ export default {
                 try {
                     const response = await axiosInstance.get(`/users/send-code/${encodeURIComponent(this.businessInfo.email)}`);
                     //this.serverVerificationCode = response.data.verificationCode;
-                    this.$message.success('验证码已发送，请检查您的邮箱');
+                    this.$message.success(`验证码已发送`);
+                    //this.$message.success('验证码已发送，请检查您的邮箱');
                 } catch (error) {
                     const message = error.response.data.msg ? error.response.data.msg : '获取验证码失败，请检查邮箱后重试！';
                     this.$message.error(message);
@@ -199,14 +200,14 @@ export default {
         async getUserInfo() {
             try {
                 const response = await axiosInstance.get(`/users/buyer/myInfo`);
-                if (response.data.message === '用户查找成功！') { // 根据实际响应内容调整
+                if (response.data.data.email) { // 根据实际响应内容调整
                     this.businessInfo = {
                         // username: response.data.target_user.useR_NAME,
                         // gender: response.data.target_user.gender,
                         email: response.data.data.email
                         // address:response.data.target_user.address
                     };
-
+                    //this.$message.success(`获取用户信息成功：${this.businessInfo.email}`);
                     // this.currentPass=response.data.target_user.password;
                 } else {
                     this.$message.error('获取用户信息失败');

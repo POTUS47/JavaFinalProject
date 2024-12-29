@@ -1,59 +1,60 @@
 <!-- 设置界面的我的钱包 -->
 <template>
 
-     <!-- Loading 组件 -->
+    <!-- Loading 组件 -->
     <Loading v-show="isLoading" />
 
     <div class="container" v-show="!isLoading">
-      <SettingSidebar />
-      <div class="main-content">
-        <SettingHeader />
-        <hr> 
-        <div class="content">
-          <div class="main-container">
-                <h2>我的余额</h2>
-                <div class="wallet">
-                    <el-card class="custom-card-width">
-                        <p>您的钱包余额：￥{{ balance }}</p>
-                    </el-card>
+        <SettingSidebar />
+        <div class="main-content">
+            <SettingHeader />
+            <hr>
+            <div class="content">
+                <div class="main-container">
+                    <h2>我的余额</h2>
+                    <div class="wallet">
+                        <el-card class="custom-card-width">
+                            <p>您的钱包余额：￥{{ balance }}</p>
+                        </el-card>
+                    </div>
+
+                    <h2>充值钱包</h2>
+                    <div class="wallet">
+                        <el-card class="custom-card-width">
+                            <el-form :model="recharge" label-width="80px" class="recharge-form">
+                                <el-form-item label="充值金额" class="form-item">
+                                    <el-input v-model.number="recharge.amount" type="number"
+                                        placeholder="请输入充值金额"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="rechargeBalance">充值</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-card>
+                    </div>
+
                 </div>
-                
-                <h2>充值钱包</h2>
-                <div class="wallet">
-                    <el-card class="custom-card-width">
-                        <el-form :model="recharge" label-width="80px" class="recharge-form">
-                            <el-form-item label="充值金额" class="form-item">
-                                <el-input v-model.number="recharge.amount" type="number" placeholder="请输入充值金额"></el-input>
-                            </el-form-item>
-                            <el-form-item >
-                                <el-button type="primary" @click="rechargeBalance">充值</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </el-card>
+                <div class="bottom">
                 </div>
-                
-          </div>
-          <div class="bottom">
-          </div>
-          
+
+            </div>
         </div>
-      </div>
     </div>
-    
+
 </template>
-    
+
 <script>
 import SettingSidebar from '../components/SettingSidebar.vue'
 import SettingHeader from '../components/SettingHeader.vue'
 import Loading from '../views/templates/LoadingView.vue';
-import { reactive, ref, computed, onMounted  } from 'vue';
+import { reactive, ref, computed, onMounted } from 'vue';
 import { ElTable, ElTableColumn, ElPagination, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElRow, ElCol, ElSelect, ElOption, ElMessage } from 'element-plus';
 import 'element-plus/dist/index.css';
 import axiosInstance from '../router/axios';
 
 export default {
-    name:'WalletSetting',
-    components:{
+    name: 'WalletSetting',
+    components: {
         SettingSidebar,
         SettingHeader,
         Loading
@@ -67,7 +68,7 @@ export default {
             balance: 0,
         };
     },
-    methods:{
+    methods: {
         //获取钱包余额
         async getWalletBalance() {
             try {
@@ -77,80 +78,111 @@ export default {
                     this.balance = balance;
                 } else {
                     this.$message.warning('未返回有效的余额信息');
-                    this.balance = 0; 
+                    this.balance = 0;
                 }
             } catch (error) {
                 console.error('请求失败:钱包数值获取', error);
                 this.$message.error('请求失败，请稍后再试');
             }
         },
-        
-        //充值钱包
+
         async rechargeBalance() {
-
-            if (this.recharge.amount <= 0) {
-                this.$message.error('充值金额必须大于零');
-                return;
-            }
-            //const userId = localStorage.getItem('userId'); // 获取当前用户 ID
-
-            // 创建 FormData 对象
-            const formData = new FormData();
-            //formData.append('BuyerId', userId); // 假设这是当前用户的 ID
-            formData.append('Amount', this.recharge.amount);
-            //formData.append('returnUrl', 'http://47.97.5.21:17990/BuyerWallet');
-            formData.append('returnUrl', 'localhost:/BuyerWallet');
-            formData.forEach((value, key) => {
-                console.log(key, value);
-             });
-                // 开始加载动画
-                this.isLoading = true;
-                this.$nextTick(() => {
-                    console.log('Loading started');
-                });
-                // 刷新网页
-                // window.location.reload();
-                console.log('Loading started');
             try {
-                const response = await axiosInstance.put('/Alipay/RechargeWallet', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                // 检查充值金额是否合法
+                if (!this.recharge.amount || this.recharge.amount <= 0||this.recharge.amount >= 5000) {
+                    this.$message.error("请输入有效的充值金额！");
+                    return;
                 }
-                });
-                console.log(response.data);
-                window.location.assign(response.data);
 
-            } catch (error) {
-                //检查是否重定向
-                if (error.response&&error.response.status===302) {
-                    const location=error.response.headers.location;
-                    //手动处理重定向
-                    window.location.href=location;
+                // 发起请求
+                const response = await axiosInstance.put("/users/recharge", null, {
+                    params: {
+                        amount: this.recharge.amount
+                    }
+                });
+                // 根据响应处理
+                if (response.status === 200) {
+                    this.$message.success("充值成功！");
+                    this.balance = response.data.data.new_balance;
+                    // 更新余额等后续逻辑
                 } else {
-                    console.error('error:',error.message);
+                    this.$message.error(response.data.msg || "充值失败！");
                 }
-                // ElMessage.error(message.value);
+            } catch (error) {
+                console.error("充值请求出错：", error);
+                this.$message.error(error.response.data.msg || "充值失败，请稍后重试！");
             }
-            finally {
-            // 关闭加载页面
-            this.recharge.amount = 0;
-        }
         },
-    },
-    mounted() {
-        // const userId = localStorage.getItem('userId');  // 替换为实际的用户 ID
-        // if (userId) {
-        //     this.getWalletBalance(userId);
-        // } else {
-        //     this.$message.error('用户ID不存在,请登录后再试');
+
+
+
+
+        // //充值钱包
+        // async rechargeBalance() {
+
+        // if (this.recharge.amount <= 0) {
+        //     this.$message.error('充值金额必须大于零');
+        //     return;
         // }
+        // //const userId = localStorage.getItem('userId'); // 获取当前用户 ID
+
+        // // 创建 FormData 对象
+        // const formData = new FormData();
+        // //formData.append('BuyerId', userId); // 假设这是当前用户的 ID
+        // formData.append('Amount', this.recharge.amount);
+        // //formData.append('returnUrl', 'http://47.97.5.21:17990/BuyerWallet');
+        // formData.append('returnUrl', 'localhost:/BuyerWallet');
+        // formData.forEach((value, key) => {
+        //     console.log(key, value);
+        // });
+        // // 开始加载动画
+        // this.isLoading = true;
+        // this.$nextTick(() => {
+        //     console.log('Loading started');
+        // });
+        // // 刷新网页
+        // // window.location.reload();
+        // console.log('Loading started');
+        // try {
+        //     const response = await axiosInstance.put('/Alipay/RechargeWallet', formData, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     });
+        //     console.log(response.data);
+        //     window.location.assign(response.data);
+
+        // } catch (error) {
+        //     //检查是否重定向
+        //     if (error.response && error.response.status === 302) {
+        //         const location = error.response.headers.location;
+        //         //手动处理重定向
+        //         window.location.href = location;
+        //     } else {
+        //         console.error('error:', error.message);
+        //     }
+        //     // ElMessage.error(message.value);
+        // }
+        // finally {
+        //     // 关闭加载页面
+        //     this.recharge.amount = 0;
+        // }
+    // }
+},
+mounted() {
+    // const userId = localStorage.getItem('userId');  // 替换为实际的用户 ID
+    // if (userId) {
+    //     this.getWalletBalance(userId);
+    // } else {
+    //     this.$message.error('用户ID不存在,请登录后再试');
+    // }
     this.getWalletBalance();
-  }
+}
 }
 </script>
-  
+
 <style scoped>
-  h2 {
+h2 {
     display: block;
     font-size: 1.5em;
     margin-block-start: 0.83em;
@@ -160,44 +192,47 @@ export default {
     font-weight: bold;
     unicode-bidi: isolate;
     color: #977c7c;
-  }
-  .container {
+}
+
+.container {
     display: flex;
     height: 100vh;
     /* background-color: rgb(248,210,210); */
     /* background-color: rgb(153,97,97); */
-    background-color: rgb(237,227,228);
+    background-color: rgb(237, 227, 228);
     /* background-color: rgb(239, 235, 235); */
-  }
-  
-  .main-content {
+}
+
+.main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     color: #ffffff;
-    
-  }
-  .content {
+
+}
+
+.content {
     flex: 1;
-  }
-  .main-container {
+}
+
+.main-container {
     text-align: left;
     color: #000000;
     margin-left: 140px;
     margin-top: 40px;
-  }
+}
 
 
 .recharge-form {
-  display: flex;
+    display: flex;
 }
 
 .form-item {
-  flex: 1; 
+    flex: 1;
 }
 
- .wallet { 
-  padding: 15px;
+.wallet {
+    padding: 15px;
 }
 
 .el-button--primary {
@@ -209,10 +244,13 @@ export default {
     background-color: #8b2b2b;
     border-color: #8b2b2b;
 }
+
 .custom-card-width {
-    max-width: 1000px; /* 设置宽度为400px，您可以根据需要调整 */
-    margin-left:0;
+    max-width: 1000px;
+    /* 设置宽度为400px，您可以根据需要调整 */
+    margin-left: 0;
 }
+
 /* .bottom {
     width: 100%;
     height: 58%;
