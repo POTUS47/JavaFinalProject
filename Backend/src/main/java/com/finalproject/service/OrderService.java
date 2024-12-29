@@ -250,6 +250,10 @@ public class OrderService {
                 orderItem.setQuantity(1);  // 假设每个商品购买数量为1,需要修改
                 orderItem.setUnitPrice(product.getProductPrice());
                 orderItem.setOrderId(order.getOrderId());
+                orderItem.setTotalPay(product.getProductPrice());
+                orderItem.setActualPay(product.getProductPrice());
+                orderItem.setItemStatus(OrderItem.ItemStatus.无售后);
+                orderItem.setScore(BigDecimal.ZERO);
 
                 // 累加总价格
                 totalPrice = totalPrice.add(product.getProductPrice());
