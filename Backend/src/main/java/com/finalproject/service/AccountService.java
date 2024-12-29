@@ -28,6 +28,9 @@ public class AccountService {
     @Resource
     private AccountRepository accountRepository;
 
+    @Resource
+    private StoreRepository storeRepository;
+
     @Autowired
     private final JavaMailSender mailSender;
 
@@ -147,6 +150,22 @@ public class AccountService {
         return Result.success(data);
     }
 
+    // 忘记密码
+    public Result<Map<String, String>> forgetPassword(String email, String password,String verificationCode) {
+        if (!this.verifyCode(email,verificationCode))
+            return Result.error(400, "验证码错误！");
+        Optional<Account> userOptional= accountRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想要修改密码的账号不存在");
+        }
+        Account user = userOptional.get();
+        user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+        accountRepository.save(user);
+        Map<String, String> data = new HashMap<>();
+        data.put("message", "密码修改成功！");
+        return Result.success(data);
+    }
+
     // 修改邮箱
     public Result<Map<String, String>> updateEmail(String userId, String newEmail) {
         Optional<Account> userOptional= accountRepository.findByAccountId(userId);
@@ -218,6 +237,52 @@ public class AccountService {
         AccountDTOs.UserInfoDTO userInfo = new AccountDTOs.
                 UserInfoDTO(user.getAccountId(), user.getUserName(),
                 user.getEmail(),user.getPhotoId(),user.getType().toString());
+        // 返回成功结果
+        return Result.success(userInfo);
+    }
+
+    // 获取买家全部基本信息
+    public Result<AccountDTOs.BuyerInfoDTO> getBuyerInfo(String userId) {
+        // 查找用户
+        Optional<Buyer> userOptional = buyerRepository.findByAccountId(userId);
+        // 如果没有找到用户
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想获取基本信息的用户不存在");
+        }
+        Buyer user = userOptional.get();
+        AccountDTOs.BuyerInfoDTO userInfo = new AccountDTOs.BuyerInfoDTO();
+        userInfo.setAddress(user.getAddress());
+        userInfo.setEmail(user.getEmail());
+        userInfo.setAge(user.getAge());
+        userInfo.setGender(user.getGender());
+        userInfo.setUserName(user.getUserName());
+        userInfo.setTotalCredits(user.getTotalCredits());
+        userInfo.setPhotoId(user.getPhotoId());
+        userInfo.setUserId(userId);
+        userInfo.setDescription(user.getDescription());
+        // 返回成功结果
+        return Result.success(userInfo);
+    }
+
+    // 获取商家全部基本信息
+    public Result<AccountDTOs.StoreInfoDTO> getStoreInfo(String userId) {
+        // 查找用户
+        Optional<Store> userOptional = storeRepository.findByAccountId(userId);
+        // 如果没有找到用户
+        if (userOptional.isEmpty()) {
+            return Result.error(404, "想获取基本信息的用户不存在");
+        }
+        Store user = userOptional.get();
+        AccountDTOs.StoreInfoDTO userInfo = new AccountDTOs.StoreInfoDTO();
+        userInfo.setAddress(user.getAddress());
+        userInfo.setEmail(user.getEmail());
+        userInfo.setStoreName(user.getStoreName());
+        userInfo.setStoreScore(user.getStoreScore().floatValue());
+        userInfo.setUserName(user.getUserName());
+        userInfo.setHasCertificate(user.isCertification());
+        userInfo.setPhotoId(user.getPhotoId());
+        userInfo.setUserId(userId);
+        userInfo.setDescription(user.getDescription());
         // 返回成功结果
         return Result.success(userInfo);
     }

@@ -73,11 +73,22 @@ public class UserController {
     }
 
     // 修改密码
-    @PostMapping("/changePassword")
+    @PostMapping("/login/changePassword")
     public ResponseEntity<Result<Map<String, String>>>
     changePassword(@RequestParam String newPassword,Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
         Result<Map<String, String>> result = userService.changePassword(userId, newPassword);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    // 忘记密码（未登录修改密码）
+    @PostMapping("/changePassword")
+    public ResponseEntity<Result<Map<String, String>>>
+    forgetPassword(@RequestBody AccountDTOs.ChangePasswordDTO dto) {
+        String password = dto.getPassword();
+        String email = dto.getEmail();
+        String verificationCode = dto.getVerificationCode();
+        Result<Map<String, String>> result = userService.forgetPassword(email,password, verificationCode);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
@@ -108,18 +119,33 @@ public class UserController {
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
-    // 获取某用户全部信息接口
+    // 获取某用户基本信息接口
     @GetMapping("/info")
     public ResponseEntity<Result<AccountDTOs.UserInfoDTO>> getUserInfo(@RequestParam String userId) {
         Result<AccountDTOs.UserInfoDTO> result = userService.getUserInfo(userId);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
-    // 获取自身信息接口
-    @GetMapping("/myInfo")
-    public ResponseEntity<Result<AccountDTOs.UserInfoDTO>> getSelfInfo(Authentication authentication) {
+    // 获取自身基本信息接口（买家）
+    @GetMapping("/buyer/myInfo")
+    public ResponseEntity<Result<AccountDTOs.BuyerInfoDTO>> getBuyerSelfInfo(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<AccountDTOs.UserInfoDTO> result = userService.getUserInfo(userId);
+        Result<AccountDTOs.BuyerInfoDTO> result = userService.getBuyerInfo(userId);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    // 获取自身基本信息接口（商家）
+    @GetMapping("/store/myInfo")
+    public ResponseEntity<Result<AccountDTOs.StoreInfoDTO>> getStoreSelfInfo(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<AccountDTOs.StoreInfoDTO> result = userService.getStoreInfo(userId);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    // 获取某商家基本信息接口
+    @GetMapping("/store/Info/{store_id}")
+    public ResponseEntity<Result<AccountDTOs.StoreInfoDTO>> getStoreInfo(@PathVariable String store_id) {
+        Result<AccountDTOs.StoreInfoDTO> result = userService.getStoreInfo(store_id);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 

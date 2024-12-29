@@ -1,11 +1,13 @@
 package com.finalproject.controller;
 
+import com.finalproject.DTO.Result;
 import com.finalproject.service.ImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class ImageController {
@@ -26,4 +28,14 @@ public class ImageController {
     public ResponseEntity<Resource> getImage(@PathVariable String imageId) {
         return imageService.loadImageAsResource(imageId);
     }
+
+    @PostMapping("/upload_image/{type}")
+    public ResponseEntity<Result<String>> getImage(@RequestParam("file") MultipartFile file, @PathVariable String type) throws IOException {
+       Result<String> result=imageService.saveImage(file, type);
+        return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+
+
+
 }
