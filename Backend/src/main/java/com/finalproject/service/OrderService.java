@@ -266,7 +266,7 @@ public class OrderService {
                 orderItemDTO.setProductName(product.getProductName());
                 List<ProductImage> productImages = getProductImagesById(productId);
                 if (!productImages.isEmpty()) {
-                    orderItemDTO.setProductImage("http://47.97.59.189:8080/images/" + productImages.getFirst().getImageId());
+                    orderItemDTO.setProductImage(productImages.getFirst().getImageId());
                 }
                 orderItemDTO.setProductPrice(product.getProductPrice());
                 orderItemDTOList.add(orderItemDTO);

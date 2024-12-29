@@ -21,11 +21,12 @@
             <!-- 使用 v-for 循环展示商品列表 -->
             <div v-for="product in paginatedProducts" :key="product.productId" class="product-item">
               <!-- 复选框，用于批量选择 -->
-              <el-checkbox :label="product.productId" v-model="selectedProductIds"
-                @change="handleProductClick(product.productId)">
-                <img :src="product.productPic" :alt="product.productId" class="product-image" />
-                <h2>{{ product.productName }}</h2>
-                <p>价格: ¥{{ product.productPrice }}</p>
+              <el-checkbox :label="product.productId" v-model="selectedProductIds">
+                <div @click="handleProductClick(product.productId)">
+                  <img :src="'http://localhost:8080/images/' + product.productPic" :alt="product.productId" class="product-image" />
+                  <h2>{{ product.productName }}</h2>
+                  <p>价格: ¥{{ product.productPrice }}</p>
+                </div>
               </el-checkbox>
             </div>
           </div>
@@ -34,6 +35,17 @@
             <span>第 {{ currentPage1 }} 页 / 共 {{ productsPages }} 页</span>
             <button @click="productPageChange(currentPage1 + 1)" :disabled="currentPage1 === productsPages">下一页</button>
           </div>
+          <el-button type="success" 
+          style="background-color: #a61b29; 
+          letter-spacing: 5px; 
+          font-size: 22px;
+          border: 2px solid #a61b29;
+          width: 150px; 
+          height:50px;
+          right: 5%;
+          bottom:20px;
+          position: absolute"
+          @click="enterPay"> 购买</el-button>
         </div>
         <div v-else>
           <span style="font-family: Arial, sans-serif; font-size: 20px; display: block; margin-bottom: 13px;">
@@ -57,7 +69,7 @@
                 <div class="store-products">
                   <div v-for="product in store.products.slice(0, 4)" :key="product.productId" class="product-item">
                     <!-- <img :src="'data:image/png;base64,' + product.productPic" alt="Product Image" class="product-image" /> -->
-                    <img :src="product.productPic" alt="Product Image" class="product-image" />
+                    <img :src="'http://localhost:8080/images/' + product.productPic" alt="Product Image" class="product-image" />
                     <p class="product-price">{{ product.productName }}</p>
                     <p class="product-price">¥{{ product.productPrice }}</p>
                   </div>
@@ -113,6 +125,7 @@ const filter = (category) => {
 }
 
 //////商品相关
+const selectedProductIds = ref([]);
 const Products = reactive([]);
 const fetchProducts = async () => {
   console.log(token);
@@ -207,7 +220,15 @@ const handleStoreClick = (storeId) => {
   router.push('/shopdetail');
 };
 
-
+const enterPay = () => {
+  const productIdStr = JSON.stringify(selectedProductIds.value);//序列化对象
+  router.push({
+    path: '/pay', query: {
+      product: productIdStr,
+      isNew: 'true'
+    }
+  });
+}
 
 onMounted(() => {
   fetchProducts();
@@ -232,15 +253,6 @@ onMounted(() => {
 }
 
 .sidebar-category {
-  /* background-color: #fff;
-  border-radius: 16px;
-  box-sizing: border-box;
-  min-height: 70vh;
-  margin-top: 16px;
-  padding: 8px;
-  position: sticky;
-  top: 10px;
-  width: 20%; */
   flex: 0 0 200px;
   background-color: #fff;
   padding: 20px;
@@ -248,8 +260,6 @@ onMounted(() => {
 }
 
 .display {
-  /* background-color: #fff;
-  border-radius: 16px; */
   box-sizing: border-box;
   margin-top: 16px;
   margin-left: 16px;
@@ -281,6 +291,9 @@ onMounted(() => {
 }
 
 .product-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   flex: 0 0 23%;
   background-color: #fff;

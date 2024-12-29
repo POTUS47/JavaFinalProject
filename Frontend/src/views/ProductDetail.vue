@@ -245,7 +245,7 @@ const enterPay = () => {
   router.push({
     path: '/pay', query: {
       product: productStr,
-      isPaid: 'false'
+      isNew: 'true'
     }
   });
 }
