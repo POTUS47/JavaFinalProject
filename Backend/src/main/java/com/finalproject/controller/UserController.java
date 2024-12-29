@@ -238,8 +238,8 @@ public class UserController {
     }
 
     @PostMapping("/UserInfo/GetPhotoAndDescribtion")
-    public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescribtion(@RequestParam("userId") String userId, Authentication authentication) {
-        //String userId = (String) authentication.getPrincipal();
+    public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescribtion(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
         Result<AccountDTOs.PandDDTO>response=userService.getPandD(userId);
         return ResponseEntity.status(response.getCode()).body(response);
     }

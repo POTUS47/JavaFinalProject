@@ -407,13 +407,22 @@ public class ProductService {
         return 200;
     }
 
-    public Result<List<ProductDTO>> getAllProduct(String storeId, String viewType) {
+    public Result<List<ProductDTO>> getAllProduct(String storeId) {
         List<Product> res=productRepository.findByStoreId(storeId);
         List<ProductDTO> response=new ArrayList<>();
         if(res.isEmpty()){
             return Result.error(404,"本店没有商品");
         }
         for(Product product:res){
+            String productId=product.getProductId();
+            String imageurl= "";
+            Optional<ProductImage> temp=productImageRepository.findFirstByProductId(productId);
+            if(temp.isEmpty()){
+                imageurl=baseUrl+"/iamge/1";
+            }
+            else{
+                imageurl=baseUrl+"/images/"+temp.get().getImageId();
+            }
             ProductDTO dto=new ProductDTO();
             dto.setProductName(product.getProductName());
             dto.setProductPrice(product.getProductPrice());
@@ -422,6 +431,7 @@ public class ProductService {
             dto.setDescription(product.getDescription());
             dto.setStoreTag(product.getStoreTag());
             dto.setProductId(product.getProductId());
+            dto.setImageurl(imageurl);
             response.add(dto);
         }
         return Result.success(response);
