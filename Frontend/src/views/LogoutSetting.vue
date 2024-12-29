@@ -41,6 +41,8 @@ export default {
     methods:{
         async logout() {
           localStorage.removeItem('token');
+          this.$message.success('成功登出');
+          this.$router.push({ name: 'LoginAndRegister' }); // 假设路由中有名为 'Login' 的路由
         },
     },
 }

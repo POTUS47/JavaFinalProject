@@ -371,7 +371,7 @@ const register= async () =>{
           const response = await axiosInstance.post('/users/register',{
             'email':registerEmail.value,
             'password':newPassword.value,
-            'type':userType.value,
+            'identity':userType.value,
             'verificationCode':verificationCode.value
           });
             message.value=response.data.data.message;

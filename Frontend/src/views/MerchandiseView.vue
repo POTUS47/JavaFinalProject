@@ -124,8 +124,6 @@ import { ref, computed,onMounted,reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axiosInstance from '../router/axios';
 
-import Loading from '../views/templates/LoadingView.vue';
-import Container from '../views/templates/PicTextContainer.vue'
 const text=ref('');
 const picUrl=ref('');
 
@@ -161,7 +159,7 @@ const typeChange = (id,name) =>{
   selectedCategory.value=0;
   // console.log(`AllCategories[currentSumCategory.value].subCategories[selectedCategory.value].subCategoryId is ${AllCategories[currentSumCategory.value].subCategories[selectedCategory.value].subCategoryId}`);
   getProducts(AllCategories[currentSumCategory.value].subCategories[selectedCategory.value].subCategoryId);
-  //wqy
+
   currentType.value = name;
   //getCategory(name);
   //getCommodity(name);

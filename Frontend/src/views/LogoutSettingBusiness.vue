@@ -39,26 +39,10 @@ export default {
         SettingHeader
     },
     methods:{
-        async logout() {
-            try {
-                // 发送请求到后端接口进行退出登录
-                const response = await axiosInstance.post('/Account/logout');
-
-                // 在控制台输出响应内容以进行调试
-                console.log('API response:', response.data);
-
-                // 检查响应内容并反馈给用户
-                if (response.data.message === '登出账号成功！') {
-                this.$message.success('退出登录成功');
-                localStorage.removeItem('userId'); // 清除本地存储的用户信息
-                this.$router.push('/loginandregister');
-                } else {
-                this.$message.error(`退出登录失败: ${response.data.message}`);
-                }
-            } catch (error) {
-                console.error('请求失败:', error);
-                this.$message.error('请求失败，请稍后再试');
-            }
+      async logout() {
+          localStorage.removeItem('token');
+          this.$message.success('成功登出');
+          this.$router.push({ name: 'LoginAndRegister' }); // 假设路由中有名为 'Login' 的路由
         },
     },
 }
