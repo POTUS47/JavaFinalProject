@@ -758,6 +758,7 @@ div {
   margin-left: 40px;
   background-color: #a61b29;
   border-radius: 15px;
+  width: 400px;
 }
 
 .preview img {
