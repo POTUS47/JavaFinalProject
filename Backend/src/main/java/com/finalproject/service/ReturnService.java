@@ -165,6 +165,10 @@ public class ReturnService {
             return response;
         }
         response=confirmReceive(returnId);
+        if(response.getCode()!=200){
+            return response;
+        }
+        response=refund(userID,returnId);
         return response;
     }
 
