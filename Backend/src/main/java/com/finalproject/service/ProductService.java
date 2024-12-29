@@ -120,9 +120,9 @@ public class ProductService {
         //商家相关信息
         Store store=pro.getStore();
 
-        //商品图片相关信息
-        List<String> imageIds = productImageRepository.findByProductId(productId).stream()
-                .map(ProductImage::getImageId) // 假设ProductImage类有getImageId方法
+        // 商品图片相关信息
+        List<String> imageUrls = productImageRepository.findByProductId(productId).stream()
+                .map(image -> baseUrl + "/images/" + image.getImageId())  // 拼接为完整的图片URL
                 .toList();
 
 
@@ -146,7 +146,7 @@ public class ProductService {
                 store.getStoreScore(),
                 getProductMarkFromSubsystem(productId,userId),
                 getStoreMarkFromSubsystem(store.getAccountId(),userId),
-                imageIds,
+                imageUrls,
                 productDetails);
 
 
