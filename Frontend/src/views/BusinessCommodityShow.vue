@@ -239,11 +239,9 @@ export default {
 
       try {
         const response = await axiosInstance.get('/productController/GetProductsByStoreIdAndViewType', {
-          headers: {
-            Authorization: `${token}`
-          },
           params: {
-            ViewType: viewType.value
+            isBuyer: false,
+            storeId: localStorage.getItem('userId'),
           },
         });
 

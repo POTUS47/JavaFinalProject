@@ -229,9 +229,7 @@ handleFile(event) {
  async fetchImageAndText(id) {
             try {
                 console.log(id,'!');
-                const response = await axiosInstance.post('/UserInfo/GetPhotoAndDescribtion', {
-                id
-                });
+              const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
 
                 const { describtion, photo } = response.data;
                 console.log('1:',this.userimades.ima);
