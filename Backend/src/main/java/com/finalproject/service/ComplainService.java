@@ -6,6 +6,7 @@ import com.finalproject.model.Complain;
 import com.finalproject.model.Return;
 import com.finalproject.repository.ComplainRepository;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/complains")
+@Service
 public class ComplainService {
     @Resource
     private ComplainRepository complainRepository;
