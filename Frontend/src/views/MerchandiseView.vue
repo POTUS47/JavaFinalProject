@@ -256,6 +256,23 @@ const handleProductClick = (productId) => {
 
 
 const getCategoryDetail = async (name) => {
+  try {
+    const response = await axiosInstance.get('/productController/Classification/GetCategoryByName', {
+      params: {
+        categoryName: name
+      }
+    });
+
+    text.value = response.data.categoryDescription;
+    picUrl.value = response.data.categoryPhoto.imageUrl;
+
+    // console.log(`CategoryDetail is ${JSON.stringify(response, null, 2)}`)
+  } catch (error) {
+    if (error.response) {
+      message.value = error.response.data;
+    } else {
+      message.value = '获取分类描述失败';
+    }
   picUrl.value = categoryUrl + name + '.jpg';
   if(name=='金彩流光'){
     text.value = detailDescription5;
@@ -279,7 +296,7 @@ const getCategoryDetail = async (name) => {
   }
   
 };
-
+}
 
 </script>
 
