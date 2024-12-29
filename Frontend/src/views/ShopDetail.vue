@@ -85,11 +85,11 @@
                   class="product-item"
                 >
                   <div @click="handleProductClick(product.productId)">
-                    <!-- <img :src="product.productPics.imageUrl" :alt="product.productId" class="product-image" /> -->
-                    <img 
+                    <img :src="product.productPics.imageUrl" :alt="product.productId" class="product-image" />
+                    <!-- <img 
                       src="../assets/wall.jpg"
                       class="product-image" 
-                    />
+                    /> -->
                     <div class="product-text">
                       <h2>{{ product.productName }}</h2>
                       <p>价格: ¥{{ product.productPrice }}</p>
@@ -237,12 +237,15 @@ const fetchIsBookmarked = async () => {
 const message3= ref('');
 const fetchAllProducts = async () => {
   try {
-    const response = await axiosInstance.get(`/productController/products/${shopinfo.storeId}`, {
+    const response = await axiosInstance.get(`/productController/GetProductsByStoreIdAndViewType`,null, {
+      params: {
+        viewtype: '其实没啥用'
+      }
     });
     if (products.length > 0) {
       products.splice(0, products.length);//清空数组
     }
-    response.data.forEach(product => {
+    response.data.data.forEach(product => {
       products.push(product);
     });
     message3.value = '已获取全部商品信息';

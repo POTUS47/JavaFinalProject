@@ -23,7 +23,7 @@
               <!-- 复选框，用于批量选择 -->
               <el-checkbox :label="product.productId" v-model="selectedProductIds">
                 <div @click="handleProductClick(product.productId)">
-                  <img :src="'http://localhost:8080/images/' + product.productPic" :alt="product.productId" class="product-image" />
+                  <img :src="product.productPic" :alt="product.productId" class="product-image" />
                   <h2>{{ product.productName }}</h2>
                   <p>价格: ¥{{ product.productPrice }}</p>
                 </div>
@@ -69,7 +69,7 @@
                 <div class="store-products">
                   <div v-for="product in store.products.slice(0, 4)" :key="product.productId" class="product-item">
                     <!-- <img :src="'data:image/png;base64,' + product.productPic" alt="Product Image" class="product-image" /> -->
-                    <img :src="'http://localhost:8080/images/' + product.productPic" alt="Product Image" class="product-image" />
+                    <img :src="product.productPic" alt="Product Image" class="product-image" />
                     <p class="product-price">{{ product.productName }}</p>
                     <p class="product-price">¥{{ product.productPrice }}</p>
                   </div>
