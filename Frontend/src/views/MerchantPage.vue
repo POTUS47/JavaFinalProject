@@ -11,7 +11,6 @@
   <script>
   import Sidebar from './BusinessSidebar.vue';
   import BusinessHomePage from './BusinessHomePage.vue';
-  import BusinessMarket from './BusinessMarket.vue';
   import BusinessOrder from './BusinessOrderManage.vue';
   import BusinessCommodity from './BusinessCommodity.vue';
 
@@ -20,7 +19,6 @@
     components: {
       Sidebar,
       BusinessHomePage,
-      BusinessMarket,
       BusinessOrder,
       BusinessCommodity,
     },
