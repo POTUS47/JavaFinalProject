@@ -2,33 +2,52 @@ package com.finalproject.service;
 import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
-import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
-import com.finalproject.service.OrderService;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.web.client.RestTemplate;
+
 
 
 @Service
 public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
-    private final StoreRepository storeRepository;
-    private final ProductRepository productRepository;
     private final OrderService orderService;
+    private final RestTemplate restTemplate;
 
     // 构造函数注入
     public OrderItemService(OrderItemRepository orderItemRepository,
                             OrderRepository orderRepository,
-                            StoreRepository storeRepository, ProductRepository productRepository,
-                            OrderService orderService){
+                            OrderService orderService,
+                            RestTemplate restTemplate){
         this.orderItemRepository = orderItemRepository;
         this.orderRepository = orderRepository;
-        this.storeRepository = storeRepository;
-        this.productRepository = productRepository;
         this.orderService = orderService;
+        this.restTemplate = restTemplate;
+    }
+
+    @Value("${api.base-url}")
+    private String baseUrl;
+
+    ////////////////////////////////////////////////////////内部接口
+    @Transactional
+    public Optional<Store> getStoreById(String storeId) {
+        String url = baseUrl + "/api/users/getStore/" + storeId;
+        ResponseEntity<Optional<Store>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        return response.getBody();
     }
 
     // 更新订单项评分评价
@@ -72,7 +91,7 @@ public class OrderItemService {
     @Transactional
     public Result<List<GetStoreRemarkDTO>> getStoreRemarks(String storeId) {
         // 确认店铺存在
-        Optional<Store> storeOpt = storeRepository.findById(storeId);
+        Optional<Store> storeOpt = getStoreById(storeId);
         if (storeOpt.isEmpty()) {
             return Result.error(404,"店铺不存在");
         }
