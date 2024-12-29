@@ -17,10 +17,11 @@ public class BookmarkProduct implements Serializable {
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     private Product product;
 
-    @Id
+
     @Column(name = "buyer_id", nullable = false, updatable = false)
     private String buyerId;
 
+    @Id
     @Column(name = "product_id", nullable = false, updatable = false)
     private String productId;
 

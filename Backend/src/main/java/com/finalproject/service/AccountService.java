@@ -100,7 +100,7 @@ public class AccountService {
                 return Result.error(400, "注册类型无效,必须是买家商家管理员");
         }
         account.setAccountId(generatedId);
-        account.setUserName(dto.getUsername());
+        account.setUserName(generatedId);
         account.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt())); // 加密密码
         account.setEmail(dto.getEmail());
         accountRepository.save(account);

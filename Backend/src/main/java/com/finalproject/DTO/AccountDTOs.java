@@ -2,7 +2,6 @@ package com.finalproject.DTO;
 
 public class AccountDTOs {
     public static class UserRegisterDTO {
-        private String username;
         private String password;
         private String email;
         private String verificationCode;
@@ -11,9 +10,6 @@ public class AccountDTOs {
         // Getters and Setters
         public String getIdentity(){
             return this.identity;
-        }
-        public String getUsername(){
-            return this.username;
         }
         public String getPassword(){
             return this.password;

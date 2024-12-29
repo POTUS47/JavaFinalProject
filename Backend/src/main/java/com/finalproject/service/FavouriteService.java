@@ -154,7 +154,7 @@ public class FavouriteService {
                     if (!productImages.isEmpty()) {
                         // 取第一张图片
                         String imageId = productImages.getFirst().getImageId();
-                        productDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                        productDTO.setProductPic(imageId);
                     }
 
                     productDTOList.add(productDTO);
@@ -199,7 +199,7 @@ public class FavouriteService {
             if (!productImages.isEmpty()) {
                 // 取第一张图片
                 String imageId = productImages.getFirst().getImageId();
-                favouriteProductsDTO.setProductPic("http://47.97.59.189:8080/images/"+imageId);
+                favouriteProductsDTO.setProductPic(imageId);
             }
 
             favouriteProducts.add(favouriteProductsDTO);

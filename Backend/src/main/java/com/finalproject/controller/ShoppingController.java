@@ -140,6 +140,13 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 判断是否存在当前商品的订单项
+    @GetMapping("/order/is-exist-order")
+    public ResponseEntity<Result<Boolean>> IsExistOrder(@RequestParam String orderId) {
+        Result<Boolean> response = orderItemService.isExistOrder(orderId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
     // 更改订单项的状态为有售后(子系统接口)
     @PutMapping("/order/return/{user_id}/{item_id}")
     public ResponseEntity<Result<Map<String,String>>>
@@ -222,7 +229,7 @@ public class ShoppingController {
     }
 
 
-    // 判断是否存在当前商品的订单项
+    // 删除订单
     @DeleteMapping("/order/delete-order")
     public ResponseEntity<Result<String>> deleteOrder(@RequestParam String orderId) {
         Result<String> response = orderService.deleteOrder(orderId);
@@ -249,6 +256,13 @@ public class ShoppingController {
     @GetMapping("/order/get-one-order")
     public ResponseEntity<Result<OrderCenterDTO>> getOneOrder(@RequestParam String orderId) {
         Result<OrderCenterDTO> response = orderService.getOneOrder(orderId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 根据一组订单号获取单个订单信息
+    @GetMapping("/order/getOrders")
+    public ResponseEntity<Result<List<OrderCenterDTO>>> getOrders(@RequestParam List<String> orderIds) {
+        Result<List<OrderCenterDTO>> response = orderService.getOrders(orderIds);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -294,7 +308,7 @@ public class ShoppingController {
     @PostMapping("/order/pay-order")
     public ResponseEntity<Result<CreditsDTO>> payOrder(@RequestBody MoneyDTO moneyDTO,Authentication authentication){
         String userId = (String) authentication.getPrincipal();
-        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), BigDecimal.valueOf(moneyDTO.getActualPay()));
+        Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), moneyDTO.getUsedCredits());
         return ResponseEntity.status(response.getCode()).body(response);
     }
 }
