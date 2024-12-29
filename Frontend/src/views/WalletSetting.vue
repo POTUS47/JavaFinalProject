@@ -69,16 +69,12 @@ export default {
     },
     methods:{
         //获取钱包余额
-        async getWalletBalance(userId) {
+        async getWalletBalance() {
             try {
-                const response = await axiosInstance.get('/Payment/GetWalletBalance', {
-                params: {
-                    accountID: userId
-                }
-                });
-
-                if (typeof response.data === 'number') {
-                    this.balance = response.data;
+                const response = await axiosInstance.get('/users/balance');
+                const balance = parseFloat(response.data.data.balance);
+                if (typeof balance === 'number') {
+                    this.balance = balance;
                 } else {
                     this.$message.warning('未返回有效的余额信息');
                     this.balance = 0; 
@@ -96,13 +92,14 @@ export default {
                 this.$message.error('充值金额必须大于零');
                 return;
             }
-            const userId = localStorage.getItem('userId'); // 获取当前用户 ID
+            //const userId = localStorage.getItem('userId'); // 获取当前用户 ID
 
             // 创建 FormData 对象
             const formData = new FormData();
-            formData.append('BuyerId', userId); // 假设这是当前用户的 ID
+            //formData.append('BuyerId', userId); // 假设这是当前用户的 ID
             formData.append('Amount', this.recharge.amount);
-            formData.append('returnUrl', 'http://47.97.5.21:17990/BuyerWallet');
+            //formData.append('returnUrl', 'http://47.97.5.21:17990/BuyerWallet');
+            formData.append('returnUrl', 'localhost:/BuyerWallet');
             formData.forEach((value, key) => {
                 console.log(key, value);
              });
@@ -141,12 +138,13 @@ export default {
         },
     },
     mounted() {
-        const userId = localStorage.getItem('userId');  // 替换为实际的用户 ID
-        if (userId) {
-            this.getWalletBalance(userId);
-        } else {
-            this.$message.error('用户ID不存在,请登录后再试');
-        }
+        // const userId = localStorage.getItem('userId');  // 替换为实际的用户 ID
+        // if (userId) {
+        //     this.getWalletBalance(userId);
+        // } else {
+        //     this.$message.error('用户ID不存在,请登录后再试');
+        // }
+    this.getWalletBalance();
   }
 }
 </script>
