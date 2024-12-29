@@ -45,19 +45,19 @@ interface Order {
   // UI 相关字段
 }
 const filteredOrders = computed(() => {
-      if (option.value==1) {
-        return myOrders.value;
-      }
-      const statusMapping: { [key: number]: string } = {
-        2: '待付款',
-        3: '处理中',
-        4: '运输中',
-        5: '已完成',
-        6: '售后中',
-        7: '售后结束',
-      };
-      return myOrders.value.filter(order => order.status === statusMapping[option.value]);
-    });
+  if (option.value==1) {
+    return myOrders.value;
+  }
+  const statusMapping: { [key: number]: string } = {
+    2: '待付款',
+    3: '处理中',
+    4: '运输中',
+    5: '已完成',
+    6: '售后中',
+    7: '售后结束',
+  };
+  return myOrders.value.filter(order => order.status === statusMapping[option.value]);
+});
 const myOrders = ref<Order[]>([])
 //   const getMyOrder = async () => {
 //   axiosInstance.get('/shopping/order/get-all-buyer-orders', {
@@ -132,7 +132,7 @@ const getOrders = async () => {
         starVisible: false,
         isStar: false
       }))
-    console.log("成功获得订单", myOrders.value)
+      console.log("成功获得订单", myOrders.value)
       isLoading.value=false;
     }
   } catch (error) {
@@ -141,7 +141,7 @@ const getOrders = async () => {
     isLoading.value=false;
   }
 }
- getOrders();
+getOrders();
 // const isStarred = async (order: Order) => {
 //   axiosInstance.get('/Shopping/CheckOrderRemark', {
 //         params: {
@@ -170,18 +170,18 @@ const admit = async (order) => {
   axiosInstance.post(`/afterSell/orderItem/${order}/return`, {
     reason: returnProduct.value === '其他' ? returnProduct_else.value : returnProduct.value
   })
-  .then(response => {
-    resetForm(order);
-    console.log('submitting return:成功');
-    ElMessage({
-        message: '申请退货成功',
-        type: 'success',
+      .then(response => {
+        resetForm(order);
+        console.log('submitting return:成功');
+        ElMessage({
+          message: '申请退货成功',
+          type: 'success',
         });
         getOrders();
         resetForm ()
-    }).catch(error => {
-      console.error('Error submitting return:', error);
-    });
+      }).catch(error => {
+    console.error('Error submitting return:', error);
+  });
 };
 // const admitOrder = async (order) => {
 //   if(returnProduct.value=='其他'){
@@ -271,17 +271,17 @@ function confirmArrive(order)
   console.log(order.id)
   axiosInstance.post('/shopping/order/receive-order',{
     orderId: order.id
-   })
-  .then(response => {
-    console.log('签收成功');
-    ElMessage({
-        message: '成功签收',
-        type: 'success',
+  })
+      .then(response => {
+        console.log('签收成功');
+        ElMessage({
+          message: '成功签收',
+          type: 'success',
         });
         getOrders();
-    }).catch(error => {
-      console.error('Error confirm:', error);
-    });
+      }).catch(error => {
+    console.error('Error confirm:', error);
+  });
 }
 
 // function deleteRow(order) {
@@ -349,174 +349,174 @@ const menuChange = (index) => {
 </script>
 
 <template>
-    <Navbar />
-    <el-container>
-      <el-aside width="18vh" style="background-color:  #82111f; ">
-  <div class="big-title" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-<!--    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />-->
-    <span>订单</span>
-<!--    <img class="flipped-image" src="@/assets/czw/aside.svg" alt="Flipped Image" />-->
-  </div>
-  <div style="width: 100%;">
-    <el-menu
-      :default-active="activeIndex"
-      mode="vertical"
-      background-color="#ffffff"
-      text-color="black"
-      active-text-color="#d42517"
-      @select="menuChange"
-      style="width: 100%;"
-    >
-      <el-menu-item 
-        v-for="item in menuItems" 
-        :key="item.index" 
-        :index="item.index.toString()"
-        
-      >
-        <span class="el-icon-menu">{{ item.title }}</span>
-      </el-menu-item>
-    </el-menu>
-  </div>
-</el-aside>
+  <Navbar />
   <el-container>
-    <el-header style="text-align: left">
-    <div style="line-height: 6vh;">
-      <span v-if="option === 1" style="font-size: 2vh; color: #333;">全部</span>
-      <span v-if="option === 2" style="font-size: 2vh; color: #333;">待付款</span>
-      <span v-if="option === 3" style="font-size: 2vh; color: #333;">处理中</span>
-      <span v-if="option === 4" style="font-size: 2vh; color: #333;">运输中</span>
-      <span v-if="option === 5" style="font-size: 2vh; color: #333;">已完成</span>
-      <span v-if="option === 6" style="font-size: 2vh; color: #333;">售后中</span>
-      <span v-if="option === 7" style="font-size: 2vh; color: #333;">售后结束</span>
-    </div>
-  </el-header>
-  <Loading v-if="isLoading" />
-  <div v-else-if="isNoData">暂无订单</div>
-  <el-table  v-else :data="filteredOrders" style="width: 100%">
-    <el-table-column label="商品信息">
-    <template v-slot="scope">
-      <div class="order-header">
-        <p>{{ scope.row.time }} 订单号: {{ scope.row.id }}</p>
+    <el-aside width="18vh" style="background-color:  #82111f; ">
+      <div class="big-title" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+        <!--    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />-->
+        <span>订单</span>
+        <!--    <img class="flipped-image" src="@/assets/czw/aside.svg" alt="Flipped Image" />-->
       </div>
-      <div style="display: flex; flex-direction: column;">
-<!--         <img :src="`data:image/png;base64,${scope.row.pic}`" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
-<!--        <img :src="scope.row.orderItems[0].productImage" alt="Order Image" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
-<!--        <div style="margin-left: 10px;">-->
-<!--          <p>{{ scope.row.orderItems[0].productName }}</p>-->
-<!--          <p>价格:{{ scope.row.orderItems[0].productPrice }}</p>-->
-<!--        </div>-->
-        <div  v-for="item in scope.row.orderItems" :key="item.productId" style="display: flex; margin-bottom: 10px;">
-          <img
-              :src="item.productImage"
-              alt="Order Image"
-              style="max-width: 100px; max-height: 100px;"
-          />
-          <div style="margin-left: 10px;">
-            <p>{{ item.productName }}</p>
-            <p>价格: {{ item.productPrice }}</p>
-          </div>
-        </div>
+      <div style="width: 100%;">
+        <el-menu
+            :default-active="activeIndex"
+            mode="vertical"
+            background-color="#ffffff"
+            text-color="black"
+            active-text-color="#d42517"
+            @select="menuChange"
+            style="width: 100%;"
+        >
+          <el-menu-item
+              v-for="item in menuItems"
+              :key="item.index"
+              :index="item.index.toString()"
+
+          >
+            <span class="el-icon-menu">{{ item.title }}</span>
+          </el-menu-item>
+        </el-menu>
       </div>
-    </template>
-  </el-table-column>
-    <el-table-column prop="store" label="店铺" width="160"></el-table-column>
-    <el-table-column prop="province" label="商品状态" width="160">
-      <template v-slot="scope">
-        <div v-for="item in scope.row.orderItems" :key="'status-' + (item?.itemId || '')">
-          <!-- 当状态为"无售后"时显示按钮 -->
-          <el-button
-              type="text"
-              v-if="scope.row.status === '已完成' && item?.itemStatus === '无售后'"
-              @click="returnOrder(item.itemId)"
-          >申请退货</el-button>
-          <!-- 其他情况显示状态文本 -->
-          <span v-else>{{ item?.itemStatus || '无' }}</span>
+    </el-aside>
+    <el-container>
+      <el-header style="text-align: left">
+        <div style="line-height: 6vh;">
+          <span v-if="option === 1" style="font-size: 2vh; color: #333;">全部</span>
+          <span v-if="option === 2" style="font-size: 2vh; color: #333;">待付款</span>
+          <span v-if="option === 3" style="font-size: 2vh; color: #333;">处理中</span>
+          <span v-if="option === 4" style="font-size: 2vh; color: #333;">运输中</span>
+          <span v-if="option === 5" style="font-size: 2vh; color: #333;">已完成</span>
+          <span v-if="option === 6" style="font-size: 2vh; color: #333;">售后中</span>
+          <span v-if="option === 7" style="font-size: 2vh; color: #333;">售后结束</span>
         </div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="totalPay" label="实付款" width="160"></el-table-column>
-    <el-table-column prop="status" label="订单状态" width="160"></el-table-column>
-    <el-table-column prop="zip" label="操作" width="160">
-    <template v-slot="scope">
-<!--      <el-button type="text" v-if="scope.row.isStar === false&&scope.row.status === '已完成'" @click="startRating(scope.row)">去评价</el-button>-->
-      <el-button
-          type="text"
-          v-for="item in scope.row.orderItems"
-          :key="'rating-' + item.itemId"
-          v-if="scope.row.status === '已完成'"
-          @click="startRating(item.itemId)"
-      >去评价
-      </el-button>
-      <el-button type="text" v-if="scope.row.status === '运输中'" @click="confirmArrive(scope.row)">确认收货</el-button>
-    </template>
-  </el-table-column>
-<!--  <el-table-column prop="o" label="订单详情" width="160">-->
-<!--    <template v-slot="scope">-->
-<!--    <el-button type="text" v-if="scope.row.orderStatus === '待付款'" @click="gotoDetail(scope.row)">去付款</el-button>-->
-<!--    <el-button type="text" v-else @click="gotoDetail(scope.row)">点击详情</el-button>-->
-<!--    </template>-->
-<!--  </el-table-column>-->
-  </el-table>
-  </el-container>
-  <div v-if="currentRow_star!=null">
-  <el-dialog
-      customClass="custom-dialog"
-        :draggable="true"
-        :style="{ zIndex: 9999 }"
-       :model-append-to-body="true"
-        :modal="false"
-        v-model="starVisible"
-        title="评价"
-        width="460px"
-        @close="resetStar(currentRow_star)"
-         :z-index="2000"
+      </el-header>
+      <Loading v-if="isLoading" />
+      <div v-else-if="isNoData">暂无订单</div>
+      <el-table  v-else :data="filteredOrders" style="width: 100%">
+        <el-table-column label="商品信息">
+          <template v-slot="scope">
+            <div class="order-header">
+              <p>{{ scope.row.time }} 订单号: {{ scope.row.id }}</p>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <!--         <img :src="`data:image/png;base64,${scope.row.pic}`" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
+              <!--        <img :src="scope.row.orderItems[0].productImage" alt="Order Image" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
+              <!--        <div style="margin-left: 10px;">-->
+              <!--          <p>{{ scope.row.orderItems[0].productName }}</p>-->
+              <!--          <p>价格:{{ scope.row.orderItems[0].productPrice }}</p>-->
+              <!--        </div>-->
+              <div  v-for="item in scope.row.orderItems" :key="item.productId" style="display: flex; margin-bottom: 10px;">
+                <img
+                    :src="item.productImage"
+                    alt="Order Image"
+                    style="max-width: 100px; max-height: 100px;"
+                />
+                <div style="margin-left: 10px;">
+                  <p>{{ item.productName }}</p>
+                  <p>价格: {{ item.productPrice }}</p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="store" label="店铺" width="160"></el-table-column>
+        <el-table-column prop="province" label="商品状态" width="160">
+          <template v-slot="scope">
+            <div v-for="item in scope.row.orderItems" :key="'status-' + (item?.itemId || '')">
+              <!-- 当状态为"无售后"时显示按钮 -->
+              <el-button
+                  type="text"
+                  v-if="scope.row.status === '已完成' && item?.itemStatus === '无售后'"
+                  @click="returnOrder(item.itemId)"
+              >申请退货</el-button>
+              <!-- 其他情况显示状态文本 -->
+              <span v-else>{{ item?.itemStatus || '无' }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPay" label="实付款" width="160"></el-table-column>
+        <el-table-column prop="status" label="订单状态" width="160"></el-table-column>
+        <el-table-column prop="zip" label="操作" width="160">
+          <template v-slot="scope">
+            <!--      <el-button type="text" v-if="scope.row.isStar === false&&scope.row.status === '已完成'" @click="startRating(scope.row)">去评价</el-button>-->
+            <el-button
+                type="text"
+                v-for="item in scope.row.orderItems"
+                :key="'rating-' + item.itemId"
+                v-if="scope.row.status === '已完成'"
+                @click="startRating(item.itemId)"
+            >去评价
+            </el-button>
+            <el-button type="text" v-if="scope.row.status === '运输中'" @click="confirmArrive(scope.row)">确认收货</el-button>
+          </template>
+        </el-table-column>
+        <!--  <el-table-column prop="o" label="订单详情" width="160">-->
+        <!--    <template v-slot="scope">-->
+        <!--    <el-button type="text" v-if="scope.row.orderStatus === '待付款'" @click="gotoDetail(scope.row)">去付款</el-button>-->
+        <!--    <el-button type="text" v-else @click="gotoDetail(scope.row)">点击详情</el-button>-->
+        <!--    </template>-->
+        <!--  </el-table-column>-->
+      </el-table>
+    </el-container>
+    <div v-if="currentRow_star!=null">
+      <el-dialog
+          customClass="custom-dialog"
+          :draggable="true"
+          :style="{ zIndex: 9999 }"
+          :model-append-to-body="true"
+          :modal="false"
+          v-model="starVisible"
+          title="评价"
+          width="460px"
+          @close="resetStar(currentRow_star)"
+          :z-index="2000"
       >
         <el-rate v-if="starVisible" v-model="star" :colors="colors"></el-rate>
         <el-input v-if="starVisible" v-model="comment" placeholder="请输入评价" class="oo"></el-input>
         <el-button type="primary" @click="confirmStar(currentRow_star)">确定</el-button>
       </el-dialog>
     </div>
-<!--    <div v-if="currentRow_cancel!=null">-->
-<!--    <el-dialog-->
-<!--      customClass="custom-dialog"-->
-<!--      :draggable="true"-->
-<!--      :modalAppendToBody="false" -->
-<!--      :modal="false"-->
-<!--       v-model="currentRow_cancel.dialogVisible_order" title="取消订单原因" width="460px" @close="resetForm(currentRow_cancel)">-->
-<!--     <el-select v-model="returnProduct" placeholder="请选择原因">-->
-<!--        <el-option label="买错了" value="买错了"></el-option>-->
-<!--        <el-option label="不想要了" value="不想要了"></el-option>-->
-<!--        <el-option label="其他" value="其他"></el-option>-->
-<!--      </el-select>-->
-<!--      <div style="margin-top: 10px;"></div>-->
-<!--      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>-->
-<!--      <el-divider></el-divider>-->
-<!--      <div slot="footer" class="dialog-footer">-->
-<!--    <el-button type="primary" @click="admitOrder(currentRow_cancel)">确 定</el-button>-->
-<!--    </div>-->
-<!--      </el-dialog>-->
+    <!--    <div v-if="currentRow_cancel!=null">-->
+    <!--    <el-dialog-->
+    <!--      customClass="custom-dialog"-->
+    <!--      :draggable="true"-->
+    <!--      :modalAppendToBody="false" -->
+    <!--      :modal="false"-->
+    <!--       v-model="currentRow_cancel.dialogVisible_order" title="取消订单原因" width="460px" @close="resetForm(currentRow_cancel)">-->
+    <!--     <el-select v-model="returnProduct" placeholder="请选择原因">-->
+    <!--        <el-option label="买错了" value="买错了"></el-option>-->
+    <!--        <el-option label="不想要了" value="不想要了"></el-option>-->
+    <!--        <el-option label="其他" value="其他"></el-option>-->
+    <!--      </el-select>-->
+    <!--      <div style="margin-top: 10px;"></div>-->
+    <!--      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>-->
+    <!--      <el-divider></el-divider>-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--    <el-button type="primary" @click="admitOrder(currentRow_cancel)">确 定</el-button>-->
+    <!--    </div>-->
+    <!--      </el-dialog>-->
     <div v-if="currentRow_return!=null">
-    <el-dialog
-      customClass="custom-dialog"
-      :draggable="true"
-      :modalAppendToBody="false"
-      :modal="false"
-       v-model="dialogVisible" title="退货原因" width="460px" @close="resetForm()">
-     <el-select v-model="returnProduct" placeholder="请选择原因">
-        <el-option label="商品与图片不符" value="商品与图片不符"></el-option>
-        <el-option label="商品破损" value="商品破损"></el-option>
-        <el-option label="商品假冒" value="商品假冒"></el-option>
-        <el-option label="不想要了" value="不想要了"></el-option>
-        <el-option label="其他" value="其他"></el-option>
-      </el-select>
-      <div style="margin-top: 10px;"></div>
-      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>
-      <div slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="admit(currentRow_return)">确 定</el-button>
-    </div>
+      <el-dialog
+          customClass="custom-dialog"
+          :draggable="true"
+          :modalAppendToBody="false"
+          :modal="false"
+          v-model="dialogVisible" title="退货原因" width="460px" @close="resetForm()">
+        <el-select v-model="returnProduct" placeholder="请选择原因">
+          <el-option label="商品与图片不符" value="商品与图片不符"></el-option>
+          <el-option label="商品破损" value="商品破损"></el-option>
+          <el-option label="商品假冒" value="商品假冒"></el-option>
+          <el-option label="不想要了" value="不想要了"></el-option>
+          <el-option label="其他" value="其他"></el-option>
+        </el-select>
+        <div style="margin-top: 10px;"></div>
+        <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="admit(currentRow_return)">确 定</el-button>
+        </div>
       </el-dialog>
     </div>
-</el-container>
+  </el-container>
 </template>
 
 
@@ -526,70 +526,70 @@ const menuChange = (index) => {
 }
 .custom-dialog {
   position: absolute;
-    top: 100%; /* 让评价组件在菜单项的下方 */
-    left: 0;
-    z-index: 1000; /* 提高层级以确保其显示在前面 */
+  top: 100%; /* 让评价组件在菜单项的下方 */
+  left: 0;
+  z-index: 1000; /* 提高层级以确保其显示在前面 */
 }
 .image {
-    width: 30px; /* 根据需求调整大小 */
-    height: auto;
-    /* transform: rotate(-90deg);*/
-  }
-  
-  .flipped-image {
-    width: 30px; /* 确保与第一张图一致 */
-    height: auto;
-    transform: scaleX(-1); /* 使用CSS进行垂直翻转 */
+  width: 30px; /* 根据需求调整大小 */
+  height: auto;
+  /* transform: rotate(-90deg);*/
+}
 
-  }
-  .big-title{
-    font-size:4vh;  /* 将字体大小设置为32像素 */
-    font-weight: bold; /* 可选：让文字加粗 */
-    text-align: center; /* 可选：使文字水平居中 */
-    margin: 20px 0; /* 可选：设置上下的外边距 */
-    font-family: "华文中宋", sans-serif;
-    color: #ffffff; /* 设置文字颜色为白色 */
-  }
-  .el-menu {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .el-menu-item {
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  
-  .el-menu-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 0;
-    height: 100%;
-    background-color: #bdaead;
-    z-index: 0;
-    transition: width 0.3s ease;
-  }
-  
-  .el-menu-item:hover::before {
-    width: 100%;
-  }
-  
-  .el-menu-item > span {
-    position: relative;
-    z-index: 1; /* 确保文本始终在滑块上方 */
-    transition: color 0.3s ease;
-  }
-  
-  .el-menu-item:hover {
-    color: #ffffff;
-  }
-  .el-icon-menu{
-    font-size:2vh;
-    font-weight: bold; /* 可选：让文字加粗 */  
-    font-family: "华文中宋", sans-serif;
-  }
+.flipped-image {
+  width: 30px; /* 确保与第一张图一致 */
+  height: auto;
+  transform: scaleX(-1); /* 使用CSS进行垂直翻转 */
+
+}
+.big-title{
+  font-size:4vh;  /* 将字体大小设置为32像素 */
+  font-weight: bold; /* 可选：让文字加粗 */
+  text-align: center; /* 可选：使文字水平居中 */
+  margin: 20px 0; /* 可选：设置上下的外边距 */
+  font-family: "华文中宋", sans-serif;
+  color: #ffffff; /* 设置文字颜色为白色 */
+}
+.el-menu {
+  position: relative;
+  overflow: hidden;
+}
+
+.el-menu-item {
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.el-menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #bdaead;
+  z-index: 0;
+  transition: width 0.3s ease;
+}
+
+.el-menu-item:hover::before {
+  width: 100%;
+}
+
+.el-menu-item > span {
+  position: relative;
+  z-index: 1; /* 确保文本始终在滑块上方 */
+  transition: color 0.3s ease;
+}
+
+.el-menu-item:hover {
+  color: #ffffff;
+}
+.el-icon-menu{
+  font-size:2vh;
+  font-weight: bold; /* 可选：让文字加粗 */
+  font-family: "华文中宋", sans-serif;
+}
 .el-header {
   background-color: #ffffff;
   color: #333;
