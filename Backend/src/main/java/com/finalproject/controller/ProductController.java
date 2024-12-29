@@ -7,6 +7,7 @@ import com.finalproject.model.Buyer;
 import com.finalproject.model.Image;
 import com.finalproject.model.Product;
 import com.finalproject.model.ProductImage;
+import com.finalproject.repository.CategoryRepository;
 import com.finalproject.service.ImageService;
 import com.finalproject.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
 
 
     //通过id获取本店所有商品
@@ -164,6 +164,13 @@ public class ProductController {
     @GetMapping("/GetAllCategories")
     public ResponseEntity<Result<List<CatSubDTO>>> getAllCategoriesWithSubcategories() {
         Result<List<CatSubDTO>> response = productService.getAllCategoriesWithSubcategories();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    //用小分类id获取商品
+    @GetMapping("/Classification/getProductsBySubTagId")
+    public ResponseEntity<Result<List<GCDDTO>>> getProductsBySubTagId(@RequestParam("subTagId") String subTagId) {
+        Result<List<GCDDTO>> response=productService.getProductsBySubTagId(subTagId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
