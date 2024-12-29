@@ -23,25 +23,7 @@
           <span>待售后</span>
         </el-card>
       </span>
-      <span class="BlockThree">
-        <el-card>
-          <div style="color: #977c7c;font-weight: bold;font-size: 1.2em;">相关市集</div>
-          <hr>
-          <el-card class="box-card" >
-            <span class="Number">
-              <el-statistic :value="stats.inCount" />
-            </span>
-          </el-card>
-          <el-card class="box-card-two">
-            <span class="Number">
-              <el-statistic :value="stats.outCount" />
-            </span>
-          </el-card>
-          <br>
-          <span class="Frame">已参与</span>
-          <span>可报名</span>
-        </el-card>
-      </span>
+
       <span class="BlockThree">
         <el-card>
           <div style="color: #977c7c;font-weight: bold;font-size: 1.2em;">今日总览</div>
@@ -53,7 +35,7 @@
           </el-card>
           <el-card class="box-card-two">
             <span class="Number">
-              <el-statistic :value="stats.totalRevenue" />
+              <el-statistic :value="stats.totalAmount" />
             </span>
           </el-card>
           <br>
@@ -84,15 +66,13 @@ export default {
   },
   data() {
     return {
-      orderData: [],
+      orderData: [10, 1, 3, 0, 0, 15, 12],
       lastSevenDays: this.getLastSevenDays(),
       stats: {
         waitingForShipment: 0,
         waitingForReturn: 0,
-        inCount: 0,
-        outCount: 0,
         orderCount: 0,
-        totalRevenue: 0,
+        totalAmount: 0,
       },
     };
   },
@@ -103,9 +83,8 @@ export default {
       const today = this.formatDate(new Date());
 
       try {
-        const response = await axiosInstance.get('/StoreFront/GetOrderStats', {
+        const response = await axiosInstance.get('/shopping/order/get-order-by-date', {
           params: {
-            storeId: storeId,
             date: today,
           },
         });
@@ -115,6 +94,7 @@ export default {
         console.error('Error fetching order stats:', error);
       }
     },
+
     //获取七天前的日期
     getLastWeekDate() {
     const date = new Date();
@@ -184,8 +164,8 @@ export default {
 
 .BlockOne {
   display: flex;
-  padding-left: 7%;
-  padding-top: 3%;
+  flex-direction: row;
+  padding:10px 100px;
 }
 
 .BlockTwo {
@@ -197,8 +177,7 @@ export default {
 
 .BlockThree {
   color: black;
-  width:22%;
-  /* background-color: rgb(226, 233, 233); */
+  width:calc(50% - 30px);
   margin-right: 5%;
   padding:15px;
 }
