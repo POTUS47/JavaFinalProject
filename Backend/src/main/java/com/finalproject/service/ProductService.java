@@ -449,27 +449,48 @@ public class ProductService {
     }
 
     public Result<List<GCDDTO>> getProductsBySubTagId(String subId){
-        List<Product> products =productRepository.findBysubCategory(subId);
-        List<GCDDTO>response=new ArrayList<>();
-        for(Product pro:products){
-            GCDDTO product=new GCDDTO();
+        String Name = switch (subId) {
+            case "00000" -> "匠心器皿";
+            case "01000" -> "织艺锦缎";
+            case "02000" -> "墨香文房";
+            case "03000" -> "金彩流光";
+            case "04000" -> "逸趣风雅";
+            default -> "";
+        };
+
+// 如果 Name 为空，则直接根据 subId 查询
+        List<Product> products;
+        if (!Name.isEmpty()) {
+            // 根据 Tagname 查询商品
+            products = productRepository.findBytag(Name);
+        } else {
+            // 如果 Name 为空，则直接根据 subId 查询商品
+            products = productRepository.findBysubCategory(subId);  // 根据 subId 查询商品
+        }
+
+        List<GCDDTO> response = new ArrayList<>();
+
+        for (Product pro : products) {
+            GCDDTO product = new GCDDTO();
             product.setProductName(pro.getProductName());
             product.setProductPrice(pro.getProductPrice());
             product.setProductId(pro.getProductId());
-            Optional<ProductImage> temp=productImageRepository.findFirstByProductId(pro.getProductId());
-            if(temp.isPresent()){
-                ProductImage image=temp.get();
+
+            Optional<ProductImage> temp = productImageRepository.findFirstByProductId(pro.getProductId());
+            if (temp.isPresent()) {
+                ProductImage image = temp.get();
                 String imageId = (image.getImageId() != null) ? image.getImageId() : "1";
-                String url=baseUrl + "/images/" + imageId;
+                String url = baseUrl + "/images/" + imageId;
                 product.setImageUrl(url);
-            }
-            else{
-                String url=baseUrl + "/images/1";
+            } else {
+                String url = baseUrl + "/images/1"; // 默认图片
                 product.setImageUrl(url);
             }
             response.add(product);
         }
+
         return Result.success(response);
+
 
     }
 

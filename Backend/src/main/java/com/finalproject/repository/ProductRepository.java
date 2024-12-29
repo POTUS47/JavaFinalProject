@@ -21,4 +21,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
                                  @Param("likePattern") String likePattern);
 
     List<Product> findBysubCategory(String subCategory);
+
+    List<Product> findBytag(String name);
 }
