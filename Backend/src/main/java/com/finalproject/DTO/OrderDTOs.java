@@ -453,4 +453,59 @@ public class OrderDTOs {
         }
     }
 
+    public static class StateDTO{
+        private int waitingForShipment;
+        private int waitingForReturn;
+        private int orderCount;
+        private BigDecimal totalAmount;
+
+        public int getWaitingForShipment() {
+            return waitingForShipment;
+        }
+
+        public int getWaitingForReturn() {
+            return waitingForReturn;
+        }
+
+        public int getOrderCount() {
+            return orderCount;
+        }
+
+        public BigDecimal getTotalAmount() {
+            return totalAmount;
+        }
+        public void setWaitingForShipment(int waitingForShipment) {
+            this.waitingForShipment = waitingForShipment;
+        }
+        public void setWaitingForReturn(int waitingForReturn) {
+            this.waitingForReturn = waitingForReturn;
+        }
+        public void setOrderCount(int orderCount) {
+            this.orderCount = orderCount;
+        }
+        public void setTotalAmount(BigDecimal totalAmount) {
+            this.totalAmount = totalAmount;
+        }
+    }
+
+    public static class NameAndScore{
+        private String storeName;
+        private String storeScore;
+
+
+        public String getStoreName() {
+            return storeName;
+        }
+
+        public String getStoreScore() {
+            return storeScore;
+        }
+        public void setStoreName(String storeName) {
+            this.storeName = storeName;
+        }
+        public void setStoreScore(String storeScore) {
+            this.storeScore = storeScore;
+        }
+    }
+
 }

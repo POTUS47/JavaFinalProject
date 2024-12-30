@@ -3,11 +3,9 @@ import java.io.Serializable;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "account") // 数据库表名
+@Table(name = "account")
 @Inheritance(strategy = InheritanceType.JOINED)
-//@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.Type)
 public class Account implements Serializable {
-
     @Id
     @Column(name = "account_id", nullable = false)
     private String accountId;

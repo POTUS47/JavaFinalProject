@@ -3,19 +3,16 @@ package com.finalproject.service;
 import com.finalproject.DTO.AfterSellDTOs;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.Complain;
-import com.finalproject.model.Return;
 import com.finalproject.repository.ComplainRepository;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/complains")
+@Service
 public class ComplainService {
     @Resource
     private ComplainRepository complainRepository;

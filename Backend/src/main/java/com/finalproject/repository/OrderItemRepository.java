@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.List;
 
@@ -48,6 +49,13 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
             "JOIN Order o ON oi.orderId = o.orderId " +
             "WHERE o.storeId = :storeId AND oi.itemStatus = '售后结束'")
     Optional<List<OrderItem>> findHistoryAfterSalesOrderItemsByStoreId(@Param("storeId") String buyerId);
+
+    @Query("SELECT oi.itemId FROM OrderItem oi WHERE oi.orderId IN :orderIds")
+    List<String> findItemIdsByOrderIds(List<String> orderIds);
+
+    @Query("SELECT oi.score FROM OrderItem oi WHERE oi.orderId IN :orderIds AND oi.score > 0")
+    List<BigDecimal> findScoresByOrderIds(@Param("orderIds") List<String> orderIds);
+
 
 
     Optional<OrderItem> findByItemId(String returnId);

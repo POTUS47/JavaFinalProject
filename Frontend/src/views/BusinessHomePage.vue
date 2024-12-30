@@ -66,13 +66,13 @@ export default {
   },
   data() {
     return {
-      orderData: [10, 1, 3, 0, 0, 15, 12],
+      orderData: [10, 1, 3, 0, 0, 15, 2],
       lastSevenDays: this.getLastSevenDays(),
       stats: {
-        waitingForShipment: 0,
+        waitingForShipment: 2,
         waitingForReturn: 0,
-        orderCount: 0,
-        totalAmount: 0,
+        orderCount: 2,
+        totalAmount: 870,
       },
     };
   },
@@ -83,13 +83,11 @@ export default {
       const today = this.formatDate(new Date());
 
       try {
-        const response = await axiosInstance.get('/shopping/order/get-order-by-date', {
-          params: {
-            date: today,
-          },
-        });
+        const response = await axiosInstance.get('/shopping/getState');
         // 更新组件数据
-        this.stats = response.data;
+        console.log('Response data:', response.data);
+        console.log('Response data:', response.data.data.waitingForShipment);
+        this.stats = response.data.data;
       } catch (error) {
         console.error('Error fetching order stats:', error);
       }
@@ -106,17 +104,13 @@ export default {
       const storeId = localStorage.getItem('userId'); // 替换为实际的 storeId
       const lastWeekDate = this.getLastWeekDate();
       try {
-        const response = await axiosInstance.get('/StoreFront/GetWeeklyOrderCount', {
-          params: {
-            storeId: storeId,
-            date: lastWeekDate,
-          },
-        });
+        const response = await axiosInstance.get('/shopping/GetWeeklyOrderCount');
 
         // 更新订单数据
-        this.orderData = response.data.map(item => item.count);
+
+        console.log('data:', response.data.data);
+        this.orderData = response.data.data.map(item => item);
         this.lastSevenDays = this.getLastSevenDays(); // 更新日期标签
-        console.log('Response data:', response.data);
 
       } catch (error) {
         console.error('Error fetching weekly order count:', error);
@@ -145,8 +139,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchOrderStats(); // 组件挂载后请求数据
-    this.fetchWeeklyOrderCount(); // 请求一周订单数据
+    // this.fetchOrderStats(); // 组件挂载后请求数据
+    // this.fetchWeeklyOrderCount(); // 请求一周订单数据
   },
 };
 </script>

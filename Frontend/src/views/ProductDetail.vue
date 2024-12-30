@@ -123,10 +123,12 @@
     </div>
     <div class="detailContent">
       <h2>图文详情</h2>
+      <img src="../assets/mmy/pat.png"  style="width: 100%;  margin-top: 10px;" />
       <div v-for="(item, index) in imagesWithDescriptions" :key="index" class="image-and-text">
         <p>{{ item.description }}</p>
         <img :src="item" :alt="`缩略图 ${index + 1}`" />
       </div>
+      
 
     </div>
   </div>
@@ -758,6 +760,7 @@ div {
   margin-left: 40px;
   background-color: #a61b29;
   border-radius: 15px;
+  width: 400px;
 }
 
 .preview img {

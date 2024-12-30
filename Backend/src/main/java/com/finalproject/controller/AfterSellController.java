@@ -160,9 +160,5 @@ public class AfterSellController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-
-
-
-
 }
 

@@ -17,17 +17,16 @@ const type = ref(localStorage.getItem('searchType') || '0'); // 搜索类型
 
 const fetchStores = async (keyword: string, type: string) => {
   try {
-    const response = await axiosInstance.get('/NaviSearch/search', {
+    const response = await axiosInstance.get('/productController/searchAll', {
       params: {
         keyword: keyword,
-        type: type
       }
     });
     console.log('返回数据', response.data);
 
-    if (response.data && response.data.length > 0) {
-      products.value = response.data;
-      //products.value = Array(100).fill(response.data).flat(); // 将数据重复100次并平展成一个数组
+    if (response.data) {
+      products.value = response.data.data;
+      console.log('products:', products.value);
       errorMessage.value = ''; // 清除错误信息
     } else {
       products.value = [];
@@ -37,7 +36,7 @@ const fetchStores = async (keyword: string, type: string) => {
     console.error('Error fetching stores:', error);
     errorMessage.value = '没找到相关的宝贝...'; // 设置错误信息
   } finally {
-    if(response.data.length>12){
+    if(response.data.data.length>12){
       loading.value = false;  // 数据获取完毕后关闭缓冲页面
     }
     
@@ -91,7 +90,7 @@ onMounted(() => {
     </div>
     <div v-else class="product-display">
       <div v-for="product in products" :key="product.productId" class="product-item" @click="goToProductDetail(product.productId)">
-        <img :src="product.productPics.length ? product.productPics[0].imageUrl : ''" :alt="product.productName" class="product-image" />
+        <img :src="product.productPic" :alt="product.productName" class="product-image" />
         <div class="product-info">
           <p class="product-price">
             <span class="special-price">价格</span> ¥{{ product.productPrice }}

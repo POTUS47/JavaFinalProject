@@ -5,19 +5,13 @@
         <span class="Buttondes">全部订单</span>
       </button> 
       <button @click="changeView(2)" id="Button2" class="Ty">
-        <span class="Buttondes">待发货订单</span>
+        <span class="Buttondes">处理中订单</span>
       </button>
       <button @click="changeView(3)" id="Button3" class="Ty">
         <span class="Buttondes">运输中订单</span>
       </button>
       <button @click="changeView(4)" id="Button4" class="Ty">
-        <span class="Buttondes">已送达订单</span>
-      </button>
-      <button @click="changeView(5)"id="Button5" class="Ty">
-        <span class="Buttondes">待退货订单</span>
-      </button>
-      <button @click="changeView(6)" id="Button6" class="Ty">
-        <span class="Buttondes">已退货订单</span>
+        <span class="Buttondes">已完成订单</span>
       </button>
     </div>
   </template>

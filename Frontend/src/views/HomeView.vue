@@ -127,19 +127,20 @@
             <p>商品</p>
           </div>
 
-          <div class="one-choice2" @click="navigateTo('/bazaar')">
+          <div class="one-choice2">
             <img class="IconPage3" src="@/assets/mmy/家具.png">
-            <p>市集</p>
+            <p>&nbsp;</p>
           </div>
 
-          <div class="one-choice1" @click="navigateTo('/forum')">
-            <img class="IconPage3" src="@/assets/mmy/服装.png">
-            <p>论坛</p>
-          </div>
-
-          <div class="one-choice2" @click="navigateTo('/cart')">
+          <div class="one-choice1" @click="navigateTo('/cart')">
             <img class="IconPage3" src="@/assets/mmy/首饰.png">
             <p>收藏夹</p>
+
+          </div>
+
+          <div class="one-choice2">
+            <img class="IconPage3" src="@/assets/mmy/服装.png">
+            <p>&nbsp;</p>
           </div>
 
           <div class="one-choice1" @click="navigateTo('/ordercentre')">

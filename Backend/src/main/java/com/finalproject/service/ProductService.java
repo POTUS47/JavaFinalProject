@@ -120,9 +120,9 @@ public class ProductService {
         //商家相关信息
         Store store=pro.getStore();
 
-        //商品图片相关信息
-        List<String> imageIds = productImageRepository.findByProductId(productId).stream()
-                .map(ProductImage::getImageId) // 假设ProductImage类有getImageId方法
+        // 商品图片相关信息
+        List<String> imageUrls = productImageRepository.findByProductId(productId).stream()
+                .map(image -> baseUrl + "/images/" + image.getImageId())  // 拼接为完整的图片URL
                 .toList();
 
 
@@ -146,7 +146,7 @@ public class ProductService {
                 store.getStoreScore(),
                 getProductMarkFromSubsystem(productId,userId),
                 getStoreMarkFromSubsystem(store.getAccountId(),userId),
-                imageIds,
+                imageUrls,
                 productDetails);
 
 
@@ -171,6 +171,30 @@ public class ProductService {
                     product.getSubCategory(),
                     product.getDescription(),
                     imageId,
+                    product.getStoreTag());
+            result.add(dto);
+        }
+        return Result.success(result);
+    }
+
+    public Result<List<ShowProductDTO>> searchAll(String keyword){
+        String likePattern = "%" + String.join("%", keyword.split("")) + "%";
+        List<Product> products = productRepository.searchAllProducts(keyword, likePattern);
+        List<ShowProductDTO> result = new ArrayList<>();
+
+        //todo 默认图片id
+        for (Product product : products) {
+            Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
+            String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
+            String url=baseUrl+"/images/"+imageId;
+            ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
+                    product.getProductName(),
+                    product.getProductPrice(),
+                    product.getQuantity(),
+                    product.getTag(),
+                    product.getSubCategory(),
+                    product.getDescription(),
+                    url,
                     product.getStoreTag());
             result.add(dto);
         }
@@ -407,13 +431,29 @@ public class ProductService {
         return 200;
     }
 
-    public Result<List<ProductDTO>> getAllProduct(String storeId, String viewType) {
-        List<Product> res=productRepository.findByStoreId(storeId);
+    public Result<List<ProductDTO>> getAllProduct(String userId,String storeId,Boolean isBuyer) {
+        String inputId="";
+        if(isBuyer){
+            inputId=storeId;
+        }
+        else{
+            inputId=userId;
+        }
+        List<Product> res=productRepository.findByStoreId(inputId);
         List<ProductDTO> response=new ArrayList<>();
         if(res.isEmpty()){
             return Result.error(404,"本店没有商品");
         }
         for(Product product:res){
+            String productId=product.getProductId();
+            String imageurl= "";
+            Optional<ProductImage> temp=productImageRepository.findFirstByProductId(productId);
+            if(temp.isEmpty()){
+                imageurl=baseUrl+"/images/1";
+            }
+            else{
+                imageurl=baseUrl+"/images/"+temp.get().getImageId();
+            }
             ProductDTO dto=new ProductDTO();
             dto.setProductName(product.getProductName());
             dto.setProductPrice(product.getProductPrice());
@@ -422,6 +462,7 @@ public class ProductService {
             dto.setDescription(product.getDescription());
             dto.setStoreTag(product.getStoreTag());
             dto.setProductId(product.getProductId());
+            dto.setImageurl(imageurl);
             response.add(dto);
         }
         return Result.success(response);
@@ -446,6 +487,52 @@ public class ProductService {
         }
 
         return Result.success(result);
+    }
+
+    public Result<List<GCDDTO>> getProductsBySubTagId(String subId){
+        String Name = switch (subId) {
+            case "00000" -> "匠心器皿";
+            case "01000" -> "织艺锦缎";
+            case "02000" -> "墨香文房";
+            case "03000" -> "金彩流光";
+            case "04000" -> "逸趣风雅";
+            default -> "";
+        };
+
+// 如果 Name 为空，则直接根据 subId 查询
+        List<Product> products;
+        if (!Name.isEmpty()) {
+            // 根据 Tagname 查询商品
+            products = productRepository.findBytag(Name);
+        } else {
+            // 如果 Name 为空，则直接根据 subId 查询商品
+            products = productRepository.findBysubCategory(subId);  // 根据 subId 查询商品
+        }
+
+        List<GCDDTO> response = new ArrayList<>();
+
+        for (Product pro : products) {
+            GCDDTO product = new GCDDTO();
+            product.setProductName(pro.getProductName());
+            product.setProductPrice(pro.getProductPrice());
+            product.setProductId(pro.getProductId());
+
+            Optional<ProductImage> temp = productImageRepository.findFirstByProductId(pro.getProductId());
+            if (temp.isPresent()) {
+                ProductImage image = temp.get();
+                String imageId = (image.getImageId() != null) ? image.getImageId() : "1";
+                String url = baseUrl + "/images/" + imageId;
+                product.setImageUrl(url);
+            } else {
+                String url = baseUrl + "/images/1"; // 默认图片
+                product.setImageUrl(url);
+            }
+            response.add(product);
+        }
+
+        return Result.success(response);
+
+
     }
 
 

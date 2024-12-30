@@ -4,6 +4,7 @@ import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,9 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final SnowflakeIdGenerator snowflakeIdGenerator;
     private final RestTemplate restTemplate;
+
+    @Autowired
+    private ReturnRepository returnRepository;
 
     // 构造函数注入
     public OrderService(OrderItemRepository orderItemRepository,
@@ -112,8 +116,9 @@ public class OrderService {
         return response.getBody();
     }
 
+    // 可以根据productId获取商品的所有图片的url!
     @Transactional
-    public List<ProductImage> getProductImagesById(String productId) {
+    public List<String> getProductImagesById(String productId) {
         // 获取商品的图片信息
         String url = baseUrl + "/api/productController/productImages/" + productId;
         ResponseEntity<List<ProductImage>> response = restTemplate.exchange(
@@ -122,7 +127,19 @@ public class OrderService {
                 null,
                 new ParameterizedTypeReference<List<ProductImage>>() {
                 });
-        return response.getBody();
+
+        List<ProductImage>productImages = response.getBody();
+        List<String>imageUrls=new ArrayList<>();
+        if (productImages != null) {
+            for (ProductImage productImage : productImages){
+                String imageUrl=baseUrl+"/images/"+productImage.getImageId();
+                imageUrls.add(imageUrl);
+            }
+        }
+        if(imageUrls.isEmpty()){
+            imageUrls.add(baseUrl+"/images/1");
+        }
+        return imageUrls;
     }
 
     // 买家支付订单
@@ -268,9 +285,9 @@ public class OrderService {
                 OrderItemDTO orderItemDTO = new OrderItemDTO();
                 orderItemDTO.setProductId(productId);
                 orderItemDTO.setProductName(product.getProductName());
-                List<ProductImage> productImages = getProductImagesById(productId);
-                if (!productImages.isEmpty()) {
-                    orderItemDTO.setProductImage(productImages.getFirst().getImageId());
+                List<String> productImageUrls = getProductImagesById(productId);
+                if (!productImageUrls.isEmpty()) {
+                    orderItemDTO.setProductImage(productImageUrls.getFirst());
                 }
                 orderItemDTO.setProductPrice(product.getProductPrice());
                 orderItemDTOList.add(orderItemDTO);
@@ -330,6 +347,7 @@ public class OrderService {
         order.setPaymentStatus(Order.PaymentStatus.已付款);
         order.setPaymentMethod(Order.PaymentMethod.钱包);
         order.setBonusCredits(addAmount);
+        order.setPayTime(LocalDateTime.now());
         orderRepository.save(order);
 
         return Result.success(creditsDTO);
@@ -402,11 +420,12 @@ public class OrderService {
             orderItemDTO.setProductId(product.getProductId());
             orderItemDTO.setProductName(product.getProductName());
             orderItemDTO.setProductPrice(product.getProductPrice());
+            orderItemDTO.setItemStatus(orderItem.getItemStatus().toString());
 
             // 获取商品图片信息
-            List<ProductImage> productImages = getProductImagesById(product.getProductId());
-            if (!productImages.isEmpty()) {
-                orderItemDTO.setProductImage("http://47.97.59.189:8080/images/" + productImages.get(0).getImageId());
+            List<String> productImageUrls = getProductImagesById(product.getProductId());
+            if (!productImageUrls.isEmpty()) {
+                orderItemDTO.setProductImage(productImageUrls.getFirst());
             }
 
             orderItemDTOList.add(orderItemDTO);
@@ -544,5 +563,90 @@ public class OrderService {
         return Result.success(map);
     }
 
+    private int getPendingReturnsCount(String storeId){
+        List<String> orderIds = orderRepository.findOrderIdsByStoreId(storeId);
 
+        List<String> itemIds = orderItemRepository.findItemIdsByOrderIds(orderIds);
+
+        return returnRepository.countPendingReturnsByItemIds(itemIds);
+    }
+
+
+    public Result<StateDTO> getState(String userId) {
+        int shipment=orderRepository.getWaitingShip(userId);
+        int waitReturn =getPendingReturnsCount(userId);
+        int todayOrder =orderRepository.countOrdersByToday();
+        BigDecimal revenue = orderRepository.getTodayRevenue();
+        if(revenue==null){
+            revenue=BigDecimal.ZERO;
+        }
+
+        StateDTO stateDTO = new StateDTO();
+        stateDTO.setWaitingForShipment(shipment);
+        stateDTO.setWaitingForReturn(waitReturn);
+        stateDTO.setOrderCount(todayOrder);
+        stateDTO.setTotalAmount(revenue);
+        return Result.success(stateDTO);
+
+    }
+
+    public Result<List<Integer>> getOrdersPerDayInLastSevenDays() {
+        // 获取今天的日期
+        LocalDate today = LocalDate.now();
+
+        // 计算七天前的日期
+        LocalDate sevenDaysAgo = today.minusDays(6);
+
+        // 存储结果的 List
+        List<Integer> orderCounts = new ArrayList<>();
+
+        // 循环查询每一天的订单数量
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = sevenDaysAgo.plusDays(i);
+            int count = orderRepository.countOrdersByDate(date);
+            orderCounts.add(count);
+        }
+
+        return Result.success(orderCounts);
+    }
+
+    public Result<NameAndScore> updateStoreRating(String storeId) {
+        List<String> orderIds = orderRepository.findOrderIdsByStoreId(storeId);
+
+        if (orderIds.isEmpty()) {
+            return Result.error(404,"店铺暂无评分");
+        }
+
+        List<BigDecimal> scores = orderItemRepository.findScoresByOrderIds(orderIds);
+
+        if (scores.isEmpty()) {
+            return Result.error(404,"店铺暂无评分");
+        }
+
+        BigDecimal totalScore = BigDecimal.ZERO;
+        for (BigDecimal score : scores) {
+            totalScore = totalScore.add(score);
+        }
+
+        BigDecimal averageScore = totalScore.divide(new BigDecimal(scores.size()), 2, RoundingMode.HALF_UP);
+        BigDecimal formattedScore = averageScore.setScale(1, RoundingMode.HALF_UP);
+        String result = formattedScore.toString();
+        String storeName=updateScoreSubSys(storeId,formattedScore);
+        NameAndScore res=new NameAndScore();
+        res.setStoreName(storeName);
+        res.setStoreScore(result);
+        return Result.success(res);
+
+    }
+
+    public String updateScoreSubSys(String storeId,BigDecimal score){
+        String url=baseUrl+"/api/users/UpdateStoreScore/"+ storeId +"/"+ score;
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<String>() {
+                });
+        return response.getBody();
+    }
 }
