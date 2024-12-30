@@ -159,7 +159,7 @@ export default {
                 console.log('图片加载成功:', imageUrl);
             } catch (error) {
                 console.error('请求失败:获取图片', error);
-                this.$message.error('请求头像失败，请稍后再试');
+                //this.$message.error('请求头像失败，请稍后再试');
             }
         },
 
