@@ -32,7 +32,7 @@
                         <el-card class="custom-card-width">
                             <el-form :model="userimades" ref="form" class="user-form">
                                 <el-form-item label="上传头像" prop="image">
-                                    <img v-if="userimades.ima" :src="userimades.ima" alt="当前图片"
+                                    <img v-if="userimades.photo_id" :src="userimades.photo_id" alt="当前图片"
                                         style="width: 40px; height: 40px;border-radius: 50%;" />
                                     <input type="file" @change="handleFile" accept="image/*" />
                                 </el-form-item>
@@ -184,12 +184,17 @@ export default {
                 const Photo = this.userimades.file;
                 const Describtion = this.userimades.describtion;
                 const Id = localStorage.getItem('userId');
+                console.log('上传的头像:', this.userimades.file);
 
                 if (this.userimades.file) {
                     formData.append('Photo', Photo); // 确保这是 File 对象
                 }
-                formData.append('Id', Id);
-                formData.append('Describtion', Describtion);
+                else {
+                    this.$message.error('请上传头像');
+                    return;
+                }
+                //formData.append('Id', Id);
+                formData.append('Describtion', this.businessInfo.description);
 
 
                 // 打印 FormData 内容
@@ -197,36 +202,42 @@ export default {
                     console.log(`${pair[0]}:`, pair[1]);
                 }
 
-                // const response = await axiosInstance.put('/UserInfo/SetPhotoAndDescribtion', formData);
+                try {
+                    const response = await axiosInstance.post('/users/setPhotoAndDescription', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
 
-                // const response = await axiosInstance.put('/UserInfo/SetPhotoAndDescribtion', formData, {
-                //     headers: { 'Content-Type': 'multipart/form-data' }
-                // });
+                    console.log('上传头像和简介的响应:', response.data.code);
 
-                 // 处理简介更新
-                if (Describtion) {
-                    try {
-                        const descriptionResponse = await axiosInstance.put(`/users/updateDescription`, null, {
-                            params: {
-                                newDescription: Describtion
-                            }
-                        });
-                        console.log('简介更新成功:', descriptionResponse.data);
-                        this.$message.success('简介更新成功');
-                    } catch (error) {
-                        console.error('简介更新失败:', error);
-                        this.$message.error('简介更新失败，请稍后再试');
-                    }
-                }
+                    if (response.data.code === 200) {
+                        this.getUserInfo();
+                        this.$message.success('上传成功');
+                    } 
+                } catch (error) {
+                    console.error(error);
+                } 
 
-                // if (response.status === 200) {
-                //     this.$message.success('上传成功，请刷新网页以查看最新状态');
-                // } else {
-                //     this.$message.error(`上传失败: ${response.data.message}`);
+                //  // 处理简介更新
+                // if (Describtion) {
+                //     try {
+                //         const descriptionResponse = await axiosInstance.put(`/users/updateDescription`, null, {
+                //             params: {
+                //                 newDescription: Describtion
+                //             }
+                //         });
+                //         console.log('简介更新成功:', descriptionResponse.data);
+                //         this.$message.success('简介更新成功');
+                //     } catch (error) {
+                //         console.error('简介更新失败:', error);
+                //         this.$message.error('简介更新失败，请稍后再试');
+                //     }
                 // }
+
             } catch (error) {
                 console.error('请求失败: 头像简介上传', error.response ? error.response.data : error.message);
-                this.$message.error('请求失败，请稍后再试');
+                //this.$message.error('请求失败，请稍后再试');
             }
         },
         // 上传认证资料

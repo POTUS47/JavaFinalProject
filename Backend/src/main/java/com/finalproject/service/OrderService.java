@@ -589,4 +589,64 @@ public class OrderService {
         return Result.success(stateDTO);
 
     }
+
+    public Result<List<Integer>> getOrdersPerDayInLastSevenDays() {
+        // 获取今天的日期
+        LocalDate today = LocalDate.now();
+
+        // 计算七天前的日期
+        LocalDate sevenDaysAgo = today.minusDays(6);
+
+        // 存储结果的 List
+        List<Integer> orderCounts = new ArrayList<>();
+
+        // 循环查询每一天的订单数量
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = sevenDaysAgo.plusDays(i);
+            int count = orderRepository.countOrdersByDate(date);
+            orderCounts.add(count);
+        }
+
+        return Result.success(orderCounts);
+    }
+
+    public Result<NameAndScore> updateStoreRating(String storeId) {
+        List<String> orderIds = orderRepository.findOrderIdsByStoreId(storeId);
+
+        if (orderIds.isEmpty()) {
+            return Result.error(404,"店铺暂无评分");
+        }
+
+        List<BigDecimal> scores = orderItemRepository.findScoresByOrderIds(orderIds);
+
+        if (scores.isEmpty()) {
+            return Result.error(404,"店铺暂无评分");
+        }
+
+        BigDecimal totalScore = BigDecimal.ZERO;
+        for (BigDecimal score : scores) {
+            totalScore = totalScore.add(score);
+        }
+
+        BigDecimal averageScore = totalScore.divide(new BigDecimal(scores.size()), 2, RoundingMode.HALF_UP);
+        BigDecimal formattedScore = averageScore.setScale(1, RoundingMode.HALF_UP);
+        String result = formattedScore.toString();
+        String storeName=updateScoreSubSys(storeId,formattedScore);
+        NameAndScore res=new NameAndScore();
+        res.setStoreName(storeName);
+        res.setStoreScore(result);
+        return Result.success(res);
+
+    }
+
+    public String updateScoreSubSys(String storeId,BigDecimal score){
+        String url=baseUrl+"/api/users/UpdateStoreScore/"+ storeId +"/"+ score;
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                null,
+                new ParameterizedTypeReference<String>() {
+                });
+        return response.getBody();
+    }
 }

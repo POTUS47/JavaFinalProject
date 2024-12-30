@@ -287,13 +287,13 @@ export default {
     watch: {
         'userInfo.photo_id': function (newPhotoId) {
             if (newPhotoId) {
-                this.getImage(newPhotoId);
+                //this.getImage(newPhotoId);
             }
         }
     },
     mounted() {
         this.getUserInfo();
-        this.getImage(this.userInfo.photo_id);
+        //this.getImage(this.userInfo.photo_id);
     }
 }
 </script>

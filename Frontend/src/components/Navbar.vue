@@ -89,13 +89,11 @@ const fetchUserProfilePhoto = async () => {
 
   // 如果 userId 不同或者没有缓存头像，重新获取
   try {
-    const response = await axiosInstance.post('/UserInfo/GetPhotoAndDescribtion', {
-      id: userId,
-    });
-    const userInfo = response.data;
+    const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
+    const userInfo = response.data.data;
 
-    if (userInfo && userInfo.photo && userInfo.photo.imageUrl) {
-      userProfilePhoto.value = userInfo.photo.imageUrl;
+    if (userInfo) {
+      userProfilePhoto.value = userInfo.imageUrl;
       localStorage.setItem(`userProfilePhoto_${userId}`, userInfo.photo.imageUrl);  // 缓存头像
       localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
     } else {

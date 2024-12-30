@@ -3,11 +3,9 @@ package com.finalproject.service;
 import com.finalproject.DTO.AfterSellDTOs;
 import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
-import com.finalproject.model.Product;
-import com.finalproject.model.Return;
+import com.finalproject.model.Returns;
 import com.finalproject.repository.ReturnRepository;
 import jakarta.annotation.Resource;
-import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -35,10 +33,10 @@ public class ReturnService {
     // 创建退货申请
     public Result<Map<String, String>> applyReturn(String orderItemId,String reason) {
         // 保存退货申请到退货表
-        Return returnOrder = new Return();
+        Returns returnOrder = new Returns();
         returnOrder.setOrderId(orderItemId);
         returnOrder.setReturnReason(reason);
-        returnOrder.setReturnStatus(Return.ReturnStatus.待审核);
+        returnOrder.setReturnStatus(Returns.ReturnStatus.待审核);
         returnOrder.setReturnTime(LocalDateTime.now());
         returnRepository.save(returnOrder);
         Map<String, String> data = new HashMap<>();
@@ -50,16 +48,16 @@ public class ReturnService {
     // 审批退货申请
     public Result<Map<String, String>> approveReturn(String orderItemId,boolean isApproved,String reason) {
         // 保存退货申请到退货表
-        Optional<Return> returns=returnRepository.findByItemId(orderItemId);
+        Optional<Returns> returns=returnRepository.findByItemId(orderItemId);
         if(returns.isEmpty()) {
             return Result.error(404, "想要审核的退货单不存在");
         }
         returns.get().setResultReason(reason);
         if(isApproved){
-            returns.get().setReturnStatus(Return.ReturnStatus.审核通过);
+            returns.get().setReturnStatus(Returns.ReturnStatus.审核通过);
         }
         else{
-            returns.get().setReturnStatus(Return.ReturnStatus.申请被拒绝);
+            returns.get().setReturnStatus(Returns.ReturnStatus.申请被拒绝);
         }
         returnRepository.save(returns.get());
         Map<String, String> data = new HashMap<>();
@@ -70,7 +68,7 @@ public class ReturnService {
 
     // 查看某退货详情
     public Result<AfterSellDTOs.ReturnDTO> getReturnDetail(String itemId) {
-        Optional<Return> returns = returnRepository.findByItemId(itemId);
+        Optional<Returns> returns = returnRepository.findByItemId(itemId);
         if(returns.isEmpty()) {
             return Result.error(404, "想要查看详情的退货单不存在");
         }
@@ -86,7 +84,7 @@ public class ReturnService {
 
     // 填写退货单快递单号
     public Result<Map<String, String>> addExpressNumber(String returnId, String expressNumber) {
-        Optional<Return> returnOrder = returnRepository.findByItemId(returnId);
+        Optional<Returns> returnOrder = returnRepository.findByItemId(returnId);
         if (returnOrder.isEmpty()){
             return Result.error(404, "想填写快递单号的退货单不存在！");
         }
@@ -94,7 +92,7 @@ public class ReturnService {
             return Result.error(400, "退货单已经存在快递单号！");
         }
         returnOrder.get().setShippingNumber(expressNumber);
-        returnOrder.get().setReturnStatus(Return.ReturnStatus.已退货);
+        returnOrder.get().setReturnStatus(Returns.ReturnStatus.已退货);
         returnRepository.save(returnOrder.get());
         Map<String, String> data = new HashMap<>();
         data.put("message","快递单号填写成功");
@@ -104,14 +102,14 @@ public class ReturnService {
 
     // 退货单确认收货
     public Result<Map<String, String>> confirmReceive(String returnId) {
-        Optional<Return> returnOrder = returnRepository.findByItemId(returnId);
+        Optional<Returns> returnOrder = returnRepository.findByItemId(returnId);
         if (returnOrder.isEmpty()){
             return Result.error(404, "想确认收货的退货单不存在！");
         }
-        if(!returnOrder.get().getReturnStatus().equals(Return.ReturnStatus.已收货)){
+        if(!returnOrder.get().getReturnStatus().equals(Returns.ReturnStatus.已收货)){
             return Result.error(400, "无法重复确认收货！");
         }
-        returnOrder.get().setReturnStatus(Return.ReturnStatus.已收货);
+        returnOrder.get().setReturnStatus(Returns.ReturnStatus.已收货);
         returnRepository.save(returnOrder.get());
         Map<String, String> data = new HashMap<>();
         data.put("message","卖家确认收货成功！");
@@ -121,11 +119,11 @@ public class ReturnService {
 
     // 更改订单项为退款状态
     public Result<Map<String,String>> refundOrderItem(String returnId) {
-        Optional<Return> returnOrder = returnRepository.findByItemId(returnId);
+        Optional<Returns> returnOrder = returnRepository.findByItemId(returnId);
         if (returnOrder.isEmpty()){
             return Result.error(404, "找不到用于退款的退货单！");
         }
-        returnOrder.get().setReturnStatus(Return.ReturnStatus.已退款);
+        returnOrder.get().setReturnStatus(Returns.ReturnStatus.已退款);
         returnRepository.save(returnOrder.get());
         Map<String, String> data = new HashMap<>();
         data.put("message","退款状态修改成功！");
@@ -250,11 +248,11 @@ public class ReturnService {
 
     //检查退货单是否为已收货
     public Result<Boolean> hasRecieved(String returnId) {
-        Optional<Return> returnOrder = returnRepository.findByItemId(returnId);
+        Optional<Returns> returnOrder = returnRepository.findByItemId(returnId);
         if(returnOrder.isEmpty()){
             return Result.error(404,"不存在该退货单");
         }
-        Return temp=returnOrder.get();
+        Returns temp=returnOrder.get();
         if(temp.getReturnStatus().toString().equals("已收货")){
             return Result.success(true);
         }

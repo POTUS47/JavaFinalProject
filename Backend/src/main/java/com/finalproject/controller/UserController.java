@@ -13,8 +13,11 @@ import com.finalproject.service.WalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -237,10 +240,33 @@ public class UserController {
         return userService.reduceCredit(userId,amount);
     }
 
+    //加载头像和简介
     @PostMapping("/UserInfo/GetPhotoAndDescribtion")
     public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescribtion(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
         Result<AccountDTOs.PandDDTO>response=userService.getPandD(userId);
         return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    //跨子系统调用，更新店铺评分
+    @PutMapping("/UpdateStoreScore/{storeId}/{score}")
+    public String updateStoreScore(@PathVariable String storeId, @PathVariable BigDecimal score) {
+        return userService.updateStoreScore(storeId,score);
+    }
+
+    //添加头像和简介
+    @PostMapping("/setPhotoAndDescription")
+    public ResponseEntity<Result<String>> setPhotoandDescription(@RequestParam("Photo") MultipartFile productImages,
+                                                          @RequestParam("Describtion") String description,Authentication auth){
+        String userId = (String) auth.getPrincipal();
+        String role= auth.getAuthorities().iterator().next().getAuthority();
+        Result<String> response = null;
+        try {
+            response = userService.setPandD(productImages,description,userId,role);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(response.getCode()).body(response);
+
     }
 }

@@ -95,12 +95,10 @@
     //获取头像简介
     async fetchImageAndText(id) {
       try {
-        const response = await axiosInstance.post('/UserInfo/GetPhotoAndDescribtion', {
-        id
-        });
+        const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
 
-        const { describtion, photo } = response.data;
-        this.userimades.ima = photo.imageUrl;
+        const { describtion, imageUrl } = response.data.data;
+        this.userimades.ima = imageUrl;
         this.userimades.descri = describtion;
       } catch (error) {
         
@@ -114,10 +112,8 @@
       this.storeScoreName = null;
 
       try {
-        const response = await axiosInstance.get('/StoreFront/UpdateStoreScore', {
-          params: { storeId }
-        });
-        this.storeScoreName = response.data;
+        const response = await axiosInstance.get('/shopping/UpdateStoreScore');
+        this.storeScoreName = response.data.data;
       } catch (error) {
         this.error = 'Failed to fetch store score';
         console.error('Error fetching store score:', error);

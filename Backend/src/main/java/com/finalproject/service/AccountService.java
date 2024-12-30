@@ -12,7 +12,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,7 +39,7 @@ public class AccountService {
     @Autowired
     private BuyerRepository buyerRepository;
     @Autowired
-    private ImageRepository imageRepository;
+    private ImageService imageService;
 
     public AccountService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -305,6 +309,14 @@ public class AccountService {
             return Result.error(404, "想获取基本信息的用户不存在");
         }
         Store user = userOptional.get();
+        String Id="";
+        if(user.getPhotoId()==null){
+            Id="1";
+        }
+        else{
+            Id=user.getPhotoId();
+        }
+        String imageUrl=baseUrl+"/images/"+Id;
         AccountDTOs.StoreInfoDTO userInfo = new AccountDTOs.StoreInfoDTO();
         userInfo.setAddress(user.getAddress());
         userInfo.setEmail(user.getEmail());
@@ -312,7 +324,7 @@ public class AccountService {
         userInfo.setStoreScore(user.getStoreScore().floatValue());
         userInfo.setUserName(user.getUserName());
         userInfo.setHasCertificate(user.isCertification());
-        userInfo.setPhotoId(user.getPhotoId());
+        userInfo.setPhotoId(imageUrl);
         userInfo.setUserId(userId);
         userInfo.setDescription(user.getDescription());
         // 返回成功结果
@@ -374,5 +386,39 @@ public class AccountService {
         re.setDescribtion(des);
         re.setImageUrl(url);
         return Result.success(re);
+    }
+
+    public String updateStoreScore(String userId, BigDecimal score) {
+        Optional<Store> storeOptional = storeRepository.findByAccountId(userId);
+        Store store = storeOptional.get();
+        store.setStoreScore(score);
+        storeRepository.save(store);
+        return store.getStoreName();
+    }
+
+    public Result<String> setPandD(MultipartFile productImages, String description,String userId,String role) throws IOException {
+        Account user=new Account();
+        if(role.equals("商家")){
+            Optional<Store> userOption = storeRepository.findByAccountId(userId);
+            user = userOption.get();
+        }
+        else{
+            Optional<Buyer> userOption = buyerRepository.findByAccountId(userId);
+        }
+
+        String oldImageUrl=user.getPhotoId();
+
+        Result<String> result=imageService.saveImage(productImages,"头像");
+        if(result.getCode()==200) {
+            String picId = result.getData();
+            user.setPhotoId(picId);
+            user.setDescription(description);
+            accountRepository.save(user);
+        }
+
+        if(oldImageUrl!=null){
+            imageService.deleteImage(oldImageUrl);
+        }
+        return result;
     }
 }

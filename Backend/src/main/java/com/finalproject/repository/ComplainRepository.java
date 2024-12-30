@@ -1,7 +1,6 @@
 package com.finalproject.repository;
 
 import com.finalproject.model.Complain;
-import com.finalproject.model.Return;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
