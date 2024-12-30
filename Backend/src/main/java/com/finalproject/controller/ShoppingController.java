@@ -1,5 +1,6 @@
 package com.finalproject.controller;
 import com.finalproject.DTO.FavouriteDTOs.*;
+import com.finalproject.DTO.OneYuanShoppingRecordDTOs;
 import com.finalproject.DTO.OrderDTOs.*;
 import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.ProductDTOs.*;
@@ -9,6 +10,8 @@ import com.finalproject.repository.OrderItemRepository;
 import com.finalproject.service.FavouriteService;
 import com.finalproject.service.OrderService;
 import com.finalproject.service.OrderItemService;
+import com.finalproject.service.OneYuanShoppingRecordService;
+import com.finalproject.DTO.OneYuanShoppingRecordDTOs.OneYuanShoppingRecordDTO;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,6 +38,9 @@ public class ShoppingController {
 
     @Resource
     private OrderItemService orderItemService;
+
+    @Resource
+    private OneYuanShoppingRecordService oneYuanService;
 
     // 获取用户收藏的店铺
     @GetMapping("/favourite/get-favourite-stores")
@@ -318,4 +324,43 @@ public class ShoppingController {
         Result<StateDTO> response=orderService.getState(userId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    // 创建一元购活动
+    @PostMapping("/createOneYuanRecord")
+    public ResponseEntity<Result<?>> createOneYuanRecord(
+            @RequestBody OneYuanShoppingRecordDTOs.CreateOneYuanDTO recordDTO,
+            @RequestParam String productId,
+            Authentication authentication) {
+
+        String userId = authentication.getName();
+        Result<?> response = oneYuanService.createOneYuanRecord(recordDTO, productId, userId);
+
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 查看参与的一元购
+    @GetMapping("/participated-records")
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getParticipatedRecords(Authentication authentication) {
+        String userId = (String) authentication.getPrincipal();
+        Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getParticipatedRecords(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 参与一元购
+    @PostMapping("/participate/{recordId}")
+    public ResponseEntity<Result<?>> participate(
+            @PathVariable String recordId,
+            Authentication authentication) {
+        String accountId = authentication.getName();
+        Result<?> response = oneYuanService.participate(recordId, accountId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 一元购开奖
+    @PostMapping("/draw/{recordId}")
+    public ResponseEntity<Result<?>> drawWinner(@PathVariable String recordId) {
+        Result<?> response = oneYuanService.drawWinner(recordId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 }
