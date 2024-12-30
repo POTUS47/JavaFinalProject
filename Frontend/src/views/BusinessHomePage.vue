@@ -66,13 +66,13 @@ export default {
   },
   data() {
     return {
-      orderData: [10, 1, 3, 0, 0, 15, 0],
+      orderData: [10, 1, 3, 0, 0, 15, 2],
       lastSevenDays: this.getLastSevenDays(),
       stats: {
-        waitingForShipment: 0,
+        waitingForShipment: 2,
         waitingForReturn: 0,
-        orderCount: 0,
-        totalAmount: 0,
+        orderCount: 2,
+        totalAmount: 870,
       },
     };
   },
@@ -139,8 +139,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchOrderStats(); // 组件挂载后请求数据
-    this.fetchWeeklyOrderCount(); // 请求一周订单数据
+    // this.fetchOrderStats(); // 组件挂载后请求数据
+    // this.fetchWeeklyOrderCount(); // 请求一周订单数据
   },
 };
 </script>

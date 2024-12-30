@@ -15,9 +15,9 @@ public class OneYuanShoppingRecord {
     @Column(name = "product_id", nullable = false)
     private String productId;
 
-    @ManyToOne
-    @JoinColumn(name = "saler_id", referencedColumnName = "account_id", nullable = false)
-    private Store saler;
+    @OneToOne
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    private Product product;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -25,18 +25,17 @@ public class OneYuanShoppingRecord {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @ElementCollection
-    @Column(name = "participants")
-    private List<String> participants; // 参与者的ID列表
-
     @Column(name = "min_participants", nullable = false)
-    private int minParticipants; // 开奖的最小参与者数量
+    private int minParticipants;
+
+    @Column(name = "current_participants", nullable = false)
+    private int currentParticipants;
 
     @Column(name = "is_drawn", nullable = false)
-    private boolean isDrawn; // 是否已开奖
+    private boolean isDrawn;
 
     @Column(name = "result")
-    private String result; // 开奖结果（获胜者ID）
+    private String result;
 
     // 构造函数
     public OneYuanShoppingRecord() {}
@@ -58,12 +57,15 @@ public class OneYuanShoppingRecord {
         this.productId = productId;
     }
 
-    public Store getsaler() {
-        return saler;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setsaler(Store saler) {
-        this.saler = saler;
+    public void setProduct(Product product) {
+        this.product = product;
+        if (product != null) {
+            this.productId = product.getProductId();
+        }
     }
 
     public LocalDateTime getStartTime() {
@@ -82,20 +84,20 @@ public class OneYuanShoppingRecord {
         this.endTime = endTime;
     }
 
-    public List<String> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<String> participants) {
-        this.participants = participants;
-    }
-
     public int getMinParticipants() {
         return minParticipants;
     }
 
     public void setMinParticipants(int minParticipants) {
         this.minParticipants = minParticipants;
+    }
+
+    public int getCurrentParticipants() {
+        return currentParticipants;
+    }
+
+    public void setCurrentParticipants(int currentParticipants) {
+        this.currentParticipants = currentParticipants;
     }
 
     public boolean isDrawn() {
@@ -112,5 +114,14 @@ public class OneYuanShoppingRecord {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    // 便捷方法
+    public void incrementParticipants() {
+        this.currentParticipants++;
+    }
+
+    public boolean canAddParticipants() {
+        return this.currentParticipants < this.minParticipants;
     }
 }

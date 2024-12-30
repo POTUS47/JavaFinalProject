@@ -42,9 +42,9 @@
               <el-button size='small' type="primary" icon="Edit" @click="handleEdit(scope.row)">编辑基本信息</el-button>
               <el-button size='small' type="primary" icon="Upload"
                 @click="handleUploadImages(scope.row)">上传图片</el-button>
-              <!-- <el-button size='small' type="primary" icon="Upload"
-                @click="handleUploadIDImages(scope.row)">上传图文描述</el-button> -->
-              <!-- <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button> -->
+                <el-button size='small' type="primary" icon="Upload" @click="handleUploadIDImages(scope.row)">上传图文描述</el-button>
+              <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">下架</el-button>
+              <el-button size='small' type="danger" icon="YiYuan" @click="handleDelete(scope.row)">设为一元购</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -247,9 +247,9 @@ export default {
     const PLYshow = (viewType) => {
       if (viewType === 1) {
         PLYProducts.value = products.value;
-      } else if (viewType === 2) {
-        PLYProducts.value = products.value.filter(product => product.isOnSale);
       } else if (viewType === 3) {
+        PLYProducts.value = products.value.filter(product => product.isOnSale);
+      } else if (viewType === 2) {
         PLYProducts.value = products.value.filter(product => !product.isOnSale);
       }
     };

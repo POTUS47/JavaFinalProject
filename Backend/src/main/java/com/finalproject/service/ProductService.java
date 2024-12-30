@@ -449,7 +449,7 @@ public class ProductService {
             String imageurl= "";
             Optional<ProductImage> temp=productImageRepository.findFirstByProductId(productId);
             if(temp.isEmpty()){
-                imageurl=baseUrl+"/iamge/1";
+                imageurl=baseUrl+"/images/1";
             }
             else{
                 imageurl=baseUrl+"/images/"+temp.get().getImageId();

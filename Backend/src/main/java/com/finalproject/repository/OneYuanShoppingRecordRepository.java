@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface OneYuanShoppingRecordRepository  extends JpaRepository<OneYuanShoppingRecord, String> {
-    List<OneYuanShoppingRecord> findByParticipantsContaining(String buyerId);
+    // List<OneYuanShoppingRecord> findByInventoryProductId(String productId);
 }
