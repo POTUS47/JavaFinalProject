@@ -310,4 +310,12 @@ public class ShoppingController {
         Result<CreditsDTO> response = orderService.payOrder(userId,moneyDTO.getOrderId(), moneyDTO.getUsedCredits());
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    //获得营收详情
+    @GetMapping("/getState")
+    public ResponseEntity<Result<StateDTO>> getState(Authentication authentication){
+        String userId = (String) authentication.getPrincipal();
+        Result<StateDTO> response=orderService.getState(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }

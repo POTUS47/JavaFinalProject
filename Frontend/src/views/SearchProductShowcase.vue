@@ -26,6 +26,7 @@ const fetchStores = async (keyword: string, type: string) => {
 
     if (response.data) {
       products.value = response.data.data;
+      console.log('products:', products.value);
       errorMessage.value = ''; // 清除错误信息
     } else {
       products.value = [];
@@ -89,7 +90,7 @@ onMounted(() => {
     </div>
     <div v-else class="product-display">
       <div v-for="product in products" :key="product.productId" class="product-item" @click="goToProductDetail(product.productId)">
-        <img :src="product.productPics.length ? product.productPics[0].imageUrl : ''" :alt="product.productName" class="product-image" />
+        <img :src="product.productPic" :alt="product.productName" class="product-image" />
         <div class="product-info">
           <p class="product-price">
             <span class="special-price">价格</span> ¥{{ product.productPrice }}

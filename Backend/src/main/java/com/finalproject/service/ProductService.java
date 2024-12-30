@@ -186,6 +186,7 @@ public class ProductService {
         for (Product product : products) {
             Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
             String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
+            String url=baseUrl+"/images/"+imageId;
             ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
                     product.getProductName(),
                     product.getProductPrice(),
@@ -193,7 +194,7 @@ public class ProductService {
                     product.getTag(),
                     product.getSubCategory(),
                     product.getDescription(),
-                    imageId,
+                    url,
                     product.getStoreTag());
             result.add(dto);
         }

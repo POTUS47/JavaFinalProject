@@ -1,14 +1,25 @@
 <!-- 这里是商品管理界面的内容区域 -->
 <template>
+  <div class="CommodityTopbar">
+    <button @click="PLYshow(1)" class="ButtonA" id="Button1">
+      <span class="Buttondes">全部商品</span>
+    </button>
+    <button @click="PLYshow(2)" class="ButtonA" id="Button2">
+      <span class="Buttondes">已售商品</span>
+    </button>
+    <button @click="PLYshow(3)" class="ButtonA" id="Button3">
+      <span class="Buttondes">未售商品</span>
+    </button>
+  </div>
   <div class="CommodityShow">
     <!-- 搜索和筛选按钮 -->
     <div class="SearchContainer">
-      <el-input v-model="searchName" placeholder="请输入商品名称(在全部商品中搜索)" style="display: inline-block;"
+      <el-input v-model="searchName" placeholder="请输入商品名称(在全部商品中搜索)" style="display: inline-flex;"
         @keyup.enter="filterProducts"></el-input>
       <el-button type="primary" @click="filterProducts">搜索</el-button>
-      <el-input v-model="searchcategoryInit" placeholder="请输入商家分类（在全部商品中搜索）" style="display: inline-block;"
+      <!-- <el-input v-model="searchcategoryInit" placeholder="请输入商家分类（在全部商品中搜索）" style="display: inline-block;"
         @keyup.enter="filterProductsTag"></el-input>
-      <el-button type="primary" @click="filterProductsTag">筛选</el-button>
+      <el-button type="primary" @click="filterProductsTag">筛选</el-button> -->
     </div>
     <!-- 表格 -->
     <div class="TableContainer">
@@ -58,7 +69,6 @@
       </span>
     </el-dialog>
 
-    //上传图文描述
     <el-dialog v-model="uploadIDDialogVisible" title="上传图文描述">
       <!-- 显示当前商品的图文描述 -->
       <div v-if="currentIDImages.length > 0" class="product-images">
@@ -222,6 +232,8 @@ export default {
     const uploadIDDialogVisible = ref(false);
 
     const selectedFiles = ref([]); // 选中的图片文件
+
+    const PLYProducts = ref([]); // 用于存储已售商品
    
 
     const uploadHeaders = ref({
@@ -231,7 +243,16 @@ export default {
       productId: ''
     });
 
-    
+    //前端处理展示是否出售的商品
+    const PLYshow = (viewType) => {
+      if (viewType === 1) {
+        PLYProducts.value = products.value;
+      } else if (viewType === 2) {
+        PLYProducts.value = products.value.filter(product => product.isOnSale);
+      } else if (viewType === 3) {
+        PLYProducts.value = products.value.filter(product => !product.isOnSale);
+      }
+    };
 
     //根据商品是否售出展示商品
     const fetchProducts = async () => {
@@ -253,10 +274,11 @@ export default {
             categoryInit: product.storeTag || 'Unknown',
             categorySys: product.subTag || 'Unknown',
             price: product.productPrice || 0,
-            isOnSale: product.saleOrNot !== undefined ? product.saleOrNot : false,
+            isOnSale: product.quantity >0 ? true : false,
             description: product.description || 'No description available',
           }));
           totalProducts.value = products.value.length;
+          PLYProducts.value = products.value;
         } else {
           console.error('Unexpected response format:', response.data);
         }
@@ -424,12 +446,14 @@ export default {
           }));
 
           products.value = processedProducts;
+          PLYProducts.value = products.value;
           console.log('products:', products.value);
         } else {
           console.error('Unexpected response format:', response.data);
         }
       } catch (error) {
         products.value = [];
+        PLYProducts.value = products.value;
         console.error('通过商品名称获取商品数据失败:', error);
       }
     };
@@ -684,7 +708,7 @@ export default {
 
     //编辑商品框  
     const handleEdit = async (item) => {
-      if (item.isOnSale) {
+      if (!item.isOnSale) {
         ElMessage({
           message: '该商品已经出售，无法编辑',
           type: 'warning'
@@ -985,7 +1009,8 @@ export default {
     const currentPageData = computed(() => {
       const start = (currentPage.value - 1) * pageSize;
       const end = Math.min(start + pageSize, totalProducts.value);
-      return products.value.slice(start, end);
+      return PLYProducts.value.slice(start, end);
+      //return products.value.slice(start, end);
     });
     const handlePageChange = (page) => {
       currentPage.value = page;
@@ -1282,6 +1307,7 @@ export default {
     return {
       value,
       products,
+      PLYProducts,
       dialogVisible,
       dialogVisibleTwo,
       currentProduct,
@@ -1294,6 +1320,7 @@ export default {
       addDialogVisible,
       confirmDialogVisible,
       selectedProducts,
+      PLYshow,
       handleCheck,
       handleDelete,
       handlePageChange,
@@ -1352,6 +1379,63 @@ export default {
 </script>
 
 <style scoped>
+.CommodityTopbar {
+  background-color: #dfcdc7;
+  height: 4vh;
+  display: flex;
+  position: fixed;
+  top: 6vh;
+  left: 150px;
+  right: 0;
+  bottom: 0;
+}
+
+#Button1 {
+  position: fixed;
+  top: 7vh;
+  left: 160px;
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 3vh;
+  border-radius: 20px;
+}
+
+#Button2 {
+  position: fixed;
+  top: 7vh;
+  left: 320px;
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 3vh;
+  border-radius: 20px;
+}
+
+#Button3 {
+  position: fixed;
+  top: 7vh;
+  left: 480px;
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 3vh;
+  border-radius: 20px;
+}
+
+.ButtonA {
+  background-color: #a13232;
+  border-color: #a13232;
+}
+
+.ButtonA:hover {
+  background-color: #8b2b2b;
+  border-color: #8b2b2b;
+}
+
+.Buttondes {
+  padding: 1vh;
+}
 .CommodityShow {
   position: fixed;
   top: 10vh;

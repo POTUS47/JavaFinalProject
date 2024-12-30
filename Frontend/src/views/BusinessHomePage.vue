@@ -66,7 +66,7 @@ export default {
   },
   data() {
     return {
-      orderData: [10, 1, 3, 0, 0, 15, 12],
+      orderData: [10, 1, 3, 0, 0, 15, 0],
       lastSevenDays: this.getLastSevenDays(),
       stats: {
         waitingForShipment: 0,
