@@ -94,6 +94,7 @@ public class OrderItemDTOs {
         private String productName;
         private String productImage;
         private BigDecimal productPrice;
+        private String itemStatus;
 
         // Getters and Setters
         public String getProductId() {
@@ -134,6 +135,14 @@ public class OrderItemDTOs {
 
         public void setItemId(String itemId) {
             this.itemId = itemId;
+        }
+
+        public String getItemStatus() {
+            return itemStatus;
+        }
+
+        public void setItemStatus(String itemStatus) {
+            this.itemStatus = itemStatus;
         }
     }
 

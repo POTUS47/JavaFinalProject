@@ -416,6 +416,7 @@ public class OrderService {
             orderItemDTO.setProductId(product.getProductId());
             orderItemDTO.setProductName(product.getProductName());
             orderItemDTO.setProductPrice(product.getProductPrice());
+            orderItemDTO.setItemStatus(orderItem.getItemStatus().toString());
 
             // 获取商品图片信息
             List<String> productImageUrls = getProductImagesById(product.getProductId());
