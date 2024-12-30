@@ -12,16 +12,16 @@ springdoc:
     path: /swagger-ui/index.html # 自定义路径，默认为"/swagger-ui/index.html"
 
 #服务器部署环境
-api:
-  base-url: "http://47.97.59.189:8080"
-trusted:
-  ip: "47.97.59.189"
+#api:
+#  base-url: "http://47.97.59.189:8080"
+#trusted:
+#  ip: "47.97.59.189"
 
 #本地测试环境
-#api:
-#  base-url: "http://127.0.0.1:8080"
-#trusted:
-#  ip: "localhost, 0:0:0:0:0:0:0:1, 127.0.0.1"
+api:
+  base-url: "http://127.0.0.1:8080"
+trusted:
+  ip: "localhost, 0:0:0:0:0:0:0:1, 127.0.0.1"
 
 spring:
   servlet:

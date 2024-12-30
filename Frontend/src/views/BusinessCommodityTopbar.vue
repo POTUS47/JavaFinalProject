@@ -1,16 +1,6 @@
 <!-- 商家界面商品管理的页面切换顶栏 -->
 <template>
-    <div class="CommodityTopbar">
-      <button @click="changeView(1)" class="ButtonA" id="Button1">
-        <span class="Buttondes">全部商品</span>
-      </button>
-      <button @click="changeView(2)" class="ButtonA" id="Button2">
-        <span class="Buttondes">已售商品</span>
-      </button>
-      <button @click="changeView(3)" class="ButtonA" id="Button3">
-        <span class="Buttondes">未售商品</span>
-      </button>
-    </div>
+    
   </template>   
  
 <script>
