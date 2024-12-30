@@ -9,6 +9,7 @@ import com.finalproject.model.Product;
 import com.finalproject.model.ProductImage;
 import com.finalproject.service.ImageService;
 import com.finalproject.service.ProductService;
+import com.finalproject.service.RecommendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,10 +27,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/productController")
 public class ProductController {
 
-    @Autowired
     private ProductService productService;
+    private RecommendService recommendService;
 
-
+    @Autowired
+    ProductController(ProductService productService, RecommendService recommendService) {
+        this.productService = productService;
+        this.recommendService = recommendService;
+    }
 
     //通过id获取本店所有商品
     @GetMapping("/GetProductsByStoreIdAndViewType")
@@ -167,5 +173,34 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+
+    // 为用户推荐商品
+    @GetMapping("/recommend/user")
+    public ResponseEntity<List<Map<String, Object>>> recommendForUser(Authentication auth) {
+        String userId = (String) auth.getPrincipal();
+        try {
+            List<Map<String, Object>> recommendations = recommendService.recommendForUser(userId);
+            return ResponseEntity.ok(recommendations);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    // 查找相似商品
+    @PostMapping("/recommend/similar-products")
+    public ResponseEntity<List<Map<String, Object>>> findSimilarProducts(
+            @RequestBody Map<String, Object> request) {
+        try {
+            String imagePath = (String) request.get("imagePath");
+            int resultNum = (int) request.getOrDefault("resultNum", 10);
+            if (imagePath == null || imagePath.isEmpty()) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            List<Map<String, Object>> similarProducts = recommendService.findSimilarProducts(imagePath, resultNum);
+            return ResponseEntity.ok(similarProducts);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
 }

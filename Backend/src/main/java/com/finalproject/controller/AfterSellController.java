@@ -37,7 +37,6 @@ public class AfterSellController {
         Result<Map<String, String>> response = returnService.applyReturn(orderItemId, reason);
         return ResponseEntity.status(response.getCode()).body(response);
     }
-
     // 商家-订单项-审批退货申请
     @PostMapping("/returns/{orderItemId}/approveReturn")
     public ResponseEntity<Result<Map<String, String>>> approveReturn(@PathVariable String orderItemId,
@@ -53,7 +52,6 @@ public class AfterSellController {
         Result<Map<String, String>> response = returnService.approveReturn(orderItemId,isApproved,reason);
         return ResponseEntity.status(response.getCode()).body(response);
     }
-
     // 卖家-查看处理中退货申请
     @GetMapping("/seller/current_returns")
     public ResponseEntity<Result<List<String>>> getSellerReturnRequests(Authentication authentication) {
@@ -93,7 +91,6 @@ public class AfterSellController {
         Result<AfterSellDTOs.ReturnDTO> response = returnService.getReturnDetail(returnId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
-
 
     // 买家-退货单填写快递单号
     @PostMapping("/return/{returnId}/addExpressNumber")
