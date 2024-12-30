@@ -488,4 +488,24 @@ public class OrderDTOs {
         }
     }
 
+    public static class NameAndScore{
+        private String storeName;
+        private String storeScore;
+
+
+        public String getStoreName() {
+            return storeName;
+        }
+
+        public String getStoreScore() {
+            return storeScore;
+        }
+        public void setStoreName(String storeName) {
+            this.storeName = storeName;
+        }
+        public void setStoreScore(String storeScore) {
+            this.storeScore = storeScore;
+        }
+    }
+
 }

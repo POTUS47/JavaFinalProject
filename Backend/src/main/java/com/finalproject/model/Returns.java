@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "return")
-public class Return implements Serializable {
+@Table(name = "returns")
+public class Returns implements Serializable {
 
     @Id
     @Column(name = "item_id")

@@ -379,14 +379,12 @@ async handleUpload() {
 async fetchImageAndText(id) {
   try {
     console.log(id,'!');
-    const response = await axiosInstance.post('/UserInfo/GetPhotoAndDescribtion', {
-      id
-    });
+    const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
 
-    const { describtion, photo } = response.data;
-    console.log('1:',this.userimades.ima);
-    console.log('2:',this.userimades.descri);
-    this.userimades.ima = `data:image/jpeg;base64,${photo}`;
+    const { describtion, imageUrl } = response.data.data;
+    
+    this.userimades.ima = imageUrl;
+    console.log('获取到的头像:', this.userimades.ima);
     this.userimades.descri = describtion;
 
     console.log('获取到的头像和文字描述:', this.userimades);

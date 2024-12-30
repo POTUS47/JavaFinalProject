@@ -9,7 +9,9 @@ import com.finalproject.repository.OrderItemRepository;
 import com.finalproject.service.FavouriteService;
 import com.finalproject.service.OrderService;
 import com.finalproject.service.OrderItemService;
+import com.finalproject.service.ProductService;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,8 @@ public class ShoppingController {
 
     @Resource
     private OrderItemService orderItemService;
+    @Autowired
+    private ProductService productService;
 
     // 获取用户收藏的店铺
     @GetMapping("/favourite/get-favourite-stores")
@@ -316,6 +320,21 @@ public class ShoppingController {
     public ResponseEntity<Result<StateDTO>> getState(Authentication authentication){
         String userId = (String) authentication.getPrincipal();
         Result<StateDTO> response=orderService.getState(userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    //获取七天订单数
+    @GetMapping("/GetWeeklyOrderCount")
+    public ResponseEntity<Result<List<Integer>>> getOrdersPerDayInLastSevenDays() {
+        Result<List<Integer>> response = orderService.getOrdersPerDayInLastSevenDays();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    //更新店铺评分并返回给前端
+    @GetMapping("UpdateStoreScore")
+    public ResponseEntity<Result<NameAndScore>> updateStoreScore(Authentication authentication){
+        String userId = (String) authentication.getPrincipal();
+        Result<NameAndScore> response=orderService.updateStoreRating(userId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 }

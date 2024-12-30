@@ -231,10 +231,9 @@ handleFile(event) {
                 console.log(id,'!');
               const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
 
-                const { describtion, photo } = response.data;
-                console.log('1:',this.userimades.ima);
-                console.log('2:',this.userimades.descri);
-                this.userimades.ima = photo.imageUrl;
+                const { describtion, imageUrl } = response.data.data;
+                
+                this.userimades.ima = imageUrl;
                 this.userimades.descri = describtion;
 
                 console.log('获取到的头像和文字描述:', this.userimades);
