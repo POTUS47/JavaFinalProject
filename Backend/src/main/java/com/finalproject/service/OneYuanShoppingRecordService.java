@@ -66,8 +66,22 @@ public class OneYuanShoppingRecordService {
             OneYuanShoppingRecord record = new OneYuanShoppingRecord();
 
             // 从DTO复制基本信息
+            if (recordDTO.getStartTime() == null) {
+                return Result.error(400, "没有1start" );
+            }
             record.setStartTime(recordDTO.getStartTime());
+            if (record.getStartTime() == null) {
+                return Result.error(400, "没有2start" );
+            }
+
+            if (recordDTO.getEndTime() == null) {
+                return Result.error(400, "没有1end" );
+            }
             record.setEndTime(recordDTO.getEndTime());
+            if (record.getEndTime() == null) {
+                return Result.error(400, "没有2end" );
+            }
+
             record.setMinParticipants(recordDTO.getMinParticipants());
 
             // 设置其他必要信息
@@ -76,15 +90,8 @@ public class OneYuanShoppingRecordService {
             record.setCurrentParticipants(0);
             record.setDrawn(false);
             record.setResult(null);
-
             // 5. 保存记录
             OneYuanShoppingRecord savedRecord = oneYuanShoppingRecordRepository.save(record);
-
-            // 6. 创建对应的一元购商品记录
-            OneYuanShoppingRecord oneYuan = new OneYuanShoppingRecord();
-            oneYuan.setProductId(productId);
-            oneYuan.setRecordId(savedRecord.getRecordId());
-            oneYuanShoppingRecordRepository.save(oneYuan);
 
             return Result.success("一元购活动创建成功", savedRecord.getRecordId());
         } catch (Exception e) {

@@ -334,7 +334,6 @@ public class ShoppingController {
 
         String userId = authentication.getName();
         Result<?> response = oneYuanService.createOneYuanRecord(recordDTO, productId, userId);
-
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
