@@ -49,6 +49,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
             "WHERE o.storeId = :storeId AND oi.itemStatus = '售后结束'")
     Optional<List<OrderItem>> findHistoryAfterSalesOrderItemsByStoreId(@Param("storeId") String buyerId);
 
+    @Query("SELECT oi.itemId FROM OrderItem oi WHERE oi.orderId IN :orderIds")
+    List<String> findItemIdsByOrderIds(List<String> orderIds);
+
 
     Optional<OrderItem> findByItemId(String returnId);
 }
