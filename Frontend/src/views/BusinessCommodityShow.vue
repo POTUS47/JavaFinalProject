@@ -247,9 +247,9 @@ export default {
     const PLYshow = (viewType) => {
       if (viewType === 1) {
         PLYProducts.value = products.value;
-      } else if (viewType === 2) {
-        PLYProducts.value = products.value.filter(product => product.isOnSale);
       } else if (viewType === 3) {
+        PLYProducts.value = products.value.filter(product => product.isOnSale);
+      } else if (viewType === 2) {
         PLYProducts.value = products.value.filter(product => !product.isOnSale);
       }
     };

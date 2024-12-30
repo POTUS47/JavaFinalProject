@@ -118,7 +118,7 @@ public class ShoppingController {
     }
 
     // 添加商品评价
-    @PatchMapping("/order/remark-order-item")
+    @PutMapping("/order/remark-order-item")
     public ResponseEntity<Result<String>> remarkOrderItem(@RequestBody UpdateOrderItemRemarkDTO updateOrderItemRemarkDTO) {
         Result<String>response = orderItemService.remarkOrderItem(updateOrderItemRemarkDTO);
         return ResponseEntity.status(response.getCode()).body(response);
@@ -287,7 +287,7 @@ public class ShoppingController {
     }
 
     // 商家更新快递单号
-    @PatchMapping("/order/update-delivery-number")
+    @PutMapping("/order/update-delivery-number")
     public ResponseEntity<Result<String>> updateDeliveryNumber(@RequestBody OrderDeliveryDTO orderDeliveryDTO){
         Result<String> response = orderService.updateDeliveryNumber(orderDeliveryDTO.getDeliveryNumber(),
                 orderDeliveryDTO.getOrderId());
