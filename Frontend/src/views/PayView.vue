@@ -211,7 +211,7 @@ watch(payVisible, (newValue, oldValue) => {
 });
 
 const productIds = ref([]);
-const orderIds = ref([]);
+let orderIds = ref([]);
 const orderInfo = ref([]);
 onMounted(async () => {
   const productIdStr = route.query.product;

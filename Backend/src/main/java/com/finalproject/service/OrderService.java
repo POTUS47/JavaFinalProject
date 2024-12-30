@@ -4,6 +4,7 @@ import com.finalproject.DTO.OrderItemDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.model.*;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,9 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final SnowflakeIdGenerator snowflakeIdGenerator;
     private final RestTemplate restTemplate;
+
+    @Autowired
+    private ReturnRepository returnRepository;
 
     // 构造函数注入
     public OrderService(OrderItemRepository orderItemRepository,
@@ -416,6 +420,7 @@ public class OrderService {
             orderItemDTO.setProductId(product.getProductId());
             orderItemDTO.setProductName(product.getProductName());
             orderItemDTO.setProductPrice(product.getProductPrice());
+            orderItemDTO.setItemStatus(orderItem.getItemStatus().toString());
 
             // 获取商品图片信息
             List<String> productImageUrls = getProductImagesById(product.getProductId());
@@ -558,5 +563,30 @@ public class OrderService {
         return Result.success(map);
     }
 
+    private int getPendingReturnsCount(String storeId){
+        List<String> orderIds = orderRepository.findOrderIdsByStoreId(storeId);
 
+        List<String> itemIds = orderItemRepository.findItemIdsByOrderIds(orderIds);
+
+        return returnRepository.countPendingReturnsByItemIds(itemIds);
+    }
+
+
+    public Result<StateDTO> getState(String userId) {
+        int shipment=orderRepository.getWaitingShip(userId);
+        int waitReturn =getPendingReturnsCount(userId);
+        int todayOrder =orderRepository.countOrdersByToday();
+        BigDecimal revenue = orderRepository.getTodayRevenue();
+        if(revenue==null){
+            revenue=BigDecimal.ZERO;
+        }
+
+        StateDTO stateDTO = new StateDTO();
+        stateDTO.setWaitingForShipment(shipment);
+        stateDTO.setWaitingForReturn(waitReturn);
+        stateDTO.setOrderCount(todayOrder);
+        stateDTO.setTotalAmount(revenue);
+        return Result.success(stateDTO);
+
+    }
 }
