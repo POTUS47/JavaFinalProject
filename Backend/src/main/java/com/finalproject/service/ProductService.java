@@ -535,5 +535,16 @@ public class ProductService {
 
     }
 
+    public Result<String> getAccountIdByProductId(String productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            String accountId = product.getStoreId();
+            return Result.success(accountId);
+        }
+        return Result.error(404, "Product not found");
+    }
+
 
 }

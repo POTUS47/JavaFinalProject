@@ -387,7 +387,16 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //卖家查看一元购
+    // 卖家查看自己店铺的一元购记录
+    @GetMapping("/store-records")
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getStoreOneYuanRecords(
+            Authentication authentication) {
+        // 从认证信息中获取商家ID
+        String storeId = authentication.getName();
+        Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getStoreOneYuanRecords(storeId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 
 
 }
