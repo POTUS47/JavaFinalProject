@@ -221,8 +221,8 @@ public class ProductController {
     }
 
     //获取商品对于商家
-    @GetMapping("/getAccountIdByProductId{productId}")
-    public ResponseEntity<Result<String>> getAccountIdByProductId(@PathVariable String productId) {
+    @GetMapping("/getAccountIdByProductId/{productId}")
+    public ResponseEntity<Result<String>> getAccountIdByProductId(@PathVariable("productId") String productId) {
         Result<String> response = productService.getAccountIdByProductId(productId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
