@@ -11,7 +11,7 @@
               </div>
             </router-link>
           </li> -->
-          <li>
+          <!-- <li>
             <router-link to="/merchant-certification" class="nav-link" active-class="active-link">
               <div class="button-content">
                 <img src="@/assets_dxy/certification_icon.svg" alt="Icon2" class="sidebar-icon white-icon">
@@ -26,12 +26,12 @@
                 <span>市集管理</span>
               </div>
             </router-link>
-          </li>
+          </li> -->
           <li>
             <router-link to="/report-management" class="nav-link" active-class="active-link">
               <div class="button-content">
                 <img src="@/assets_dxy/report_icon.svg" alt="Icon4" class="sidebar-icon white-icon">
-                <span>举报管理</span>
+                <span>申诉管理</span>
               </div>
             </router-link>
           </li>
@@ -42,7 +42,7 @@
   
   <style scoped>
   .sidebar {
-    width: 150px;
+    width: 120px;
     background-color: #444;
     color: #fff;
     display: flex;
@@ -80,8 +80,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 150px;
-    height: 130px;
+    width: 120px;
+    height: 120px;
     padding: 10px 0;
     cursor: pointer;
   }
