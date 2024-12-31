@@ -44,7 +44,7 @@
                 @click="handleUploadImages(scope.row)">上传图片</el-button>
                 <el-button size='small' type="primary" icon="Upload" @click="handleUploadIDImages(scope.row)">上传图文描述</el-button>
               <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">下架</el-button>
-              <el-button size='small' type="danger" icon="YiYuan" @click="setOneYuan(scope.row.id)">设为一元购</el-button>
+              <el-button size='small' type="danger" icon="YiYuan" v-if="scope.row.quantity>0" @click="setOneYuan(scope.row.id)">设为一元购</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -376,7 +376,7 @@ export default {
             storeId: localStorage.getItem('userId'),
           },
         });
-
+        console.log(response.data);
         if (Array.isArray(response.data)) {
           products.value = response.data.map(product => ({
             id: product.productId || 'N/A',
@@ -386,6 +386,7 @@ export default {
             price: product.productPrice || 0,
             isOnSale: product.quantity >0 ? true : false,
             description: product.description || 'No description available',
+            quantity: product.quantity,
           }));
           totalProducts.value = products.value.length;
           PLYProducts.value = products.value;

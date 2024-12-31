@@ -93,9 +93,6 @@ const goToTop = () => {
 };
 const typeChange = (id, name) => {
   pageSize.value = 12; //进入“全部”分类，每页4个商品
-  if (name == "其他") {
-    pageSize.value = 12; //进入“其他-全部”分类，每页8个商品
-  }
   currentPage.value = 1; //重置分页器当前页数
   console.log(`name is ${name}`);
   getCategoryDetail(name); //获取当前大分类描述
@@ -142,9 +139,6 @@ const filter = (subCategory, index) => {
   if (selectedCategory.value == 0 && subCategory.subCategoryId != '05000') { //进入“全部”分类，每页4个商品
     pageSize.value = 12;
   }
-  // else { //其余小分类，每页展示8个商品
-  //   pageSize.value = 12;
-  // }
   getProducts(AllCategories[currentSumCategory.value].subCategories[selectedCategory.value].subCategoryId);
 }
 
@@ -200,7 +194,7 @@ const currentType = ref('服装')
 const router = useRouter();
 
 /////////////////////////////////
-const pageSize = ref(4);
+const pageSize = ref(12);
 const currentPage = ref(1);
 
 const totalProducts = computed(() => displayProducts.length);

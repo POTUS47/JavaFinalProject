@@ -129,7 +129,7 @@
 
           <div class="one-choice2">
             <img class="IconPage3" src="@/assets/mmy/家具.png">
-            <p>&nbsp;</p>
+            <p>一元购</p>
           </div>
 
           <div class="one-choice1" @click="navigateTo('/cart')">
@@ -138,15 +138,15 @@
 
           </div>
 
-          <div class="one-choice2">
-            <img class="IconPage3" src="@/assets/mmy/服装.png">
-            <p>&nbsp;</p>
-          </div>
-
-          <div class="one-choice1" @click="navigateTo('/ordercentre')">
+          <div class="one-choice2" @click="navigateTo('/ordercentre')">
             <img class="IconPage3" src="@/assets/mmy/小物件.png">
             <p>订单中心</p>
           </div>
+
+                    <div class="one-choice1">
+                      <img class="IconPage3" src="@/assets/mmy/服装.png">
+                      <p>&nbsp;</p>
+                    </div>
         </div>
 
         <!-- ----------动画效果尝试失败---------- -->

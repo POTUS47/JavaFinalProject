@@ -112,6 +112,7 @@ const fetchUserProfilePhoto = async () => {
 const menuItems = reactive([
   { text: "首页", link: "/home" },
   { text: "商品", link: "/merchandise/1" },
+  { text: "一元购", link: "/oneyuan" },
   { text: "收藏夹", link: "/cart" },
   { text: "订单中心", link: "/ordercentre" },
 ]);

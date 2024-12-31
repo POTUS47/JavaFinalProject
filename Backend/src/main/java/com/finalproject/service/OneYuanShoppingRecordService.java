@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.client.RestTemplate;
@@ -168,6 +168,42 @@ public class OneYuanShoppingRecordService {
 
             recordDTOs.add(dto);
         }
+
+        return Result.success(recordDTOs);
+    }
+
+    @Transactional
+    public Result<List<OneYuanShoppingRecordDTO>> getAllProperRecords() {
+        // 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+
+        // 查询符合条件的一元购记录
+        List<OneYuanShoppingRecord> records = oneYuanShoppingRecordRepository.findAll().stream()
+                .filter(record ->
+                        record.getStartTime().isBefore(now) &&
+                                record.getEndTime().isAfter(now)
+                )
+                .collect(Collectors.toList());
+
+        if (records.isEmpty()) {
+            return Result.error(404, "未找到正在进行的一元购记录");
+        }
+
+        // 构造返回的DTO列表
+        List<OneYuanShoppingRecordDTO> recordDTOs = records.stream()
+                .map(record -> {
+                    OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
+                    dto.setRecordId(record.getRecordId());
+                    dto.setStartTime(record.getStartTime());
+                    dto.setEndTime(record.getEndTime());
+                    dto.setMinParticipants(record.getMinParticipants());
+                    dto.setDrawn(record.isDrawn());
+                    dto.setResult(record.getResult());
+                    dto.setCurrentParticipants(record.getCurrentParticipants());
+                    dto.setProductId(record.getProductId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
         return Result.success(recordDTOs);
     }

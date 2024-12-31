@@ -246,6 +246,7 @@ const starStore = async () => {
 const enterPay = () => {
   const productIds = ref([]);
   localStorage.setItem('recordPayId', recordId);
+
   productIds.value.push(productId);
   console.log(productIds.value);
   const productStr = JSON.stringify(productIds.value);//序列化对象

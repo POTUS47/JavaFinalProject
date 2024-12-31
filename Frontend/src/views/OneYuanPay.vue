@@ -101,7 +101,7 @@
               height:43px;
               right:60px;
               bottom:20px;
-              position: absolute">支付￥{{ finalPrice }}</el-button>
+              position: absolute">支付￥ 1</el-button>
         <el-dialog v-model="payVisible" width="20%" :style="{ borderRadius: '15px' }">
           <div v-show="isPaySuccess === true">
             <p class="text_pay_isSuccess">支付成功</p>
@@ -338,9 +338,8 @@ const openPay = async () => {
     try {
       const response = await axiosInstance.post(`/shopping/order/pay-order`, {
         "orderId": orderInfo.value[i].orderId,
-        "usedCredits": isUseCredits.value === 'yes' ? 200 : 0,
+        "usedCredits":  0,
       });
-      bonusCredits.value += response.data.data.bonus;
       isPaySuccess.value = true;
       confirmOneYuan();
     } catch (error) {
@@ -352,15 +351,11 @@ const openPay = async () => {
 // 参与一元购
 const confirmOneYuan = async () => {
     try {
-      const response = await axiosInstance.post(`/shopping/order/pay-order`, {
-        "orderId": orderInfo.value[i].orderId,
-        "usedCredits": isUseCredits.value === 'yes' ? 200 : 0,
+      const response = await axiosInstance.post(`/shopping/participate/{recordPayId}`, {
       });
-      bonusCredits.value += response.data.data.bonus;
-      isPaySuccess.value = true;
-      confirmOneYuan();
+      recordPayId.value=null;
     } catch (error) {
-      isPaySuccess.value = false;
+      console.log("参与失败",error);
     }
 }
 

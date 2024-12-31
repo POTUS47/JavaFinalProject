@@ -382,9 +382,12 @@ public class ShoppingController {
 
     // 所有一元购
     @GetMapping("/all-one-yuan")
-    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllRecords() {
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllProperRecords() {
         Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getAllRecords();
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    //卖家查看一元购
+
 
 }
