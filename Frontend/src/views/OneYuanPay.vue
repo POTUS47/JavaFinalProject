@@ -47,7 +47,7 @@
           <div class="dialog-line">
             <div class="dialog-text">所在地区 </div>
             <el-cascader :options='options' v-model='selectedOptions' placeholder="省/市/区（县）" class="custom-cascader"
-              style="width: 350px;" @change='addressChange'></el-cascader>
+                         style="width: 350px;" @change='addressChange'></el-cascader>
           </div>
           <div class="dialog-line">
             <div class="dialog-text">详细地址 </div>
@@ -87,20 +87,9 @@
 
     <div class="price" v-show="isNew === true">
       <div class="storeArea">
-        <div class="text-price1">价格明细</div>
+        <div class="text-price1">价格</div>
       </div>
-      <div class="text-price">商品原价：&#8201;&#8201;{{ (totalOriginalPrice) }}元</div>
-      <div>
-        <div class="useCredit">
-          <div class="text-price-active">是否使用积分</div>
-          <el-radio-group v-model="isUseCredits" style="margin-left: 10px;margin-bottom:0px">
-            <el-radio label="yes">是</el-radio>
-            <el-radio label="no">否</el-radio>
-          </el-radio-group>
-        </div>
-        <div class="text-price-active-small">当前积分{{ 10024 }},可抵扣{{ 10 }}元</div>
-      </div>
-      <div class="text-price-active">价格合计：{{ finalPrice }}元</div>
+      <div class="text-price-active">1  元</div>
       <div class="pay">
         <el-button @click="checkPay" class="payMoney" style="
               font-size: 20px;
@@ -116,7 +105,6 @@
         <el-dialog v-model="payVisible" width="20%" :style="{ borderRadius: '15px' }">
           <div v-show="isPaySuccess === true">
             <p class="text_pay_isSuccess">支付成功</p>
-            <p class="text_pay">获得积分：&#8201;&#8201;{{ bonusCredits }}</p>
           </div>
           <!-- <div v-show="isPaySuccess === false">
             <p class="text_pay_isSuccess">支付失败</p>
@@ -215,22 +203,22 @@ const productIds = ref([]);
 let orderIds = ref([]);
 const orderInfo = ref([]);
 onMounted(async () => {
-  const productIdStr = route.query.product;
-  if (productIdStr) {
-    productIds.value = JSON.parse(productIdStr);
-    console.log(`productIds.value is ${JSON.stringify(productIds.value, null, 2)}`)
-  }
-  const orderIdStr = route.query.orderIds;
-  if (orderIdStr) {
-    orderIds = JSON.parse(orderIdStr);
-    console.log(`orderIds is ${JSON.stringify(orderIds, null, 2)}`)
-  }
-  if (isNew == true) {
-    addOrders();
-  } else {
-    getOrders();
-  }
-}
+      const productIdStr = route.query.product;
+      if (productIdStr) {
+        productIds.value = JSON.parse(productIdStr);
+        console.log(`productIds.value is ${JSON.stringify(productIds.value, null, 2)}`)
+      }
+      const orderIdStr = route.query.orderIds;
+      if (orderIdStr) {
+        orderIds = JSON.parse(orderIdStr);
+        console.log(`orderIds is ${JSON.stringify(orderIds, null, 2)}`)
+      }
+      if (isNew == true) {
+        addOrders();
+      } else {
+        getOrders();
+      }
+    }
 )
 
 const totalOriginalPrice = computed(() => {
@@ -346,7 +334,7 @@ const openPay = async () => {
   payChoiceVisible.value = false;
   payVisible.value = true;
   for (let i = 0; i < orderInfo.value.length; i++) {
-    console.log(`正在支付订单 ${orderInfo.value[i].orderId}`); 
+    console.log(`正在支付订单 ${orderInfo.value[i].orderId}`);
     try {
       const response = await axiosInstance.post(`/shopping/order/pay-order`, {
         "orderId": orderInfo.value[i].orderId,
@@ -354,10 +342,26 @@ const openPay = async () => {
       });
       bonusCredits.value += response.data.data.bonus;
       isPaySuccess.value = true;
+      confirmOneYuan();
     } catch (error) {
       isPaySuccess.value = false;
     }
   }
+}
+
+// 参与一元购
+const confirmOneYuan = async () => {
+    try {
+      const response = await axiosInstance.post(`/shopping/order/pay-order`, {
+        "orderId": orderInfo.value[i].orderId,
+        "usedCredits": isUseCredits.value === 'yes' ? 200 : 0,
+      });
+      bonusCredits.value += response.data.data.bonus;
+      isPaySuccess.value = true;
+      confirmOneYuan();
+    } catch (error) {
+      isPaySuccess.value = false;
+    }
 }
 
 </script>

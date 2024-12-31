@@ -127,15 +127,50 @@ public class OneYuanShoppingRecordService {
                 // 设置基本信息
                 dto.setRecordId(record.getRecordId());
                 dto.setStartTime(record.getStartTime());
+                dto.setEndTime(record.getEndTime());
                 dto.setMinParticipants(record.getMinParticipants());
                 dto.setDrawn(record.isDrawn());
                 dto.setResult(record.getResult());
-
+                dto.setCurrentParticipants(record.getCurrentParticipants());
+                dto.setProductId(record.getProductId());
                 records.add(dto);
             }
         }
 
         return Result.success(records); }
+
+
+    @Transactional
+    public Result<List<OneYuanShoppingRecordDTO>> getAllRecords() {
+        // 查询所有的一元购记录
+        List<OneYuanShoppingRecord> records = oneYuanShoppingRecordRepository.findAll();
+
+        if (records.isEmpty()) {
+            return Result.error(404, "未找到任何一元购记录");
+        }
+
+        // 构造返回的DTO列表
+        List<OneYuanShoppingRecordDTO> recordDTOs = new ArrayList<>();
+
+        // 遍历记录
+        for (OneYuanShoppingRecord record : records) {
+            OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
+
+            // 设置基本信息
+            dto.setRecordId(record.getRecordId());
+            dto.setStartTime(record.getStartTime());
+            dto.setEndTime(record.getEndTime());
+            dto.setMinParticipants(record.getMinParticipants());
+            dto.setDrawn(record.isDrawn());
+            dto.setResult(record.getResult());
+            dto.setCurrentParticipants(record.getCurrentParticipants());
+            dto.setProductId(record.getProductId());
+
+            recordDTOs.add(dto);
+        }
+
+        return Result.success(recordDTOs);
+    }
 
 
     @Transactional

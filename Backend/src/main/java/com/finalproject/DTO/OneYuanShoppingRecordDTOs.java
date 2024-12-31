@@ -12,6 +12,7 @@ public class OneYuanShoppingRecordDTOs {
         private int currentParticipants;
         private boolean isDrawn;
         private String result;
+        private String productId;
 
         // 构造函数
         public OneYuanShoppingRecordDTO() {}
@@ -63,6 +64,14 @@ public class OneYuanShoppingRecordDTOs {
 
         public void setResult(String result) {
             this.result = result;
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
         }
 
     }
