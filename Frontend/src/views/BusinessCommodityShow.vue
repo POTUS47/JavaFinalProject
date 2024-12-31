@@ -357,9 +357,9 @@ export default {
     const PLYshow = (viewType) => {
       if (viewType === 1) {
         PLYProducts.value = products.value;
-      } else if (viewType === 3) {
-        PLYProducts.value = products.value.filter(product => product.isOnSale);
       } else if (viewType === 2) {
+        PLYProducts.value = products.value.filter(product => product.isOnSale);
+      } else if (viewType === 3) {
         PLYProducts.value = products.value.filter(product => !product.isOnSale);
       }
     };
@@ -474,7 +474,7 @@ export default {
         return;
       }
 
-      const formData = new FormData();
+      const formData = new FormData(); 
       console.log('selected:', selectedFiles.value);
       formData.append('productId', currentProduct.value.id);
       selectedFiles.value.forEach((file) => {
@@ -482,15 +482,13 @@ export default {
       });
 
       try {
-        console.log('formData:', formData);
         const response = await axiosInstance.post('/productController/addProductImage', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: localStorage.getItem('token'),
           },
         });
-        console.log('response:', response);
-        console.log('response.data:', response.data);
+        
         if (response.data) {
           fetchProductImages(currentProduct.value.id); // 上传成功后刷新图片列表
           ElMessage.success('上传成功');
