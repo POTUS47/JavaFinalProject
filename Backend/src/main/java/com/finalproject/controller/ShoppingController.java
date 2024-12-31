@@ -392,7 +392,7 @@ public class ShoppingController {
     public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getStoreOneYuanRecords(
             Authentication authentication) {
         // 从认证信息中获取商家ID
-        String storeId = authentication.getName();
+        String storeId = (String) authentication.getPrincipal();
         Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getStoreOneYuanRecords(storeId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
