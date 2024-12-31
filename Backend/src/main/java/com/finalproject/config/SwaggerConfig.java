@@ -8,12 +8,6 @@ import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @Author HHHY
- * @ClassName
- * @Date: 2024/4/2 14:21
- * @Description: Swagger 配置
- */
 
 @Configuration
 public class SwaggerConfig {

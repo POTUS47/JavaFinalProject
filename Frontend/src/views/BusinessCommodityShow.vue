@@ -42,9 +42,9 @@
               <el-button size='small' type="primary" icon="Edit" @click="handleEdit(scope.row)">编辑基本信息</el-button>
               <el-button size='small' type="primary" icon="Upload"
                 @click="handleUploadImages(scope.row)">上传图片</el-button>
-              <!-- <el-button size='small' type="primary" icon="Upload"
-                @click="handleUploadIDImages(scope.row)">上传图文描述</el-button> -->
-              <!-- <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button> -->
+                <el-button size='small' type="primary" icon="Upload" @click="handleUploadIDImages(scope.row)">上传图文描述</el-button>
+              <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">下架</el-button>
+              <el-button size='small' type="danger" icon="YiYuan" v-if="scope.row.quantity>0" @click="setOneYuan(scope.row.id)">设为一元购</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -126,6 +126,52 @@
         </el-form>
       </div>
     </div>
+
+    <!-- 一元购 -->
+    <div v-if="oneYuanVisible" class="SettingPopUp">
+      <div v-if="currentOneYuan" class="SettingContent">
+        <el-form ref="oneYuanForm" :rules="oneYuanRules">
+
+          <el-form-item label="活动开始时间" prop="startTime">
+            <el-date-picker
+                v-model="oneYuanStart"
+                type="datetime"
+                placeholder="选择开始时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item label="活动结束时间" prop="endTime">
+            <el-date-picker
+                v-model="oneYuanEnd"
+                type="datetime"
+                placeholder="选择结束时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item label="最小参与人数" prop="minParticipants">
+            <el-input-number
+                v-model="oneYuanMin"
+                :min="10"
+                :max="1000"
+                controls-position="right"
+            >
+            </el-input-number>
+          </el-form-item>
+
+          <div style="display: flex;justify-content: center;margin-top: 30px">
+            <el-button type="primary" @click="confirmOneYuan(currentOneYuan)">确认创建</el-button>
+            <el-button type="info" @click="cancelOneYuan">取消</el-button>
+          </div>
+        </el-form>
+      </div>
+    </div>
+
 
     <!--添加商品对话框-->
     <div v-if="addDialogVisible" class="SettingPopUp">
@@ -230,7 +276,11 @@ export default {
     const currentIDImages = ref([]);
     const uploadImagesDialogVisible = ref(false);
     const uploadIDDialogVisible = ref(false);
-
+    const oneYuanStart=ref(null);
+    const oneYuanEnd=ref(null);
+    const oneYuanMin=ref(null);
+    const oneYuanVisible=ref(false);
+    const currentOneYuan=ref(null);
     const selectedFiles = ref([]); // 选中的图片文件
 
     const PLYProducts = ref([]); // 用于存储已售商品
@@ -242,6 +292,66 @@ export default {
     const uploadData = ref({
       productId: ''
     });
+
+    const setOneYuan = (id) => {
+      oneYuanVisible.value = true;
+      currentOneYuan.value=id;// 记录当前选中的商品
+    };
+
+    const cancelOneYuan = () => {
+      oneYuanVisible.value = false; // 记录当前选中的商品
+      oneYuanMin.value = null;
+      oneYuanStart.value = null;
+      oneYuanEnd.value = null;
+      currentOneYuan.value=null;
+    };
+
+
+    //设置一元购
+    const confirmOneYuan = async (id) => {
+      try {
+        // const body = {
+        //   startTime: oneYuanStart.value,
+        //   endTime:oneYuanEnd.value,
+        //   minParticipants: Number(oneYuanMin.value),
+        // };
+        console.log(id);
+        const response = await axiosInstance.post('/shopping/createOneYuanRecord', {
+          startTime: oneYuanStart.value,
+          endTime: oneYuanEnd.value,
+          minParticipants: Number(oneYuanMin.value)
+        },{
+          params: {
+            productId: id
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // 根据接口返回结构处理响应
+        if (response.data && response.data.code === 200) {
+          ElMessage({
+            message: response.data.msg || '一元购活动创建成功',
+            type: 'success'
+          })
+          cancelOneYuan();
+        } else {
+          ElMessage({
+            message: response.data.msg || '创建一元购活动失败',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        if (error !== 'cancel') {
+          ElMessage({
+            message: '创建一元购活动失败: ' + (error.response?.data?.msg || error.message),
+            type: 'error'
+          });
+        }
+      }
+    };
+
 
     //前端处理展示是否出售的商品
     const PLYshow = (viewType) => {
@@ -266,7 +376,7 @@ export default {
             storeId: localStorage.getItem('userId'),
           },
         });
-
+        console.log(response.data);
         if (Array.isArray(response.data)) {
           products.value = response.data.map(product => ({
             id: product.productId || 'N/A',
@@ -276,6 +386,7 @@ export default {
             price: product.productPrice || 0,
             isOnSale: product.quantity >0 ? true : false,
             description: product.description || 'No description available',
+            quantity: product.quantity,
           }));
           totalProducts.value = products.value.length;
           PLYProducts.value = products.value;
@@ -1309,7 +1420,6 @@ export default {
       dialogVisible,
       dialogVisibleTwo,
       currentProduct,
-      totalProducts,
       currentPageData,
       pageSize,
       preProduct,
@@ -1371,6 +1481,14 @@ export default {
       fetchPDs,
       currentIDImages,
       handleUploadIDImages,
+      setOneYuan,
+      oneYuanVisible,
+      oneYuanMin,
+      oneYuanStart,
+      oneYuanEnd,
+      cancelOneYuan,
+      confirmOneYuan,
+      currentOneYuan
     };
   }
 }
