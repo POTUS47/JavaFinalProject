@@ -10,6 +10,9 @@
     <button @click="PLYshow(3)" class="ButtonA" id="Button3">
       <span class="Buttondes">未售商品</span>
     </button>
+    <button @click="PLYshow(4)" class="ButtonA" id="Button4">
+      <span class="Buttondes">一元购商品</span>
+    </button>
   </div>
   <div class="CommodityShow">
     <!-- 搜索和筛选按钮 -->
@@ -360,6 +363,9 @@ export default {
       } else if (viewType === 2) {
         PLYProducts.value = products.value.filter(product => product.isOnSale);
       } else if (viewType === 3) {
+        PLYProducts.value = products.value.filter(product => !product.isOnSale);
+      }
+      else if (viewType === 4) {
         PLYProducts.value = products.value.filter(product => !product.isOnSale);
       }
     };
