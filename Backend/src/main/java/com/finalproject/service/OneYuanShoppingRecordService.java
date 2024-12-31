@@ -13,6 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClientException;
 import org.springframework.core.ParameterizedTypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 public class OneYuanShoppingRecordService {
     private final OneYuanShoppingRecordRepository oneYuanShoppingRecordRepository;
     private final RecordParticipantRepository recordParticipantRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OneYuanShoppingRecordService.class);
 
     @Value("${api.base-url}")
     private String baseUrl;
@@ -311,6 +314,7 @@ public class OneYuanShoppingRecordService {
                     null,
                     new ParameterizedTypeReference<>() {
                     } );
+            logger.debug("商家ID: {}", response.getBody().getData());
             return response.getBody().getData();
     }
 
@@ -328,6 +332,7 @@ public class OneYuanShoppingRecordService {
             for (OneYuanShoppingRecord record : allRecords) {
                 // 通过新方法获取商品的商家ID
                 String productStoreIdOptional = getProductStoreIdFromSubsystem(record.getProductId());
+//                logger.debug("商家ID: {}", productStoreIdOptional);
                 // 检查商家ID是否匹配
                 if (productStoreIdOptional != null && storeId.equals(productStoreIdOptional)) {
                     OneYuanShoppingRecordDTO dto = convertToDTO(record);
