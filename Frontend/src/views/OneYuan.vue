@@ -215,8 +215,8 @@ const productPageChange = (page) => {
 };
 
 const handleProductClick = (productId,oneYuanId) => {
-  localStorage.setItem('productIdOfDetail', productId);
   localStorage.setItem('recordIdOfDetail', oneYuanId);
+  localStorage.setItem('productIdOfDetail', productId);
   router.push('/oneYuanDetail');
 };
 
