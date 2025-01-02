@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -275,6 +273,7 @@ public class FavouriteService {
         try {
             System.out.println("保存");
             bookmarkProductRepository.insertBookmarkProduct(userId, productId);
+            bookmarkProductRecord(userId, productId);
             return Result.success(200,"收藏成功");
         } catch (Exception e) {
             return Result.error(500, "数据库操作异常");
@@ -293,4 +292,26 @@ public class FavouriteService {
         boolean isBookmarked = bookmarkProductRepository.existsByBuyerIdAndProductId(userId, productId);
         return Result.success(isBookmarked);
     }
+
+    // 更新用户特征向量
+    @Transactional
+    public Result<String> bookmarkProductRecord(String userId, String productId) {
+        Optional<Product> productOpt = getProductById(productId);
+        if (productOpt.isEmpty()) {
+            return Result.error(404,"收藏的商品不存在");
+        }
+
+        String url = baseUrl + "/api/productController/recommend/updateUserFeature" +
+                "/"+userId+"/"+productOpt.get().getProductName()+"/"+productOpt.get().getDescription();
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                new ParameterizedTypeReference<String>() {
+                });
+        return Result.success(response.getBody());
+    }
+
+
 }

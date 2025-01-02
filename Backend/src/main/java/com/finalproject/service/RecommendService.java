@@ -20,8 +20,8 @@ public class RecommendService {
     /**
      * 调用 Flask 接口生成商品特征向量
      */
-    public boolean generateProductFeature(String productId, String description, String name, String imagePath) {
-        return flaskApiClient.generateProductFeature(productId, description, name, imagePath);
+    public boolean generateProductFeature(String productId, String description, String name) {
+        return flaskApiClient.generateProductFeature(productId, description, name);
     }
 
     /**
@@ -43,5 +43,38 @@ public class RecommendService {
      */
     public List<Map<String, Object>> recommendForUser(String userId) {
         return flaskApiClient.recommendForUser(userId);
+    }
+
+    /**
+     * 更新商品描述特征
+     */
+    public void updateProductFeature(String productId, String description, String name) {
+        flaskApiClient.updateProductFeature(productId,name,description);
+    }
+
+    /**
+     * 生成商品图片特征
+     */
+    public void generateProductImgFeature(String productId, String imgPath) {
+        flaskApiClient.generateProductImgFeature(productId,imgPath);
+    }
+
+    /**
+     * 更新商品图片特征
+     */
+    public void updateProductImgFeature(String productId, String imgPath) {
+        flaskApiClient.updateProductImageFeature(productId,imgPath);
+    }
+
+
+    // 测试用
+    public String test(String userId) {
+        try {
+            flaskApiClient.testAPI(userId);
+        }
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "success";
     }
 }

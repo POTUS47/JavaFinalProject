@@ -40,8 +40,6 @@ public class ShoppingController {
 
     @Resource
     private OrderItemService orderItemService;
-    @Autowired
-    private ProductService productService;
 
     @Resource
     private OneYuanShoppingRecordService oneYuanService;
