@@ -2,7 +2,7 @@
 
     <swiper-slide>
       <div class="slide1">
-        <aside class="sidebar-category">
+<!--        <aside class="sidebar-category">-->
           <!-- <div>
             <img src="@/assets/mmy/arrow_left.svg"/>
            </div> -->
@@ -11,7 +11,7 @@
 <!--               @click="filter(subCategory, index)">-->
 <!--            {{ subCategory.subCategoryName }}-->
 <!--          </div>-->
-        </aside>
+<!--        </aside>-->
         <div class="display-container">
 <!--          <div class="container-block"-->
 <!--               v-show="AllCategories.length > 0 && AllCategories[currentSumCategory].subCategories[selectedCategory].subCategoryName === '全部' && AllCategories[currentSumCategory].largeCategoryName !== '其他'">-->
