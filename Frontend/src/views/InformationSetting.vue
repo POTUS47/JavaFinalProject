@@ -63,12 +63,12 @@
                         <el-card class="custom-card-width">
                             <el-form :model="userimades" :rules="rules" ref="form" class="user-form">
                                 <el-form-item label="上传头像" prop="image">
-                                    <img v-if="userimades.ima" :src="userimades.ima" alt="当前图片"
+                                    <img v-if="userimades.photo_id" :src="userimades.photo_id" alt="当前图片"
                                         style="width: 40px; height: 40px;border-radius: 50%;" />
                                     <input type="file" @change="handleFile" accept="image/*" />
                                 </el-form-item>
                                 <el-form-item label="上传简介">
-                                    <el-input v-model="userimades.description" maxlength="20"
+                                    <el-input v-model="userimades.describtion" maxlength="20"
                                         show-word-limit></el-input>
                                 </el-form-item>
                             </el-form>
@@ -116,7 +116,7 @@ export default {
                 photo_id: '',
                 ima: '',
                 file: null,
-                describtion: ''
+                describtion: '',
             }
 
         };
@@ -132,14 +132,15 @@ export default {
                     age: response.data.data.age,
                     credits: response.data.data.totalCredits,
                     address: response.data.data.address,
-                    description: response.data.data.describtion,
+                    description: response.data.data.description,
                     photo_id: response.data.data.photoId,
                     email: response.data.data.email
                 };
                 this.userimades = {
-                    photo_id: response.data.data.photoId,
-                    describtion: response.data.data.describtion
+                    photo_id: response.data.data.photoUrl,
+                    describtion: response.data.data.description
                 };
+                console.log('用户信息:', this.userimades);
             } catch (error) {
                 console.error('请求失败:获取用户信息', error);
                 this.$message.error('请求用户信息失败，请稍后再试');
@@ -240,60 +241,74 @@ export default {
                 const formData = new FormData();
                 const Photo = this.userimades.file;
                 const Describtion = this.userimades.describtion;
-                //const Id = localStorage.getItem('userId');
+                const Id = localStorage.getItem('userId');
+                console.log('上传的头像:', this.userimades.file);
+
                 if (this.userimades.file) {
-                    formData.append('file', Photo); // 确保这是 File 对象
+                    formData.append('Photo', Photo); // 确保这是 File 对象
                 }
+                else {
+                    this.$message.error('请上传头像');
+                    return;
+                }
+                // formData.append('Id', Id);
+                formData.append('Describtion', Describtion);
+
+
+                // 打印 FormData 内容
+                for (const pair of formData.entries()) {
+                    console.log(`${pair[0]}:`, pair[1]);
+                }
+
                 try {
-                    const type = '头像';
-                    const response = await axiosInstance.post(`/upload_image/${type}`, formData, {
+                    const response = await axiosInstance.post('/users/setPhotoAndDescription', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-                    console.log('头像上传成功:', response.data);
-                    this.$message.success('上传成功，请刷新网页以查看最新状态');
 
-                    if (response.data.data) {
-                        this.userimades.photo_id = response.data.data;
-                        // 更新本地展示的头像
+                    console.log('上传头像和简介的响应:', response.data.code);
+
+                    if (response.data.code === 200) {
+                        this.getUserInfo();
+                        this.$message.success('上传成功');
                     }
-
                 } catch (error) {
-                    console.error('头像上传失败:', error);
+                    console.error(error);
                 }
-                // 处理简介更新
-                if (Describtion) {
-                    try {
-                        const descriptionResponse = await axiosInstance.put(`/users/updateDescription`, null, {
-                            params: {
-                                newDescription: Describtion
-                            }
-                        });
-                        console.log('简介更新成功:', descriptionResponse.data);
-                        this.$message.success('简介更新成功');
-                    } catch (error) {
-                        console.error('简介更新失败:', error);
-                        this.$message.error('简介更新失败，请稍后再试');
-                    }
-                }
+
+                //  // 处理简介更新
+                // if (Describtion) {
+                //     try {
+                //         const descriptionResponse = await axiosInstance.put(`/users/updateDescription`, null, {
+                //             params: {
+                //                 newDescription: Describtion
+                //             }
+                //         });
+                //         console.log('简介更新成功:', descriptionResponse.data);
+                //         this.$message.success('简介更新成功');
+                //     } catch (error) {
+                //         console.error('简介更新失败:', error);
+                //         this.$message.error('简介更新失败，请稍后再试');
+                //     }
+                // }
 
             } catch (error) {
                 console.error('请求失败: 头像简介上传', error.response ? error.response.data : error.message);
-                this.$message.error('头像简介上传请求失败，请稍后再试');
+                //this.$message.error('请求失败，请稍后再试');
             }
         },
     },
     watch: {
         'userInfo.photo_id': function (newPhotoId) {
             if (newPhotoId) {
-                //this.getImage(newPhotoId);
+                // this.getImage(newPhotoId);
             }
         }
     },
     mounted() {
         this.getUserInfo();
-        //this.getImage(this.userInfo.photo_id);
+        // this.getImage(this.userInfo.photo_id);
     }
 }
 </script>

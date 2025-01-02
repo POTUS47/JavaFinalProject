@@ -294,6 +294,7 @@ public class AccountService {
         userInfo.setUserName(user.getUserName());
         userInfo.setTotalCredits(user.getTotalCredits());
         userInfo.setPhotoId(user.getPhotoId());
+        userInfo.setPhotoUrl(baseUrl + "/images/" + user.getPhotoId());
         userInfo.setUserId(userId);
         userInfo.setDescription(user.getDescription());
         // 返回成功结果
@@ -404,6 +405,7 @@ public class AccountService {
         }
         else{
             Optional<Buyer> userOption = buyerRepository.findByAccountId(userId);
+            user = userOption.get();
         }
 
         String oldImageUrl=user.getPhotoId();

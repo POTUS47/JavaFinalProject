@@ -6,17 +6,21 @@ public class AccountDTOs {
         private String email;
         private String verificationCode;
         private String identity; // 用户身份 (ADMIN, SELLER, BUYER)
+
         // Getters and Setters
-        public String getIdentity(){
+        public String getIdentity() {
             return this.identity;
         }
-        public String getPassword(){
+
+        public String getPassword() {
             return this.password;
         }
-        public String getEmail(){
+
+        public String getEmail() {
             return this.email;
         }
-        public String getVerificationCode(){
+
+        public String getVerificationCode() {
             return this.verificationCode;
         }
 
@@ -42,10 +46,11 @@ public class AccountDTOs {
         private String password;
 
         // Getters and Setters
-        public String getIdentifier(){
+        public String getIdentifier() {
             return this.identifier;
         }
-        public String getPassword(){
+
+        public String getPassword() {
             return this.password;
         }
 
@@ -62,14 +67,19 @@ public class AccountDTOs {
         private String email;
         private String password;
         private String verificationCode;
+
         // Getters and Setters
-        public String getEmail(){
+        public String getEmail() {
             return this.email;
         }
-        public String getPassword(){
+
+        public String getPassword() {
             return this.password;
         }
-        public String getVerificationCode(){return this.verificationCode;}
+
+        public String getVerificationCode() {
+            return this.verificationCode;
+        }
 
         public void setVerificationCode(String verificationCode) {
             this.verificationCode = verificationCode;
@@ -100,34 +110,44 @@ public class AccountDTOs {
             this.photoId = photoId;
             this.type = type;
         }
+
         // Getter 和 Setter
         public void setUserId(String userId) {
             this.userId = userId;
         }
+
         public void setUserName(String userName) {
             this.userName = userName;
         }
+
         public void setEmail(String email) {
             this.email = email;
         }
+
         public void setPhotoId(String photoId) {
             this.photoId = photoId;
         }
+
         public void setType(String type) {
             this.type = type;
         }
+
         public String getType() {
             return type;
         }
+
         public String getUserId() {
             return userId;
         }
+
         public String getUserName() {
             return userName;
         }
+
         public String getEmail() {
             return email;
         }
+
         public String getPhotoId() {
             return photoId;
         }
@@ -143,6 +163,7 @@ public class AccountDTOs {
         private int age;
         private int totalCredits;
         private String address;
+        private String photo_url;
 
         public void setAddress(String address) {
             this.address = address;
@@ -180,6 +201,10 @@ public class AccountDTOs {
             this.userId = userId;
         }
 
+        public void setPhotoUrl(String photoUrl) {
+            this.photo_url = photoUrl;
+        }
+
         public String getAddress() {
             return address;
         }
@@ -214,6 +239,10 @@ public class AccountDTOs {
 
         public String getUserId() {
             return userId;
+        }
+
+        public String getPhotoUrl() {
+            return photo_url;
         }
     }
 
@@ -300,12 +329,15 @@ public class AccountDTOs {
             return userId;
         }
     }
-    public static class PandDDTO{
+
+    public static class PandDDTO {
         private String imageUrl;
         private String describtion;
-        public String getImageUrl(){
+
+        public String getImageUrl() {
             return this.imageUrl;
         }
+
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
         }
@@ -313,12 +345,11 @@ public class AccountDTOs {
         public String getDescribtion() {
             return describtion;
         }
+
         public void setDescribtion(String describtion) {
             this.describtion = describtion;
         }
     }
-
-
 
 
 }

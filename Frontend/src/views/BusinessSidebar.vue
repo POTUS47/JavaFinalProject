@@ -115,8 +115,8 @@
         const response = await axiosInstance.get('/shopping/UpdateStoreScore');
         this.storeScoreName = response.data.data;
       } catch (error) {
-        this.error = 'Failed to fetch store score';
-        console.error('Error fetching store score:', error);
+        this.error = error.response.data.msg;
+        // console.error('Error fetching store score:', error);
       } finally {
         this.loading = false;
       }

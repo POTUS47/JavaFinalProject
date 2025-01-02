@@ -139,8 +139,8 @@ export default {
     },
   },
   mounted() {
-    // this.fetchOrderStats(); // 组件挂载后请求数据
-    // this.fetchWeeklyOrderCount(); // 请求一周订单数据
+    this.fetchOrderStats(); // 组件挂载后请求数据
+    this.fetchWeeklyOrderCount(); // 请求一周订单数据
   },
 };
 </script>

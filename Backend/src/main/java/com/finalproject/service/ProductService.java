@@ -6,6 +6,7 @@ import com.finalproject.model.*;
 import com.finalproject.repository.*;
 import com.finalproject.util.SnowflakeIdGenerator;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -91,23 +92,21 @@ public class ProductService {
         return Result.success();
     }
 
-    public Result<String> addDesPic(List<uploadDesPic> files, String productId) throws IOException {
-        for(uploadDesPic file : files){
-            Result<String> result=imageService.saveImage(file.getPic(),"商品详情");
-            if(result.getCode()==200){
-                String picId=result.getData();
+    public Result<String> addDesPicWithFile(MultipartFile file, String description,String productId) throws IOException {
+        Result<String> result=imageService.saveImage(file,"商品详情");
+        if(result.getCode()==200){
+            String picId=result.getData();
 
-                //把图片id和商品id填入数据库Product_image表中
-                ProductDetail productDetail = new ProductDetail();
-                productDetail.setProductId(productId);
-                productDetail.setImageId(picId);
-                productDetail.setDescription(file.getDescription());
-                // 保存到数据库
-                productDetailRepository.save(productDetail);
-            }
-            else{
-                return Result.error(500,"上传图片失败");
-            }
+            //把图片id和商品id填入数据库Product_image表中
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setProductId(productId);
+            productDetail.setImageId(picId);
+            productDetail.setDescription(description);
+            // 保存到数据库
+            productDetailRepository.save(productDetail);
+        }
+        else{
+            return Result.error(500,"上传图片失败");
         }
         return Result.success(productId);
     }
@@ -559,5 +558,20 @@ public class ProductService {
         return Result.error(404, "Product not found");
     }
 
+    @Transactional
+    public Result<String> deleteAllPicDes(String productId) {
+        productDetailRepository.deleteByProductId(productId);
+        return Result.success(productId);
+    }
 
+    public Result<String> addDesPicWithoutFile(String imageId, String description, String productId) {
+        //把图片id和商品id填入数据库Product_image表中
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setProductId(productId);
+        productDetail.setImageId(imageId);
+        productDetail.setDescription(description);
+        // 保存到数据库
+        productDetailRepository.save(productDetail);
+        return Result.success(productId);
+    }
 }

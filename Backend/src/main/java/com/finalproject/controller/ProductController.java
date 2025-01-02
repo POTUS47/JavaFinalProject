@@ -8,6 +8,7 @@ import com.finalproject.model.Image;
 import com.finalproject.model.Product;
 import com.finalproject.model.ProductImage;
 import com.finalproject.repository.CategoryRepository;
+import com.finalproject.repository.ProductRepository;
 import com.finalproject.service.ImageService;
 import com.finalproject.service.ProductService;
 import com.finalproject.service.RecommendService;
@@ -26,13 +27,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/productController")
 public class ProductController {
 
+    private final ProductRepository productRepository;
     private ProductService productService;
     private RecommendService recommendService;
 
     @Autowired
-    ProductController(ProductService productService, RecommendService recommendService) {
+    ProductController(ProductService productService, RecommendService recommendService, ProductRepository productRepository) {
         this.productService = productService;
         this.recommendService = recommendService;
+        this.productRepository = productRepository;
     }
 
     //通过id获取本店所有商品
@@ -92,7 +95,7 @@ public class ProductController {
 
     }
 
-    //删除一个商品的图片 todo test
+    //删除一个商品的图片
     //
     @DeleteMapping("/deleteProductImage/{productId}/{imageId}")
     public ResponseEntity<Result<String>> deleteProImage(@PathVariable("productId") String productId,
@@ -101,19 +104,38 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //添加商品图文详情
+    //添加商品图文详情有图的
     //返回productId
-    @PostMapping("/addProductDesPic")
-    public ResponseEntity<Result<String>> addDesPic(@RequestBody List<uploadDesPic> despic,
+    @PostMapping("/addProductDesPicWithFile")
+    public ResponseEntity<Result<String>> addDesPicWithFile(@RequestParam("pic") MultipartFile pic,
+                                                          @RequestParam("description") String description,
                                                           @RequestParam("productId") String productId){
         Result<String> response = null;
         try {
-            response = productService.addDesPic(despic,productId);
+            response = productService.addDesPicWithFile(pic,description,productId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.status(response.getCode()).body(response);
 
+    }
+
+    //添加商品图文详情没图只有imageid
+    //返回productId
+    @PostMapping("/addProductDesPicWithoutFile")
+    public ResponseEntity<Result<String>> addDesPicWithoutFile(@RequestParam("imageId") String imageId,
+                                                    @RequestParam("description") String description,
+                                                    @RequestParam("productId") String productId){
+        Result<String> response = productService.addDesPicWithoutFile(imageId,description,productId);
+        return ResponseEntity.status(response.getCode()).body(response);
+
+    }
+
+    //删除一个商品的所有图文描述
+    @PostMapping("/deleteAllPicDes/{productId}")
+    public ResponseEntity<Result<String>> deleteAllPicDes(@PathVariable("productId") String productId){
+        Result<String> response = productService.deleteAllPicDes(productId);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 
     //获取商品的图文描述
