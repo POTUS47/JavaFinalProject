@@ -78,8 +78,11 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+#upload:
+#  path: /home/ecs-user/image/
+
 upload:
-  path: /home/ecs-user/image/
+  path: ../uploads
 
 jwt:
   secret: secureKey123
