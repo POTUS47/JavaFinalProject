@@ -191,7 +191,7 @@
           </el-form-item>
 
           <el-form-item label="最小参与人数" prop="minParticipants">
-            <el-input-number v-model="oneYuanMin" :min="10" :max="1000" controls-position="right">
+            <el-input-number v-model="oneYuanMin" :min="1"  controls-position="right">
             </el-input-number>
           </el-form-item>
 
@@ -356,7 +356,7 @@ export default {
         const response = await axiosInstance.post('/shopping/createOneYuanRecord', {
           startTime: oneYuanStart.value,
           endTime: oneYuanEnd.value,
-          minParticipants: Number(oneYuanMin.value)
+          minParticipants: oneYuanMin.value
         }, {
           params: {
             productId: id

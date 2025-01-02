@@ -70,7 +70,7 @@
             <p>商品</p>
           </div>
 
-          <div class="one-choice2">
+          <div class="one-choice2" @click="navigateTo('/oneyuan')">
             <img class="IconPage3" src="@/assets/mmy/家具.png">
             <p>一元购</p>
           </div>

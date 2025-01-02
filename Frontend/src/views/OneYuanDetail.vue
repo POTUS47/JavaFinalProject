@@ -81,6 +81,10 @@
           <div class="from2">{{ product.fromWhere }}</div>
         </div>
         <div class="baozhang">
+          <div class="baozhang1">开始时间：</div>
+          <div class="baozhang2">{{ record.startTime}} </div>
+        </div>
+        <div class="baozhang">
           <div class="baozhang1">结束时间：</div>
           <div class="baozhang2">{{ record.endTime}} </div>
         </div>
@@ -113,7 +117,7 @@
             {{ product.productStared ? '已收藏' : '收&nbsp藏' }}
           </el-button>
           <!-- 参与 -->
-          <el-button type="success" v-show="role === '买家' && isAbleBuy" @click="enterPay" style="background-color: #a61b29;
+          <el-button  v-if="role === '买家' && isAbleBuy && new Date().getTime() >= new Date(record.startTime).getTime() && new Date().getTime() <= new Date(record.endTime).getTime()" type="success" v-show="role === '买家' && isAbleBuy" @click="enterPay" style="background-color: #a61b29;
         letter-spacing: 5px;
         font-size: 22px;
         border: 2px solid #a61b29;
@@ -122,6 +126,15 @@
         right: 5%;
         bottom:0%;
         position: absolute"> 参与</el-button>
+          <el-button v-else type="success" v-show="role === '买家' && isAbleBuy"  style="background-color: #ba8c8c;
+        letter-spacing: 5px;
+        font-size: 12px;
+        border: 2px solid #a61b29;
+        width: 25%;
+        height:50px;
+        right: 5%;
+        bottom:0%;
+        position: absolute">不在活动时间</el-button>
         </div>
       </div>
     </div>
@@ -272,7 +285,7 @@ const starStore = async () => {
 const enterPay = () => {
   const productIds = ref([]);
   localStorage.setItem('recordPayId', recordId);
-
+  console.log(recordId);
   productIds.value.push(productId);
   console.log(productIds.value);
   const productStr = JSON.stringify(productIds.value);//序列化对象
