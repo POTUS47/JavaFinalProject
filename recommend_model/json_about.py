@@ -37,6 +37,31 @@ def append_feature_to_json(file_name, vector_id, feature_vector):
     print(f"特征向量已追加到文件：{file_name}")
 
 
+def remove_feature_from_json(file_name, vector_id):
+    """根据 ID 删除特征向量"""
+    if not os.path.exists(file_name):
+        print(f"文件 {file_name} 不存在。")
+        return
+
+    # 读取现有的 JSON 文件
+    with open(file_name, 'r') as f:
+        data = json.load(f)
+
+    # 查找并删除指定 ID 的条目
+    original_length = len(data)
+    data = [item for item in data if item["id"] != vector_id]
+
+    if len(data) == original_length:
+        print(f"未找到 ID 为 {vector_id} 的条目。")
+        return
+
+    # 将更新后的数据写回文件
+    with open(file_name, 'w') as f:
+        json.dump(data, f, indent=4)
+
+    print(f"ID 为 {vector_id} 的特征向量已删除。")
+
+
 # 加载所有商品特征
 def load_product_features(filename):
     """从 JSON 文件加载商品特征，并将特征列表转换为 Tensor"""

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -127,15 +128,23 @@ public class ProductController {
 
     //用户在商家中根据关键词搜索商品
     @GetMapping("/search")
-    public ResponseEntity<Result<List<ShowProductDTO>>> search(@RequestParam String storeId, @RequestParam String keyword) {
+    public ResponseEntity<Result<List<ShowProductDTO>>> search(@RequestParam String storeId,
+                                                               @RequestParam String keyword,Authentication auth) {
+        String userId = (String) auth.getPrincipal();
         Result<List<ShowProductDTO>> response=productService.searchInStore(storeId, keyword);
+        String[] strings = new String[]{keyword};
+        recommendService.updateUserFeatures(userId,strings);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
     //用户根据关键词搜索全部商品
     @GetMapping("/searchAll")
-    public ResponseEntity<Result<List<ShowProductDTO>>> search( @RequestParam String keyword) {
+    public ResponseEntity<Result<List<ShowProductDTO>>> search( @RequestParam String keyword
+    ,Authentication auth) {
+        String userId = (String) auth.getPrincipal();
         Result<List<ShowProductDTO>> response=productService.searchAll(keyword);
+        String[] strings = new String[]{keyword};
+        recommendService.updateUserFeatures(userId,strings);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -190,9 +199,8 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-
     // 为用户推荐商品
-    @GetMapping("/recommend/user")
+    @PostMapping("/recommend/user")
     public ResponseEntity<List<Map<String, Object>>> recommendForUser(Authentication auth) {
         String userId = (String) auth.getPrincipal();
         try {
@@ -204,7 +212,7 @@ public class ProductController {
     }
 
     // 查找相似商品
-    @PostMapping("/recommend/similar-products")
+    @PostMapping("/recommend/similarProducts")
     public ResponseEntity<List<Map<String, Object>>> findSimilarProducts(
             @RequestBody Map<String, Object> request) {
         try {
@@ -227,4 +235,26 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 买家收藏商品时更新用户变量（子系统接口）
+    @PostMapping("/recommend/updateUserFeature/{userId}/{name}/{description}")
+    public ResponseEntity<String> updateUserFeatures(@PathVariable String userId,
+                                                             @PathVariable String description,
+                                                             @PathVariable String name){
+        String [] strings = new String[]{description,name};
+        recommendService.updateUserFeatures(userId,strings);
+        return ResponseEntity.status(200).body("success");
+    }
+
+
+    // 测试用
+    @PostMapping("/recommend/test")
+    public ResponseEntity<String> test(Authentication auth) {
+        String userId = (String) auth.getPrincipal();
+        try {
+             String response=recommendService.test(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
 }
