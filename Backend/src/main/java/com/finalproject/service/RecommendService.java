@@ -1,5 +1,6 @@
 package com.finalproject.service;
 
+import com.finalproject.DTO.Result;
 import com.finalproject.util.FlaskApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class RecommendService {
     /**
      * 为用户推荐商品
      */
-    public List<Map<String, Object>> recommendForUser(String userId) {
+    public List<String> recommendForUser(String userId) {
         return flaskApiClient.recommendForUser(userId);
     }
 
