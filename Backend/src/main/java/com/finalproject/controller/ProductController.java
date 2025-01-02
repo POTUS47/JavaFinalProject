@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -201,13 +198,15 @@ public class ProductController {
 
     // 为用户推荐商品
     @PostMapping("/recommend/user")
-    public ResponseEntity<List<Map<String, Object>>> recommendForUser(Authentication auth) {
+    public ResponseEntity<List<String>> recommendForUser(Authentication auth) {
         String userId = (String) auth.getPrincipal();
         try {
-            List<Map<String, Object>> recommendations = recommendService.recommendForUser(userId);
+            List<String> recommendations = recommendService.recommendForUser(userId);
             return ResponseEntity.ok(recommendations);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            List<String> list = new ArrayList<>();
+            list.add(e.getMessage());
+            return ResponseEntity.status(500).body(list);
         }
     }
 

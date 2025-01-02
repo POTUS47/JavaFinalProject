@@ -1,6 +1,8 @@
 package com.finalproject.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalproject.DTO.Result;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -90,15 +92,30 @@ public class FlaskApiClient {
     /**
      * 调用 Flask 的 /recommend_for_user 接口
      */
-    public List<Map<String, Object>> recommendForUser(String userId) {
+    public List<String> recommendForUser(String userId) {
         String url = BASE_URL + "/recommend_for_user";
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("user_id", userId);
 
         try {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
-            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.POST, request, List.class);
-            return response.getBody();
+
+            // 使用 ParameterizedTypeReference 来解析返回的 List<String>
+            ResponseEntity<Map<String, List<String>>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    new ParameterizedTypeReference<Map<String, List<String>>>() {}
+            );
+
+            // 获取推荐的商品ID列表
+            Map<String, List<String>> responseBody = response.getBody();
+            if (responseBody != null && responseBody.containsKey("recommendations")) {
+                return responseBody.get("recommendations");
+            }
+
+            return Collections.emptyList();
+
         } catch (HttpClientErrorException e) {
             System.err.println("Error calling recommendForUser: " + e.getResponseBodyAsString());
             return Collections.emptyList();
