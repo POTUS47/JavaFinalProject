@@ -151,9 +151,18 @@ public class ImageService {
         Image image = imageOptional.get();
 
         Path imagePath = Paths.get(image.getFilePath());
+
+        // 使用数据库中存储的相对路径来构建绝对路径
+        String relativeFilePath = image.getFilePath();
+
+        // 获取项目的根目录（假设您的应用是一个Spring Boot应用）
+        Path projectRootPath = getProjectRoot();
+
+        Path absoluteFilePath = Paths.get(projectRootPath.toString(), relativeFilePath).normalize();
+
         try {
-            if (Files.exists(imagePath)) {
-                Files.delete(imagePath);
+            if (Files.exists(absoluteFilePath)) {
+                Files.delete(absoluteFilePath);
             } else {
                 return Result.error(404, "图片文件不存在");
             }
