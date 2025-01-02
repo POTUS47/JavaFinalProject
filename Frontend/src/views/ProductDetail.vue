@@ -220,6 +220,8 @@ const starProduct = async () => {
     );
     if (response.data.code == 200) {
       product.value.productStared = !product.value.productStared;
+      ElMessage.success("商品操作成功！");
+
     } 
   } catch (error) {
     ElMessage.error(error.response.data.msg);
@@ -237,6 +239,7 @@ const starStore = async () => {
     );
     if (response.data.code == 200) {
       product.value.storeStared = !product.value.storeStared;
+      ElMessage.success("店铺操作成功！");
     } 
   } catch (error) {
     ElMessage.error(error.response.data.msg);

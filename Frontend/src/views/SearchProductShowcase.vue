@@ -58,10 +58,10 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 onMounted(() => {
-  // const keyword = localStorage.getItem('keyword') || '';
-  // const type = localStorage.getItem('searchType') || '0';
-  // fetchStores(keyword, type);
-  fetchStores(keyword.value, type.value);
+  const keyword = localStorage.getItem('keyword') || '';
+  const type = localStorage.getItem('searchType') || '0';
+  fetchStores(keyword, type);
+  //fetchStores(keyword.value, type.value);
  
 });
 </script>

@@ -1,4 +1,5 @@
 package com.finalproject.service;
+import com.finalproject.DTO.ProductDTOs;
 import com.finalproject.DTO.ProductDTOs.*;
 import com.finalproject.DTO.Result;
 import com.finalproject.exception.BusinessTagException;
@@ -185,22 +186,39 @@ public class ProductService {
 
         //todo 默认图片id
         for (Product product : products) {
-            Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
-            String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
-            String url=baseUrl+"/images/"+imageId;
-            ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
-                    product.getProductName(),
-                    product.getProductPrice(),
-                    product.getQuantity(),
-                    product.getTag(),
-                    product.getSubCategory(),
-                    product.getDescription(),
-                    url,
-                    product.getStoreTag());
-            result.add(dto);
+            setShowProductDto(result, product);
         }
         return Result.success(result);
     }
+
+    public Result<List<ShowProductDTO>> recommendProductsGetDetail(List<String> productIds) {
+        List<ShowProductDTO> result = new ArrayList<>();
+        for(String productId:productIds){
+            Optional<Product> optionalProduct=productRepository.findById(productId);
+            if(optionalProduct.isEmpty()){continue;}
+            Product product = optionalProduct.get();
+            if(product.getQuantity()<1){continue;}
+            setShowProductDto(result, product);
+        }
+        return Result.success(result);
+    }
+
+    private void setShowProductDto(List<ShowProductDTO> result, Product product) {
+        Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
+        String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
+        String url=baseUrl+"/images/"+imageId;
+        ShowProductDTO dto = new ShowProductDTO(product.getProductId(),
+                product.getProductName(),
+                product.getProductPrice(),
+                product.getQuantity(),
+                product.getTag(),
+                product.getSubCategory(),
+                product.getDescription(),
+                url,
+                product.getStoreTag());
+        result.add(dto);
+    }
+
 
     public Result<String> deleteProImage(String productId,String imageId) {
         Optional<ProductImage> productImage=productImageRepository.findById(imageId);

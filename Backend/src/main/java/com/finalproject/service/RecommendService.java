@@ -1,6 +1,4 @@
 package com.finalproject.service;
-
-import com.finalproject.DTO.Result;
 import com.finalproject.util.FlaskApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
