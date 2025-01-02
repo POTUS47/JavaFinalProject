@@ -256,7 +256,7 @@ const login = async () => {
       } else if (role == '商家') {
         router.push('/merchantpage');
       } else {
-        router.push('/merchant-certification');
+        router.push('/report-management');
       }
     } catch (error) {
       ElMessage.error(error.response.data.msg);
