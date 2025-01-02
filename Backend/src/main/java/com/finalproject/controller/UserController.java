@@ -241,8 +241,8 @@ public class UserController {
     }
 
     //加载头像和简介
-    @PostMapping("/UserInfo/GetPhotoAndDescribtion")
-    public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescribtion(Authentication authentication) {
+    @PostMapping("/UserInfo/GetPhotoAndDescription")
+    public ResponseEntity<Result<AccountDTOs.PandDDTO>> getPhotoAndDescription(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
         Result<AccountDTOs.PandDDTO>response=userService.getPandD(userId);
         return ResponseEntity.status(response.getCode()).body(response);

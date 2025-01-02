@@ -130,7 +130,7 @@ public class ProductService {
 
         //商品详情信息
         List<DesPic> productDetails = productDetailRepository.findByProductId(productId).stream()
-                .map(detail -> new DesPic(detail.getImageId(), detail.getDescription()))  // 映射为DesPic对象
+                .map(detail -> new DesPic( baseUrl + "/images/" + detail.getImageId(), detail.getDescription()))  // 映射为DesPic对象
                 .collect(Collectors.toList());
 
 

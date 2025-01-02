@@ -78,33 +78,35 @@ const userId=localStorage.getItem('userId')|| 'we0';
 
 
 const fetchUserProfilePhoto = async () => {
-  const cachedUserId = localStorage.getItem('cachedUserId');
-  const cachedProfilePhoto = localStorage.getItem(`userProfilePhoto_${userId}`);
+  //const cachedUserId = localStorage.getItem('cachedUserId');
+  //const cachedProfilePhoto = localStorage.getItem(`userProfilePhoto_${userId}`);
 
   // 检查缓存的 userId 是否和当前 userId 相同
-  if (cachedUserId === userId && cachedProfilePhoto) {
-    userProfilePhoto.value = cachedProfilePhoto;
-    return;  // 如果缓存的 userId 和当前用户一致，且有缓存的头像，直接使用
-  }
+  // if (cachedUserId === userId && cachedProfilePhoto) {
+  //   userProfilePhoto.value = cachedProfilePhoto;
+  //   return;  // 如果缓存的 userId 和当前用户一致，且有缓存的头像，直接使用
+  // }
 
   // 如果 userId 不同或者没有缓存头像，重新获取
   try {
-    const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescribtion');
+    const response = await axiosInstance.post('/users/UserInfo/GetPhotoAndDescription');
     const userInfo = response.data.data;
+    console.log(userInfo.imageUrl);
 
     if (userInfo) {
       userProfilePhoto.value = userInfo.imageUrl;
-      localStorage.setItem(`userProfilePhoto_${userId}`, userInfo.photo.imageUrl);  // 缓存头像
-      localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
+
+      //localStorage.setItem(`userProfilePhoto_${userId}`, userInfo.photo.imageUrl);  // 缓存头像
+      //localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
     } else {
       userProfilePhoto.value = defaultProfilePhoto;
-      localStorage.setItem(`userProfilePhoto_${userId}`, defaultProfilePhoto);  // 缓存默认头像
-      localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
+      //localStorage.setItem(`userProfilePhoto_${userId}`, defaultProfilePhoto);  // 缓存默认头像
+      //localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
     }
   } catch (error) {
     userProfilePhoto.value = defaultProfilePhoto;
-    localStorage.setItem(`userProfilePhoto_${userId}`, defaultProfilePhoto);
-    localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
+    //localStorage.setItem(`userProfilePhoto_${userId}`, defaultProfilePhoto);
+    //localStorage.setItem('cachedUserId', userId);  // 记录当前 userId
   }
 };
 
@@ -183,19 +185,19 @@ onMounted(() => {
   // fetchWeather();
   // fetchUserProfilePhoto(); // 组件挂载时获取用户头像
 
-  const cachedUserId = localStorage.getItem('cachedUserId');
-  const cachedProfilePhoto = localStorage.getItem(`userProfilePhoto_${userId}`);
+  //const cachedUserId = localStorage.getItem('cachedUserId');
+  //const cachedProfilePhoto = localStorage.getItem(`userProfilePhoto_${userId}`);
   const cachedWeather = localStorage.getItem(`weather_${userId}`);
 
   // 如果缓存的 userId 和当前的 userId 一致，直接使用缓存
-  if (cachedUserId === userId && cachedProfilePhoto) {
-    userProfilePhoto.value = cachedProfilePhoto;
-  } else {
-    fetchUserProfilePhoto();  // 重新获取头像
-  }
+  // if (cachedUserId === userId && cachedProfilePhoto) {
+  //   userProfilePhoto.value = cachedProfilePhoto;
+  // } else {
+  //   fetchUserProfilePhoto();  // 重新获取头像
+  // }
 
   fetchWeather();  // 重新获取天气
-  
+  fetchUserProfilePhoto();  // 重新获取头像
 
   /// 每小时更新日期和天气
   setInterval(() => {

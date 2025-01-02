@@ -195,7 +195,7 @@ const fetchStoreInfo = async () => {
   try {
     const response = await axiosInstance.get(`/users/store/Info/${storeId}`);
     const data = response.data;
-    shopinfo.storeName = data.data.userName;
+    shopinfo.storeName = data.data.storeName;
     shopinfo.storeScore = data.data.storeScore;
     shopinfo.Address = data.data.address;
     shopinfo.avatar = data.data.photoId;

@@ -586,6 +586,7 @@ body {
 
 /* 以下是商品推荐 */
 .product-display {
+
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -610,9 +611,10 @@ body {
   /* 每行显示四个商品，减去间隙 */
   height: 255px;
   padding: 20px;
-  border: 1px solid #e7e7e7;
+  /* border: 1px solid #e7e7e7; */
   border-radius: 10px;
-  background-color: #fff;
+  background-color: rgba(0, 0, 0, 0.23);
+  /* background-color: rgba(255, 255, 255, 0.69); */
   display: flex;
   flex-direction: column;
   align-items: center;
