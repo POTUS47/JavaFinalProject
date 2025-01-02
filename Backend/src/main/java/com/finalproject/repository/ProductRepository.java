@@ -28,4 +28,5 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "(p.productName LIKE %:keyword% OR p.productName LIKE %:likePattern%)")
     List<Product> searchAllProducts(@Param("keyword") String keyword,
                                     @Param("likePattern") String likePattern);
+
 }

@@ -155,20 +155,33 @@ public class ProductDTOs {
     }
 
     public static class uploadDesPic{
-        private MultipartFile Pic;
+        private MultipartFile file;
         private String Description;
+        private String imageId;
 
-        public uploadDesPic(MultipartFile pic, String Description) {
-            this.Pic = pic;
-            this.Description = Description;
-        }
+
 
         public String getDescription() {
             return Description;
         }
 
         public MultipartFile getPic() {
-            return Pic;
+            return file;
+        }
+
+        public String getImageId() {
+            return imageId;
+        }
+        public void setImageId(String imageId) {
+            this.imageId = imageId;
+        }
+
+        public void setFile(MultipartFile file) {
+            this.file = file;
+        }
+
+        public void setDescription(String description) {
+            Description = description;
         }
     }
 

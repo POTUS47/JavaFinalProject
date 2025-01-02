@@ -13,4 +13,6 @@ import java.util.List;
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, String> {
 
     Collection<ProductDetail> findByProductId(String productId);
+
+    void deleteByProductId(String productId);
 }
