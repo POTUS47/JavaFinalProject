@@ -1,8 +1,7 @@
 <!-- 商家界面商品管理的页面切换顶栏 -->
 <template>
-    
+
   </template>   
- 
 <script>
 export default {
   methods: {
@@ -55,6 +54,18 @@ export default {
     height: 3vh; 
     border-radius: 20px;
 }
+
+#Button4 {
+  position: fixed;
+  top: 7vh;
+  left: 560px;
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 3vh;
+  border-radius: 20px;
+}
+
 
 .ButtonA {
     background-color: #a13232;

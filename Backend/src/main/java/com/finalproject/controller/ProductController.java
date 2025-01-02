@@ -228,6 +228,13 @@ public class ProductController {
         }
     }
 
+    //获取商品对于商家
+    @GetMapping("/getAccountIdByProductId/{productId}")
+    public ResponseEntity<Result<String>> getAccountIdByProductId(@PathVariable("productId") String productId) {
+        Result<String> response = productService.getAccountIdByProductId(productId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
     // 买家收藏商品时更新用户变量（子系统接口）
     @PostMapping("/recommend/updateUserFeature/{userId}/{name}/{description}")
     public ResponseEntity<String> updateUserFeatures(@PathVariable String userId,

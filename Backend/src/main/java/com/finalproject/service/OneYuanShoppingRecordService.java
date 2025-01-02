@@ -8,6 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.finalproject.repository.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestClientException;
+import org.springframework.core.ParameterizedTypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +24,7 @@ import java.time.LocalDateTime;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 public class OneYuanShoppingRecordService {
     private final OneYuanShoppingRecordRepository oneYuanShoppingRecordRepository;
     private final RecordParticipantRepository recordParticipantRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OneYuanShoppingRecordService.class);
 
     @Value("${api.base-url}")
     private String baseUrl;
@@ -66,8 +75,22 @@ public class OneYuanShoppingRecordService {
             OneYuanShoppingRecord record = new OneYuanShoppingRecord();
 
             // 从DTO复制基本信息
+            if (recordDTO.getStartTime() == null) {
+                return Result.error(400, "没有1start" );
+            }
             record.setStartTime(recordDTO.getStartTime());
+            if (record.getStartTime() == null) {
+                return Result.error(400, "没有2start" );
+            }
+
+            if (recordDTO.getEndTime() == null) {
+                return Result.error(400, "没有1end" );
+            }
             record.setEndTime(recordDTO.getEndTime());
+            if (record.getEndTime() == null) {
+                return Result.error(400, "没有2end" );
+            }
+
             record.setMinParticipants(recordDTO.getMinParticipants());
 
             // 设置其他必要信息
@@ -76,15 +99,8 @@ public class OneYuanShoppingRecordService {
             record.setCurrentParticipants(0);
             record.setDrawn(false);
             record.setResult(null);
-
             // 5. 保存记录
             OneYuanShoppingRecord savedRecord = oneYuanShoppingRecordRepository.save(record);
-
-            // 6. 创建对应的一元购商品记录
-            OneYuanShoppingRecord oneYuan = new OneYuanShoppingRecord();
-            oneYuan.setProductId(productId);
-            oneYuan.setRecordId(savedRecord.getRecordId());
-            oneYuanShoppingRecordRepository.save(oneYuan);
 
             return Result.success("一元购活动创建成功", savedRecord.getRecordId());
         } catch (Exception e) {
@@ -120,15 +136,86 @@ public class OneYuanShoppingRecordService {
                 // 设置基本信息
                 dto.setRecordId(record.getRecordId());
                 dto.setStartTime(record.getStartTime());
+                dto.setEndTime(record.getEndTime());
                 dto.setMinParticipants(record.getMinParticipants());
                 dto.setDrawn(record.isDrawn());
                 dto.setResult(record.getResult());
-
+                dto.setCurrentParticipants(record.getCurrentParticipants());
+                dto.setProductId(record.getProductId());
                 records.add(dto);
             }
         }
 
         return Result.success(records); }
+
+
+    @Transactional
+    public Result<List<OneYuanShoppingRecordDTO>> getAllRecords() {
+        // 查询所有的一元购记录
+        List<OneYuanShoppingRecord> records = oneYuanShoppingRecordRepository.findAll();
+
+        if (records.isEmpty()) {
+            return Result.error(404, "未找到任何一元购记录");
+        }
+
+        // 构造返回的DTO列表
+        List<OneYuanShoppingRecordDTO> recordDTOs = new ArrayList<>();
+
+        // 遍历记录
+        for (OneYuanShoppingRecord record : records) {
+            OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
+
+            // 设置基本信息
+            dto.setRecordId(record.getRecordId());
+            dto.setStartTime(record.getStartTime());
+            dto.setEndTime(record.getEndTime());
+            dto.setMinParticipants(record.getMinParticipants());
+            dto.setDrawn(record.isDrawn());
+            dto.setResult(record.getResult());
+            dto.setCurrentParticipants(record.getCurrentParticipants());
+            dto.setProductId(record.getProductId());
+
+            recordDTOs.add(dto);
+        }
+
+        return Result.success(recordDTOs);
+    }
+
+    @Transactional
+    public Result<List<OneYuanShoppingRecordDTO>> getAllProperRecords() {
+        // 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+
+        // 查询符合条件的一元购记录
+        List<OneYuanShoppingRecord> records = oneYuanShoppingRecordRepository.findAll().stream()
+                .filter(record ->
+                        record.getStartTime().isBefore(now) &&
+                                record.getEndTime().isAfter(now)
+                )
+                .collect(Collectors.toList());
+
+        if (records.isEmpty()) {
+            return Result.error(404, "未找到正在进行的一元购记录");
+        }
+
+        // 构造返回的DTO列表
+        List<OneYuanShoppingRecordDTO> recordDTOs = records.stream()
+                .map(record -> {
+                    OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
+                    dto.setRecordId(record.getRecordId());
+                    dto.setStartTime(record.getStartTime());
+                    dto.setEndTime(record.getEndTime());
+                    dto.setMinParticipants(record.getMinParticipants());
+                    dto.setDrawn(record.isDrawn());
+                    dto.setResult(record.getResult());
+                    dto.setCurrentParticipants(record.getCurrentParticipants());
+                    dto.setProductId(record.getProductId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return Result.success(recordDTOs);
+    }
 
 
     @Transactional
@@ -219,54 +306,63 @@ public class OneYuanShoppingRecordService {
         }
     }
 
-//    @Transactional
-//    public Result<List<OneYuanShoppingRecordDTO>> getMerchantOneYuanProducts(String merchantId) {
-//        try {
-//            // 1. 调用商品子系统API获取商家的商品列表
-//            String url = baseUrl + "/products/merchant/" + merchantId;
-//            ResponseEntity<Result<List<Product>>> response = restTemplate.exchange(
-//                    url,
-//                    HttpMethod.GET,
-//                    null,
-//                    new ParameterizedTypeReference<Result<List<Product>>>() {}
-//            );
-//
-//            Result<List<Product>> result = response.getBody();
-//            if (result == null || result.getCode() != 200) {
-//                return Result.error(result != null ? result.getCode() : 500,
-//                        "获取商家商品列表失败");
-//            }
-//
-//            List<Product> merchantProducts = result.getData();
-//            List<OneYuanShoppingRecordDTO> dtoList = new ArrayList<>();
-//
-//            // 2. 获取每个商品关联的一元购记录并转换为DTO
-//            for (Product product : merchantProducts) {
-//                List<OneYuanShoppingRecord> records = oneYuanShoppingRecordRepository
-//                        .findByInventoryProductId(product.getProductId());
-//
-//                records.forEach(record -> {
-//                    OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
-//                    dto.setRecordId(record.getRecordId());
-//                    dto.setStartTime(record.getStartTime());
-//                    dto.setEndTime(record.getEndTime());
-//                    dto.setMinParticipants(record.getMinParticipants());
-//                    dto.setCurrentParticipants(record.getCurrentParticipants());
-//                    dto.setDrawn(record.isDrawn());
-//                    dto.setResult(record.getResult());
-//
-//                    // 设置商品相关信息
-//                    dto.setProductId(product.getProductId());
-//
-//
-//                    dtoList.add(dto);
-//                });
-//            }
-//
-//            return Result.success(dtoList);
-//        } catch (Exception e) {
-//            return Result.error(500, "获取商家一元购商品记录失败: " + e.getMessage());
-//        }
-//    }
+    private String getProductStoreIdFromSubsystem(String productId) {
+        String url = baseUrl + "/api/productController/getAccountIdByProductId/" + productId;
+            ResponseEntity<Result<String>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    } );
+            logger.debug("商家ID: {}", response.getBody().getData());
+            return response.getBody().getData();
+    }
 
+
+
+    @Transactional
+    public Result<List<OneYuanShoppingRecordDTO>> getStoreOneYuanRecords(String storeId) {
+        try {
+            // 1. 查询所有一元购记录
+            List<OneYuanShoppingRecord> allRecords = oneYuanShoppingRecordRepository.findAll();
+
+            // 2. 过滤并收集符合条件的记录
+            List<OneYuanShoppingRecordDTO> storeRecords = new ArrayList<>();
+
+            for (OneYuanShoppingRecord record : allRecords) {
+                // 通过新方法获取商品的商家ID
+                String productStoreIdOptional = getProductStoreIdFromSubsystem(record.getProductId());
+//                logger.debug("商家ID: {}", productStoreIdOptional);
+                // 检查商家ID是否匹配
+                if (productStoreIdOptional != null && storeId.equals(productStoreIdOptional)) {
+                    OneYuanShoppingRecordDTO dto = convertToDTO(record);
+                    storeRecords.add(dto);
+                }
+            }
+
+            // 3. 返回结果
+            if (storeRecords.isEmpty()) {
+                return Result.error(404, "该商家没有一元购记录");
+            }
+
+            return Result.success(storeRecords);
+
+        } catch (Exception e) {
+            return Result.error(500, "获取商家一元购记录失败：" + e.getMessage());
+        }
+    }
+
+    // 辅助转换方法
+    private OneYuanShoppingRecordDTO convertToDTO(OneYuanShoppingRecord record) {
+        OneYuanShoppingRecordDTO dto = new OneYuanShoppingRecordDTO();
+        dto.setRecordId(record.getRecordId());
+        dto.setStartTime(record.getStartTime());
+        dto.setEndTime(record.getEndTime());
+        dto.setMinParticipants(record.getMinParticipants());
+        dto.setDrawn(record.isDrawn());
+        dto.setResult(record.getResult());
+        dto.setCurrentParticipants(record.getCurrentParticipants());
+        dto.setProductId(record.getProductId());
+        return dto;
+    }
 }

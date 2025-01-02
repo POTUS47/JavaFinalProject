@@ -10,6 +10,9 @@
     <button @click="PLYshow(3)" class="ButtonA" id="Button3">
       <span class="Buttondes">未售商品</span>
     </button>
+    <button @click="FKYshow()" class="ButtonA" id="Button4">
+      <span class="Buttondes">一元购商品</span>
+    </button>
   </div>
   <div class="CommodityShow">
     <!-- 搜索和筛选按钮 -->
@@ -21,8 +24,28 @@
         @keyup.enter="filterProductsTag"></el-input>
       <el-button type="primary" @click="filterProductsTag">筛选</el-button> -->
     </div>
+
+    <!-- 一元购商品 -->
+    <div v-if="FKY" class="TableContainer">
+      <el-table :data="currentPageData" class="CommodityTable" height="760" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" />
+        <el-table-column prop="productId" label="商品ID"></el-table-column>
+        <el-table-column prop="productName" label="商品名称"></el-table-column>
+        <el-table-column prop="startTime" label="开始时间"></el-table-column>
+        <el-table-column prop="endTime" label="结束时间" width="100"></el-table-column>
+        <el-table-column prop="minParticipants" label="最小参与人数" width="100"></el-table-column>
+        <el-table-column prop="currentParticipants" label="当前参与人数" width="100"></el-table-column>
+        <el-table-column prop="currentParticipants" label="开奖" width="100">
+          <template #default="scope">
+          <el-button size='small' type="primary" icon="check" @click="handleWinner(scope.row.record)">开奖</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <p>hu</p>
+    </div>
+
     <!-- 表格 -->
-    <div class="TableContainer">
+    <div v-else class="TableContainer">
       <el-table :data="currentPageData" class="CommodityTable" height="760" @selection-change="handleSelectionChange">
         <el-table-column type="selection" />
         <el-table-column prop="id" label="商品ID"></el-table-column>
@@ -44,11 +67,12 @@
                 @click="handleUploadImages(scope.row)">上传图片</el-button>
                 <el-button size='small' type="primary" icon="Upload" @click="handleUploadIDImages(scope.row)">上传图文描述</el-button>
               <el-button size='small' type="danger" icon="Delete" @click="handleDelete(scope.row)">下架</el-button>
-              <el-button size='small' type="danger" icon="YiYuan" @click="handleDelete(scope.row)">设为一元购</el-button>
+              <el-button size='small' type="danger" icon="YiYuan" v-if="scope.row.quantity>0" @click="setOneYuan(scope.row.id)">设为一元购</el-button>
             </el-button-group>
           </template>
         </el-table-column>
       </el-table>
+      <p>yyyyy{{FKY}}</p>
     </div>
 
     <!-- 上传图片对话框 -->
@@ -126,6 +150,52 @@
         </el-form>
       </div>
     </div>
+
+    <!-- 一元购 -->
+    <div v-if="oneYuanVisible" class="SettingPopUp">
+      <div v-if="currentOneYuan" class="SettingContent">
+        <el-form ref="oneYuanForm" :rules="oneYuanRules">
+
+          <el-form-item label="活动开始时间" prop="startTime">
+            <el-date-picker
+                v-model="oneYuanStart"
+                type="datetime"
+                placeholder="选择开始时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item label="活动结束时间" prop="endTime">
+            <el-date-picker
+                v-model="oneYuanEnd"
+                type="datetime"
+                placeholder="选择结束时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item label="最小参与人数" prop="minParticipants">
+            <el-input-number
+                v-model="oneYuanMin"
+                :min="10"
+                :max="1000"
+                controls-position="right"
+            >
+            </el-input-number>
+          </el-form-item>
+
+          <div style="display: flex;justify-content: center;margin-top: 30px">
+            <el-button type="primary" @click="confirmOneYuan(currentOneYuan)">确认创建</el-button>
+            <el-button type="info" @click="cancelOneYuan">取消</el-button>
+          </div>
+        </el-form>
+      </div>
+    </div>
+
 
     <!--添加商品对话框-->
     <div v-if="addDialogVisible" class="SettingPopUp">
@@ -230,11 +300,15 @@ export default {
     const currentIDImages = ref([]);
     const uploadImagesDialogVisible = ref(false);
     const uploadIDDialogVisible = ref(false);
-
+    const oneYuanStart = ref(null);
+    const oneYuanEnd = ref(null);
+    const oneYuanMin = ref(null);
+    const oneYuanVisible = ref(false);
+    const currentOneYuan = ref(null);
     const selectedFiles = ref([]); // 选中的图片文件
-
+    const FKY = ref(false);
     const PLYProducts = ref([]); // 用于存储已售商品
-   
+
 
     const uploadHeaders = ref({
       Authorization: localStorage.getItem('token')
@@ -243,16 +317,88 @@ export default {
       productId: ''
     });
 
+    const setOneYuan = (id) => {
+      oneYuanVisible.value = true;
+      currentOneYuan.value = id;// 记录当前选中的商品
+    };
+
+    const cancelOneYuan = () => {
+      oneYuanVisible.value = false; // 记录当前选中的商品
+      oneYuanMin.value = null;
+      oneYuanStart.value = null;
+      oneYuanEnd.value = null;
+      currentOneYuan.value = null;
+    };
+
+
+    //设置一元购
+    const confirmOneYuan = async (id) => {
+      try {
+        // const body = {
+        //   startTime: oneYuanStart.value,
+        //   endTime:oneYuanEnd.value,
+        //   minParticipants: Number(oneYuanMin.value),
+        // };
+        console.log(id);
+        const response = await axiosInstance.post('/shopping/createOneYuanRecord', {
+          startTime: oneYuanStart.value,
+          endTime: oneYuanEnd.value,
+          minParticipants: Number(oneYuanMin.value)
+        }, {
+          params: {
+            productId: id
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // 根据接口返回结构处理响应
+        if (response.data && response.data.code === 200) {
+          ElMessage({
+            message: response.data.msg || '一元购活动创建成功',
+            type: 'success'
+          })
+          cancelOneYuan();
+        } else {
+          ElMessage({
+            message: response.data.msg || '创建一元购活动失败',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        if (error !== 'cancel') {
+          ElMessage({
+            message: '创建一元购活动失败: ' + (error.response?.data?.msg || error.message),
+            type: 'error'
+          });
+        }
+      }
+    };
+
+
     //前端处理展示是否出售的商品
     const PLYshow = (viewType) => {
       if (viewType === 1) {
         PLYProducts.value = products.value;
-      } else if (viewType === 3) {
-        PLYProducts.value = products.value.filter(product => product.isOnSale);
+        FKY.value = false;
       } else if (viewType === 2) {
+        PLYProducts.value = products.value.filter(product => product.isOnSale);
+        FKY.value = false;
+      } else if (viewType === 3) {
         PLYProducts.value = products.value.filter(product => !product.isOnSale);
+        FKY.value = false;
+      } else if (viewType === 4) {
+        getOneYuan();
+        PLYProducts.value = myOneYuan.value
       }
     };
+
+    const FKYshow = () => {
+      FKY.value = true;
+      getOneYuan();
+      PLYProducts.value = myOneYuan.value
+    }
 
     //根据商品是否售出展示商品
     const fetchProducts = async () => {
@@ -266,7 +412,7 @@ export default {
             storeId: localStorage.getItem('userId'),
           },
         });
-
+        console.log(response.data);
         if (Array.isArray(response.data)) {
           products.value = response.data.map(product => ({
             id: product.productId || 'N/A',
@@ -274,8 +420,9 @@ export default {
             categoryInit: product.storeTag || 'Unknown',
             categorySys: product.subTag || 'Unknown',
             price: product.productPrice || 0,
-            isOnSale: product.quantity >0 ? true : false,
+            isOnSale: product.quantity > 0 ? true : false,
             description: product.description || 'No description available',
+            quantity: product.quantity,
           }));
           totalProducts.value = products.value.length;
           PLYProducts.value = products.value;
@@ -371,15 +518,13 @@ export default {
       });
 
       try {
-        console.log('formData:', formData);
         const response = await axiosInstance.post('/productController/addProductImage', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: localStorage.getItem('token'),
           },
         });
-        console.log('response:', response);
-        console.log('response.data:', response.data);
+
         if (response.data) {
           fetchProductImages(currentProduct.value.id); // 上传成功后刷新图片列表
           ElMessage.success('上传成功');
@@ -398,15 +543,13 @@ export default {
     };
 
     const submitUploadPD = async () => {
-      
+
     }
 
     // 组件加载时调用获取商品数据
     onMounted(() => {
       fetchProducts();
     });
-
-   
 
 
     const handleChange = (viewTypeValue) => {
@@ -421,64 +564,73 @@ export default {
         fetchProducts();
       }
     };
-    const fetchProductByName = async (keyword) => {
-      const storeId = localStorage.getItem('userId');
+
+    const myOneYuan = ref([]);
+    // 获取一元购
+    const getOneYuan = async () => {
       try {
-        const response = await axiosInstance.get('/productController/search', {
-          params: {
-            storeId: storeId,
-            keyword: keyword || '',
+        const response = await axiosInstance.get('/shopping/store-records')
+        // 存储原始一元购记录的数组
+        const originalProducts = response.data.data;
+        // console.log("一元购商品详情", originalProducts);
+        // 遍历一元购记录，获取每个商品的详细信息
+        for (const product of originalProducts) {
+          try {
+            // 根据商品ID获取详细信息
+            const orderResponse = await axiosInstance.get(`/productController/product/${product.productId}`);
+
+            // 合并两次返回的数据
+            const combinedOrderInfo = {
+              ...product, // 原始记录的信息
+              ...orderResponse.data, // 详细订单信息
+            };
+            // 将详细信息放入 myOneYuan
+            myOneYuan.value.push(combinedOrderInfo);
+            console.log("一元购商品详情", myOneYuan);
+          } catch (productError) {
+            console.error(`获取商品 ${product.productId} 详情失败`, productError);
           }
-        });
-        console.log('response:', response);
-        console.log('response.data:', response.data);
-
-        if (response.data) {
-          const productList = response.data.data;
-          const processedProducts = productList.map(product => ({
-            id: product.productId || 'N/A',
-            name: product.productName || 'Unknown',
-            categorySys: product.subTag || 'Unknown',
-            categoryInit: product.storeTag || 'Unknown',
-            price: product.productPrice || 0,
-            isOnSale: product.saleOrNot !== undefined ? product.saleOrNot : false,
-            description: product.description || 'No description available',
-          }));
-
-          products.value = processedProducts;
-          PLYProducts.value = products.value;
-          console.log('products:', products.value);
-        } else {
-          console.error('Unexpected response format:', response.data);
         }
       } catch (error) {
-        products.value = [];
-        PLYProducts.value = products.value;
-        console.error('通过商品名称获取商品数据失败:', error);
+        console.error('获取一元购订单失败:', error)
       }
-    };
-    //根据商品分类搜索商品
-    const filterProductsTag = () => {
-      if (searchcategoryInit.value.trim() !== '') {
-        fetchProductByTag(searchcategoryInit.value.trim());
-      } else {
-        fetchProducts();
-      }
-    };
-    const fetchProductByTag = async (storeTag) => {
-      const storeId = localStorage.getItem('userId');
+    }
+
+
+    // 开奖
+    const handleWinner = async (id) => {
       try {
-        const response = await axiosInstance.get('/StoreViewProduct/searchByStoreTag', {
-          params: {
-            storeId: storeId,
-            storeTag: storeTag || '',
-          }
-        });
+        const response = await axiosInstance.get('/shopping/draw/{id}')
+        // 根据后端返回处理响应
+        if (response.data) {
+          // 处理成功逻辑
+          console.log('开奖成功', response.data);
+          ElMessage.success('开奖成功')
+          // 可以添加后续处理，如刷新页面或提示用户
+        }
+      } catch (error) {
+        console.error('开奖失败:', error);
+        ElMessage.error('不符合开奖条件')
+        // 可以添加错误处理，如显示错误提示
+      }
+    }
 
-        if (Array.isArray(response.data)) {
-          const processedProducts = response.data.map(product => {
 
-            return {
+      const fetchProductByName = async (keyword) => {
+        const storeId = localStorage.getItem('userId');
+        try {
+          const response = await axiosInstance.get('/productController/search', {
+            params: {
+              storeId: storeId,
+              keyword: keyword || '',
+            }
+          });
+          console.log('response:', response);
+          console.log('response.data:', response.data);
+
+          if (response.data) {
+            const productList = response.data.data;
+            const processedProducts = productList.map(product => ({
               id: product.productId || 'N/A',
               name: product.productName || 'Unknown',
               categorySys: product.subTag || 'Unknown',
@@ -486,636 +638,620 @@ export default {
               price: product.productPrice || 0,
               isOnSale: product.saleOrNot !== undefined ? product.saleOrNot : false,
               description: product.description || 'No description available',
+            }));
+
+            products.value = processedProducts;
+            PLYProducts.value = products.value;
+            console.log('products:', products.value);
+          } else {
+            console.error('Unexpected response format:', response.data);
+          }
+        } catch (error) {
+          products.value = [];
+          PLYProducts.value = products.value;
+          console.error('通过商品名称获取商品数据失败:', error);
+        }
+      };
+      //根据商品分类搜索商品
+      const filterProductsTag = () => {
+        if (searchcategoryInit.value.trim() !== '') {
+          fetchProductByTag(searchcategoryInit.value.trim());
+        } else {
+          fetchProducts();
+        }
+      };
+      const fetchProductByTag = async (storeTag) => {
+        const storeId = localStorage.getItem('userId');
+        try {
+          const response = await axiosInstance.get('/StoreViewProduct/searchByStoreTag', {
+            params: {
+              storeId: storeId,
+              storeTag: storeTag || '',
+            }
+          });
+
+          if (Array.isArray(response.data)) {
+            const processedProducts = response.data.map(product => {
+
+              return {
+                id: product.productId || 'N/A',
+                name: product.productName || 'Unknown',
+                categorySys: product.subTag || 'Unknown',
+                categoryInit: product.storeTag || 'Unknown',
+                price: product.productPrice || 0,
+                isOnSale: product.saleOrNot !== undefined ? product.saleOrNot : false,
+                description: product.description || 'No description available',
+              };
+            });
+
+            products.value = processedProducts;
+          } else {
+            console.error('Unexpected response format:', response.data);
+          }
+        } catch (error) {
+          products.value = [];
+          console.error('通过商品名称获取商品数据失败:', error);
+        }
+      };
+      //获取商品系统分类并过滤
+      const fetchCategories = async () => {
+        try {
+          const response = await axiosInstance.get('/productController/GetAllCategories');
+
+          // 要过滤掉的subCategoryId列表
+          const idsToRemove = ['00000', '01000', '02000', '03000', '04000'];
+
+          // 处理过滤操作
+          const filteredCategories = response.data.data.map(category => {
+            return {
+              ...category,
+              subCategories: category.subCategories.filter(subCategory => !idsToRemove.includes(subCategory.subCategoryId))
             };
           });
 
-          products.value = processedProducts;
-        } else {
-          console.error('Unexpected response format:', response.data);
-        }
-      } catch (error) {
-        products.value = [];
-        console.error('通过商品名称获取商品数据失败:', error);
-      }
-    };
-    //获取商品系统分类并过滤
-    const fetchCategories = async () => {
-      try {
-        const response = await axiosInstance.get('/productController/GetAllCategories');
+          // 更新 categories
+          categories.splice(0, categories.length, ...filteredCategories);
 
-        // 要过滤掉的subCategoryId列表
-        const idsToRemove = ['00000', '01000', '02000', '03000', '04000'];
+          // 调试输出
+          console.log('Updated categories:', categories);
 
-        // 处理过滤操作
-        const filteredCategories = response.data.data.map(category => {
-          return {
-            ...category,
-            subCategories: category.subCategories.filter(subCategory => !idsToRemove.includes(subCategory.subCategoryId))
-          };
-        });
-
-        // 更新 categories
-        categories.splice(0, categories.length, ...filteredCategories);
-
-        // 调试输出
-        console.log('Updated categories:', categories);
-
-        message01.value = '已获取系统分类数据';
-      } catch (error) {
-        if (error.response) {
-          message01.value = error.response.data;
-        } else {
-          message01.value = '获取分类数据失败';
-        }
-        ElMessage.error('获取分类数据失败，请稍后再试');
-      }
-    };
-    onMounted(async () => {
-      await fetchCategories(); // 确保分类数据已加载
-      await fetchProducts(); // 分类数据加载完成后获取商品数据
-    });
-    //查看商品具体信息
-    const handleCheck = (item) => {
-      currentProduct.value = item;
-      localStorage.setItem('productIdOfDetail', item.id);
-      router.push('/productdetail');
-    };
-    function calculateByteLength(str) {
-      let length = 0;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charAt(i);
-        if (/[\u0000-\u007F]/.test(char)) {
-          // 英文字符或数字，1字节
-          length += 1;
-        } else {
-          // 中文字符及其他，3字节
-          length += 3;
-        }
-      }
-      return length;
-    }
-    const rules = {
-      name: [
-        { required: true, message: '请输入商品名称', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            if (!value) {
-              callback(new Error('请输入商品名称'));
-            } else if (calculateByteLength(value) > 40) {
-              callback(new Error('商品名称过长'));
-            } else {
-              callback();
-            }
-          },
-          trigger: 'blur'
-        }
-      ],
-      categorySys: [{ required: true, message: '请输入系统分类', trigger: 'blur' }],
-      categoryInit: [
-        { required: true, message: '请输入商家分类', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            if (!value) {
-              callback(new Error('请输入商家分类'));
-            } else if (calculateByteLength(value) > 40) {
-              callback(new Error('商家分类过长'));
-            } else {
-              callback();
-            }
-          },
-          trigger: 'blur'
-        }
-      ],
-      price: [{ required: true, message: '请输入商品价格', trigger: 'blur' },
-      { type: 'number', message: '价格必须为数字', trigger: 'blur' },
-      {
-        validator: (rule, value, callback) => {
-          if (value === null || value === undefined || value < 0) {
-            callback(new Error('价格必须大于或等于0'));
+          message01.value = '已获取系统分类数据';
+        } catch (error) {
+          if (error.response) {
+            message01.value = error.response.data;
           } else {
-            callback();
+            message01.value = '获取分类数据失败';
           }
-        }, trigger: 'blur'
-      }],
-      isOnSale: [{ required: true, message: '请选择是否出售', trigger: 'change' }],
-      description: [
-        { required: true, message: '请输入商品描述', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            if (!value) {
-              callback(new Error('请输入商品描述'));
-            } else if (calculateByteLength(value) > 190) {
-              callback(new Error('商品描述过长'));
-            } else {
-              callback();
-            }
-          },
-          trigger: 'blur'
+          ElMessage.error('获取分类数据失败，请稍后再试');
         }
-      ]
-      
-    };
-    //编辑商品
-    // 限制输入字符长度的方法
-    const limitInputLength = (event) => {
-      const maxLength = 150;
-      const input = event.target.value;
-
-      // 如果输入长度超过最大限制，截取前 maxLength 个字符
-      if (input.length > maxLength) {
-        description.value = input.slice(0, maxLength);
-      }
-    };
-    //移除新选中的商品图片
-    const removeSelectedImage = (index) => {
-      selectedImages.value.splice(index, 1);
-    };
-    //编辑中删除服务器中的商品图片
-    const removeImage = (index) => {
-      if (preProduct.value.images.length > 1) {
-        // 从显示的图片数组中移除
-        const removedImage = preProduct.value.images.splice(index, 1)[0]; // 从 preProduct.images 中移除图片，并获取该图片对象
-
-        // 将已删除的图片对象添加到 deletedImages 数组中
-        if (removedImage) {
-          deletedImages.value.push(removedImage);
-        }
-      } else {
-        ElMessage({
-          message: '至少需要保留一张商品图片',
-          type: 'warning'
-        });
-      }
-    };
-    //移除新选中的瑕疵图文
-    const removeSelectedDefectImage = (index) => {
-      selectedDefectImages.value.splice(index, 1);
-    };
-    //编辑中删除服务器中的瑕疵图片
-    const removeDefectImage = (index) => {
-      // 确保至少保留一张瑕疵图片
-      if (preProduct.value.defectImages.length > 1) {
-        // 从显示的瑕疵图片数组中移除
-        const removedImage = preProduct.value.defectImages.splice(index, 1)[0];
-
-        // 将已删除的瑕疵图片对象添加到 deletedDefectImages 数组中
-        if (removedImage) {
-          deletedDefectImages.value.push(removedImage);
-        }
-      } else {
-        ElMessage({
-          message: '至少需要保留一张详细图片',
-          type: 'warning'
-        });
-      }
-    };
-    //取消编辑
-    const handleCancel = () => {
-      // 清空选择的商品图片
-      selectedImages.value = [];
-      // 清空 deletedImages 数组
-      deletedImages.value = [];
-
-      // 清空 deletedDefectImages 数组
-      deletedDefectImages.value = [];
-      // 关闭对话框
-      dialogVisibleTwo.value = false;
-    };
-    //处理商品图片
-    const handleFile = (event) => {
-      const files = event.target.files;
-      if (files.length > 0) {
-        const newImages = Array.from(files).map(file => ({
-          url: URL.createObjectURL(file),
-          file: file,
-        }));
-        selectedImages.value = [...selectedImages.value, ...newImages];
-      }
-    };
-    //处理瑕疵图文
-    const handleDefectFile = (event) => {
-      const files = event.target.files;
-      if (files.length > 0) {
-        const newImages = Array.from(files).map(file => ({
-          url: URL.createObjectURL(file),
-          file: file,
-          description: '无'
-        }));
-        selectedDefectImages.value = [...selectedDefectImages.value, ...newImages];
-      }
-    };
-
-
-    //编辑商品框  
-    const handleEdit = async (item) => {
-      if (!item.isOnSale) {
-        ElMessage({
-          message: '该商品已经出售，无法编辑',
-          type: 'warning'
-        });
-        return;
-      }
-      currentProduct.value = item;
-      preProduct.value = {
-        id: item.id,
-        name: item.name,
-        categorySys: item.categorySys,
-        categoryInit: item.categoryInit,
-        price: item.price,
-        description: item.description,
-        images: [],
-        defectImages: [],
-
+      };
+      onMounted(async () => {
+        await fetchCategories(); // 确保分类数据已加载
+        await fetchProducts(); // 分类数据加载完成后获取商品数据
+      });
+      //查看商品具体信息
+      const handleCheck = (item) => {
+        currentProduct.value = item;
+        localStorage.setItem('productIdOfDetail', item.id);
+        router.push('/productdetail');
       };
 
-      // 获取商品图片
-      try {
-        const response = await axiosInstance.get(`/StoreViewProduct/getProductImages/${preProduct.value.id}`);
-        if (response.status === 200) {
-          preProduct.value.images = response.data;  // 将图片数据赋值给 preProduct.images
-        } else {
-          ElMessage({
-            message: '获取商品图片失败else',
-            type: 'error'
-          });
-        }
-      } catch (error) {
-
-        ElMessage({
-          message: '获取商品图片失败，本商品可能不存在图片',
-          type: 'error'
-        });
-      }
-      //获取瑕疵图文
-      try {
-        const productDetailsResponse = await axiosInstance.get(`/productController/GetProductInfo`, {
-          params: {
-            productId: preProduct.value.id
-          },
-          headers: {
-            Authorization: `${token}`
+      function calculateByteLength(str) {
+        let length = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charAt(i);
+          if (/[\u0000-\u007F]/.test(char)) {
+            // 英文字符或数字，1字节
+            length += 1;
+          } else {
+            // 中文字符及其他，3字节
+            length += 3;
           }
-        });
-        if (productDetailsResponse.status === 200) {
-          const productDetails = productDetailsResponse.data;
-          console.log('productDetails', productDetails);
+        }
+        return length;
+      }
 
-          // 确保 data 中的 image 和 description 存在且是数组
-          const defectImagesData = productDetails.map(detail => ({
-            imageId: detail.image.imageId,
-            imageUrl: detail.image.imageUrl,
-            description: detail.description || '描述获取失败'
-          }));
+      const rules = {
+        name: [
+          {required: true, message: '请输入商品名称', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error('请输入商品名称'));
+              } else if (calculateByteLength(value) > 40) {
+                callback(new Error('商品名称过长'));
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        categorySys: [{required: true, message: '请输入系统分类', trigger: 'blur'}],
+        categoryInit: [
+          {required: true, message: '请输入商家分类', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error('请输入商家分类'));
+              } else if (calculateByteLength(value) > 40) {
+                callback(new Error('商家分类过长'));
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        price: [{required: true, message: '请输入商品价格', trigger: 'blur'},
+          {type: 'number', message: '价格必须为数字', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value < 0) {
+                callback(new Error('价格必须大于或等于0'));
+              } else {
+                callback();
+              }
+            }, trigger: 'blur'
+          }],
+        isOnSale: [{required: true, message: '请选择是否出售', trigger: 'change'}],
+        description: [
+          {required: true, message: '请输入商品描述', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error('请输入商品描述'));
+              } else if (calculateByteLength(value) > 190) {
+                callback(new Error('商品描述过长'));
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
 
-          // 更新 defectImages
-          preProduct.value.defectImages = defectImagesData;
+      };
+      //编辑商品
+      // 限制输入字符长度的方法
+      const limitInputLength = (event) => {
+        const maxLength = 150;
+        const input = event.target.value;
 
-          console.log('Defect Images:', preProduct.value.defectImages);
+        // 如果输入长度超过最大限制，截取前 maxLength 个字符
+        if (input.length > maxLength) {
+          description.value = input.slice(0, maxLength);
+        }
+      };
+      //移除新选中的商品图片
+      const removeSelectedImage = (index) => {
+        selectedImages.value.splice(index, 1);
+      };
+      //编辑中删除服务器中的商品图片
+      const removeImage = (index) => {
+        if (preProduct.value.images.length > 1) {
+          // 从显示的图片数组中移除
+          const removedImage = preProduct.value.images.splice(index, 1)[0]; // 从 preProduct.images 中移除图片，并获取该图片对象
+
+          // 将已删除的图片对象添加到 deletedImages 数组中
+          if (removedImage) {
+            deletedImages.value.push(removedImage);
+          }
         } else {
           ElMessage({
-            message: '获取详细图片失败',
+            message: '至少需要保留一张商品图片',
+            type: 'warning'
+          });
+        }
+      };
+      //移除新选中的瑕疵图文
+      const removeSelectedDefectImage = (index) => {
+        selectedDefectImages.value.splice(index, 1);
+      };
+      //编辑中删除服务器中的瑕疵图片
+      const removeDefectImage = (index) => {
+        // 确保至少保留一张瑕疵图片
+        if (preProduct.value.defectImages.length > 1) {
+          // 从显示的瑕疵图片数组中移除
+          const removedImage = preProduct.value.defectImages.splice(index, 1)[0];
+
+          // 将已删除的瑕疵图片对象添加到 deletedDefectImages 数组中
+          if (removedImage) {
+            deletedDefectImages.value.push(removedImage);
+          }
+        } else {
+          ElMessage({
+            message: '至少需要保留一张详细图片',
+            type: 'warning'
+          });
+        }
+      };
+      //取消编辑
+      const handleCancel = () => {
+        // 清空选择的商品图片
+        selectedImages.value = [];
+        // 清空 deletedImages 数组
+        deletedImages.value = [];
+
+        // 清空 deletedDefectImages 数组
+        deletedDefectImages.value = [];
+        // 关闭对话框
+        dialogVisibleTwo.value = false;
+      };
+      //处理商品图片
+      const handleFile = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+          const newImages = Array.from(files).map(file => ({
+            url: URL.createObjectURL(file),
+            file: file,
+          }));
+          selectedImages.value = [...selectedImages.value, ...newImages];
+        }
+      };
+      //处理瑕疵图文
+      const handleDefectFile = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+          const newImages = Array.from(files).map(file => ({
+            url: URL.createObjectURL(file),
+            file: file,
+            description: '无'
+          }));
+          selectedDefectImages.value = [...selectedDefectImages.value, ...newImages];
+        }
+      };
+
+
+      //编辑商品框
+      const handleEdit = async (item) => {
+        if (!item.isOnSale) {
+          ElMessage({
+            message: '该商品已经出售，无法编辑',
+            type: 'warning'
+          });
+          return;
+        }
+        currentProduct.value = item;
+        preProduct.value = {
+          id: item.id,
+          name: item.name,
+          categorySys: item.categorySys,
+          categoryInit: item.categoryInit,
+          price: item.price,
+          description: item.description,
+          images: [],
+          defectImages: [],
+
+        };
+
+        // 获取商品图片
+        try {
+          const response = await axiosInstance.get(`/StoreViewProduct/getProductImages/${preProduct.value.id}`);
+          if (response.status === 200) {
+            preProduct.value.images = response.data;  // 将图片数据赋值给 preProduct.images
+          } else {
+            ElMessage({
+              message: '获取商品图片失败else',
+              type: 'error'
+            });
+          }
+        } catch (error) {
+
+          ElMessage({
+            message: '获取商品图片失败，本商品可能不存在图片',
             type: 'error'
           });
         }
-      } catch (error) {
-        ElMessage({
-          message: '获取详细图片失败，本商品可能不存在详细图片',
-          type: 'error'
-        });
-        console.log('error', error);
-      }
-
-      dialogVisibleTwo.value = true;
-    };
-    //更新瑕疵描述
-    const updateDefectDescription = async () => {
-      try {
-        // 遍历 preProduct.defectImages，准备更新描述
-        const updateRequests = preProduct.value.defectImages.map(defectImage => {
-          return axiosInstance.post('/StoreViewProduct/updateProductDescription', {
-            imageId: defectImage.imageId,
-            description: defectImage.description || '无' // 如果没有描述，则默认为“无”
+        //获取瑕疵图文
+        try {
+          const productDetailsResponse = await axiosInstance.get(`/productController/GetProductInfo`, {
+            params: {
+              productId: preProduct.value.id
+            },
+            headers: {
+              Authorization: `${token}`
+            }
           });
-        });
+          if (productDetailsResponse.status === 200) {
+            const productDetails = productDetailsResponse.data;
+            console.log('productDetails', productDetails);
 
-        // 等待所有更新请求完成
-        const responses = await Promise.all(updateRequests);
+            // 确保 data 中的 image 和 description 存在且是数组
+            const defectImagesData = productDetails.map(detail => ({
+              imageId: detail.image.imageId,
+              imageUrl: detail.image.imageUrl,
+              description: detail.description || '描述获取失败'
+            }));
 
-        // 检查所有响应状态
-        const allSuccessful = responses.every(response => response.status === 200);
-        if (allSuccessful) {
+            // 更新 defectImages
+            preProduct.value.defectImages = defectImagesData;
+
+            console.log('Defect Images:', preProduct.value.defectImages);
+          } else {
+            ElMessage({
+              message: '获取详细图片失败',
+              type: 'error'
+            });
+          }
+        } catch (error) {
           ElMessage({
-            message: '详细图片文字描述已更新',
-            type: 'success'
+            message: '获取详细图片失败，本商品可能不存在详细图片',
+            type: 'error'
           });
-        } else {
+          console.log('error', error);
+        }
+
+        dialogVisibleTwo.value = true;
+      };
+      //更新瑕疵描述
+      const updateDefectDescription = async () => {
+        try {
+          // 遍历 preProduct.defectImages，准备更新描述
+          const updateRequests = preProduct.value.defectImages.map(defectImage => {
+            return axiosInstance.post('/StoreViewProduct/updateProductDescription', {
+              imageId: defectImage.imageId,
+              description: defectImage.description || '无' // 如果没有描述，则默认为“无”
+            });
+          });
+
+          // 等待所有更新请求完成
+          const responses = await Promise.all(updateRequests);
+
+          // 检查所有响应状态
+          const allSuccessful = responses.every(response => response.status === 200);
+          if (allSuccessful) {
+            ElMessage({
+              message: '详细图片文字描述已更新',
+              type: 'success'
+            });
+          } else {
+            ElMessage({
+              message: '更新详细图片文字描述失败',
+              type: 'error'
+            });
+          }
+        } catch (error) {
+          console.error('更新详细图片文字描述时发生错误:', error.response ? error.response.data : error.message);
           ElMessage({
             message: '更新详细图片文字描述失败',
             type: 'error'
           });
         }
-      } catch (error) {
-        console.error('更新详细图片文字描述时发生错误:', error.response ? error.response.data : error.message);
-        ElMessage({
-          message: '更新详细图片文字描述失败',
-          type: 'error'
-        });
-      }
-    };
-    
-    // 上传瑕疵图文
-    const submitDefectUpload = async () => {
-      if (selectedDefectImages.value.length > 0) {
-        try {
-          // 遍历每个选中的瑕疵图片，逐个上传
-          for (const image of selectedDefectImages.value) {
-            const formData = new FormData();
+      };
 
-            // 添加文件到 FormData
-            formData.append('Image', image.file); // 确保 image.file 是 File 对象
-
-            // 添加描述信息到 FormData
-            formData.append('Description', image.description || '无');
-
-            // 添加 productId 到 FormData
-            formData.append('productId', preProduct.value.id);
-
-            // 上传的接口地址
-            const uploadUrl = `/StoreViewProduct/addProductDetail`;
-
-            // 发起上传请求
-            const response = await axiosInstance.post(uploadUrl, formData, {
-              headers: { 'Content-Type': 'multipart/form-data' }
-            });
-
-            // 处理响应
-            if (response.status === 200) {
-              ElMessage({
-                message: `详细图片 "${image.file.name}" 上传成功`,
-                type: 'success'
-              });
-            } else {
-              ElMessage({
-                message: `详细图片 "${image.file.name}" 上传失败`,
-                type: 'error'
-              });
-            }
-          }
-
-          // 清空已上传的图片数组
-          selectedDefectImages.value = [];
-
-        } catch (error) {
-          console.error('上传详细图片时发生错误:', error.response ? error.response.data : error.message);
-          ElMessage({
-            message: '详细图片上传失败',
-            type: 'error'
-          });
-        }
-      }
-    };
-    //给后端传大分类名称Tag
-    const updateTagT = (selectedSubCategoryId) => {
-      // 查找选中的系统分类对应的大标题名字
-      const selectedCategory = categories.find(group =>
-        group.subCategories.some(item => item.subCategoryId === selectedSubCategoryId)
-      );
-
-      // 更新 Tag 字段
-      preProduct.value.Tag = selectedCategory ? selectedCategory.largeCategoryName : '';
-    };
-    //提交
-    const onsubmit = async () => {
-      editForm.value.validate(async (valid) => {
-        if (valid) {
-          const formData = new FormData();
-          formData.append('productId', preProduct.value.id);
-          formData.append('productName', preProduct.value.name);
-          formData.append('productPrice', preProduct.value.price);
-          formData.append('storeTag', preProduct.value.categoryInit);
-          formData.append('tag', preProduct.value.Tag || '');
-          formData.append('subTag', preProduct.value.categorySys || '');
-          formData.append('description', preProduct.value.description);
-          for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-          }
+      // 上传瑕疵图文
+      const submitDefectUpload = async () => {
+        if (selectedDefectImages.value.length > 0) {
           try {
-            const token = localStorage.getItem('token');
-            const response = await axiosInstance.put('/productController/editProduct', formData, {
-              headers: {
-                Authorization: `${token}`,
-              }
-            });
+            // 遍历每个选中的瑕疵图片，逐个上传
+            for (const image of selectedDefectImages.value) {
+              const formData = new FormData();
 
-            if (response.status === 200) {
-              dialogVisibleTwo.value = false;
-              currentProduct.value = preProduct.value;
-              fetchProducts();
-              ElMessage({
-                message: '商品信息已更新',
-                type: 'success'
+              // 添加文件到 FormData
+              formData.append('Image', image.file); // 确保 image.file 是 File 对象
+
+              // 添加描述信息到 FormData
+              formData.append('Description', image.description || '无');
+
+              // 添加 productId 到 FormData
+              formData.append('productId', preProduct.value.id);
+
+              // 上传的接口地址
+              const uploadUrl = `/StoreViewProduct/addProductDetail`;
+
+              // 发起上传请求
+              const response = await axiosInstance.post(uploadUrl, formData, {
+                headers: {'Content-Type': 'multipart/form-data'}
               });
-              
-              //删除商品图片
-              try {
-                for (const image of deletedImages.value) {
-                  const response = await axiosInstance.delete(`/StoreViewProduct/deleteProductImage/${preProduct.value.id}/${image.imageId}`);
-                  if (response.status === 401) {
+
+              // 处理响应
+              if (response.status === 200) {
+                ElMessage({
+                  message: `详细图片 "${image.file.name}" 上传成功`,
+                  type: 'success'
+                });
+              } else {
+                ElMessage({
+                  message: `详细图片 "${image.file.name}" 上传失败`,
+                  type: 'error'
+                });
+              }
+            }
+
+            // 清空已上传的图片数组
+            selectedDefectImages.value = [];
+
+          } catch (error) {
+            console.error('上传详细图片时发生错误:', error.response ? error.response.data : error.message);
+            ElMessage({
+              message: '详细图片上传失败',
+              type: 'error'
+            });
+          }
+        }
+      };
+      //给后端传大分类名称Tag
+      const updateTagT = (selectedSubCategoryId) => {
+        // 查找选中的系统分类对应的大标题名字
+        const selectedCategory = categories.find(group =>
+            group.subCategories.some(item => item.subCategoryId === selectedSubCategoryId)
+        );
+
+        // 更新 Tag 字段
+        preProduct.value.Tag = selectedCategory ? selectedCategory.largeCategoryName : '';
+      };
+      //提交
+      const onsubmit = async () => {
+        editForm.value.validate(async (valid) => {
+          if (valid) {
+            const formData = new FormData();
+            formData.append('productId', preProduct.value.id);
+            formData.append('productName', preProduct.value.name);
+            formData.append('productPrice', preProduct.value.price);
+            formData.append('storeTag', preProduct.value.categoryInit);
+            formData.append('tag', preProduct.value.Tag || '');
+            formData.append('subTag', preProduct.value.categorySys || '');
+            formData.append('description', preProduct.value.description);
+            for (const [key, value] of formData.entries()) {
+              console.log(`${key}: ${value}`);
+            }
+            try {
+              const token = localStorage.getItem('token');
+              const response = await axiosInstance.put('/productController/editProduct', formData, {
+                headers: {
+                  Authorization: `${token}`,
+                }
+              });
+
+              if (response.status === 200) {
+                dialogVisibleTwo.value = false;
+                currentProduct.value = preProduct.value;
+                fetchProducts();
+                ElMessage({
+                  message: '商品信息已更新',
+                  type: 'success'
+                });
+
+                //删除商品图片
+                try {
+                  for (const image of deletedImages.value) {
+                    const response = await axiosInstance.delete(`/StoreViewProduct/deleteProductImage/${preProduct.value.id}/${image.imageId}`);
+                    if (response.status === 401) {
+                      ElMessage({
+                        message: '所有图片已被删除',
+                        type: 'warning'
+                      });
+                    }
+                  }
+                } catch (error) {
+                  if (error.response && error.response.status === 401) {
                     ElMessage({
                       message: '所有图片已被删除',
                       type: 'warning'
                     });
+                  } else {
+                    // 处理其他非401错误
+                    ElMessage({
+                      message: '删除图片时发生错误',
+                      type: 'error'
+                    });
                   }
                 }
-              } catch (error) {
-                if (error.response && error.response.status === 401) {
-                  ElMessage({
-                    message: '所有图片已被删除',
-                    type: 'warning'
-                  });
-                } else {
-                  // 处理其他非401错误
-                  ElMessage({
-                    message: '删除图片时发生错误',
-                    type: 'error'
-                  });
-                }
-              }
-              // 清空 deletedImages 数组
-              deletedImages.value = [];
-              //上传瑕疵图片
-              await submitDefectUpload();
-              // 删除瑕疵图片
-              try {
-                for (const defectImage of deletedDefectImages.value) {
-                  // 发起删除请求，使用 defectImage.imageId 作为 Path 参数
-                  const response = await axiosInstance.post(`/StoreViewProduct/deleteProductDetail/${defectImage.imageId}`);
+                // 清空 deletedImages 数组
+                deletedImages.value = [];
+                //上传瑕疵图片
+                await submitDefectUpload();
+                // 删除瑕疵图片
+                try {
+                  for (const defectImage of deletedDefectImages.value) {
+                    // 发起删除请求，使用 defectImage.imageId 作为 Path 参数
+                    const response = await axiosInstance.post(`/StoreViewProduct/deleteProductDetail/${defectImage.imageId}`);
 
-                  // 处理 401 响应，表示所有瑕疵图片已被删除
-                  if (response.status === 401) {
+                    // 处理 401 响应，表示所有瑕疵图片已被删除
+                    if (response.status === 401) {
+                      ElMessage({
+                        message: '所有详细图片已被删除',
+                        type: 'warning'
+                      });
+                    } else {
+                      // 如果删除成功，可根据需求处理成功逻辑
+                      ElMessage({
+                        message: '详细图片已成功删除',
+                        type: 'success'
+                      });
+                    }
+                  }
+                } catch (error) {
+                  // 针对 401 错误进行处理
+                  if (error.response && error.response.status === 401) {
                     ElMessage({
                       message: '所有详细图片已被删除',
                       type: 'warning'
                     });
                   } else {
-                    // 如果删除成功，可根据需求处理成功逻辑
+                    // 处理其他非401错误
                     ElMessage({
-                      message: '详细图片已成功删除',
-                      type: 'success'
+                      message: '删除详细图片时发生错误',
+                      type: 'error'
                     });
                   }
                 }
-              } catch (error) {
-                // 针对 401 错误进行处理
-                if (error.response && error.response.status === 401) {
-                  ElMessage({
-                    message: '所有详细图片已被删除',
-                    type: 'warning'
-                  });
-                } else {
-                  // 处理其他非401错误
-                  ElMessage({
-                    message: '删除详细图片时发生错误',
-                    type: 'error'
-                  });
-                }
+                // 清空 deletedDefectImages 数组
+                deletedDefectImages.value = [];
+                //更新瑕疵图文描述
+                await updateDefectDescription();
+              } else {
+                ElMessage({
+                  message: '更新商品信息失败?',
+                  type: 'error'
+                });
               }
-              // 清空 deletedDefectImages 数组
-              deletedDefectImages.value = [];
-              //更新瑕疵图文描述
-              await updateDefectDescription();
-            } else {
+            } catch (error) {
+              console.error('更新商品信息失败:', error.response ? error.response.data : error.message);
               ElMessage({
-                message: '更新商品信息失败?',
+                message: '更新商品信息失败',
                 type: 'error'
               });
             }
-          } catch (error) {
-            console.error('更新商品信息失败:', error.response ? error.response.data : error.message);
+          } else {
             ElMessage({
-              message: '更新商品信息失败',
-              type: 'error'
+              message: '请填写正确',
+              type: 'warning'
             });
           }
-        } else {
-          ElMessage({
-            message: '请填写正确',
-            type: 'warning'
-          });
-        }
+        });
+      };
+      //翻页
+      const currentPageData = computed(() => {
+        const start = (currentPage.value - 1) * pageSize;
+        const end = Math.min(start + pageSize, totalProducts.value);
+        return PLYProducts.value.slice(start, end);
+        //return products.value.slice(start, end);
       });
-    };
-    //翻页
-    const currentPageData = computed(() => {
-      const start = (currentPage.value - 1) * pageSize;
-      const end = Math.min(start + pageSize, totalProducts.value);
-      return PLYProducts.value.slice(start, end);
-      //return products.value.slice(start, end);
-    });
-    const handlePageChange = (page) => {
-      currentPage.value = page;
-    };
-    //删除单个商品
-    const handleDelete = async (row) => {
-      if (row.isOnSale) {
-        ElMessage({
-          message: '该商品已经出售，无法删除',
-          type: 'warning'
-        });
-        return;
-      }
-
-      try {
-        await ElMessageBox.confirm('此操作将永久删除该商品, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        });
-
-        const storeId = localStorage.getItem('userId');;
-        const productId = row.id;
-
-        const response = await axiosInstance.delete('/StoreViewProduct/deleteProducts', {
-          params: {
-            storeId: storeId
-          },
-          data: [productId]
-        });
-
-        if (response.status === 200) {
-          // 删除本地商品列表中的商品
-          const index = products.value.indexOf(row);
-          if (index !== -1) {
-            products.value.splice(index, 1); // 删除指定索引的数据
-            handlePageChange(currentPage.value);
-            if (currentPage.value > 1 && currentPageData.value.length === 0) {
-              currentPage.value--;
-            }
-          }
+      const handlePageChange = (page) => {
+        currentPage.value = page;
+      };
+      //删除单个商品
+      const handleDelete = async (row) => {
+        if (row.isOnSale) {
           ElMessage({
-            message: '商品已删除',
-            type: 'success'
-          });
-        } else {
-          ElMessage({
-            message: '删除商品失败',
-            type: 'error'
-          });
-        }
-      } catch (error) {
-        if (error !== 'cancel') {
-          // console.error('删除商品失败:', error.response ? error.response.data : error.message);
-          ElMessage({
-            message: '删除商品失败: ' + error.message,
-            type: 'error'
-          });
-        }
-      }
-    };
-    //删除多个商品
-    const handleSelectionChange = (selection) => {
-      selectedProducts.value = selection;
-    };
-    const confirmBatchDelete = () => {
-      if (selectedProducts.value.length > 0) {
-        const notAllowedToDelete = selectedProducts.value.some(product => product.isOnSale);
-        if (notAllowedToDelete) {
-          ElMessage({
-            message: '所选商品中包含已经出售的商品，无法删除',
+            message: '该商品已经出售，无法删除',
             type: 'warning'
           });
-        } else {
-          confirmDialogVisible.value = true;
+          return;
         }
-      } else {
-        ElMessage({
-          message: '请选择要删除的商品',
-          type: 'warning'
-        });
-      }
-    };
-    const deleteSelectedCommodities = async () => {
-      if (selectedProducts.value.length > 0) {
-        try {
-          const storeId = localStorage.getItem('userId');
-          const productIds = selectedProducts.value.map(product => product.id);
 
-          // 发送请求到后端批量删除商品
+        try {
+          await ElMessageBox.confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          });
+
+          const storeId = localStorage.getItem('userId');
+          ;
+          const productId = row.id;
+
           const response = await axiosInstance.delete('/StoreViewProduct/deleteProducts', {
             params: {
               storeId: storeId
             },
-            data: productIds // 传递请求体
+            data: [productId]
           });
 
           if (response.status === 200) {
-            // 从本地商品列表中删除选中的商品
-            products.value = products.value.filter(product => !selectedProducts.value.includes(product));
-            selectedProducts.value = [];
-            confirmDialogVisible.value = false;
-
+            // 删除本地商品列表中的商品
+            const index = products.value.indexOf(row);
+            if (index !== -1) {
+              products.value.splice(index, 1); // 删除指定索引的数据
+              handlePageChange(currentPage.value);
+              if (currentPage.value > 1 && currentPageData.value.length === 0) {
+                currentPage.value--;
+              }
+            }
             ElMessage({
-              message: '选中的商品已删除',
+              message: '商品已删除',
               type: 'success'
             });
           } else {
@@ -1125,257 +1261,331 @@ export default {
             });
           }
         } catch (error) {
-          console.error('删除商品失败:', error.response ? error.response.data : error.message);
+          if (error !== 'cancel') {
+            // console.error('删除商品失败:', error.response ? error.response.data : error.message);
+            ElMessage({
+              message: '删除商品失败: ' + error.message,
+              type: 'error'
+            });
+          }
+        }
+      };
+      //删除多个商品
+      const handleSelectionChange = (selection) => {
+        selectedProducts.value = selection;
+      };
+      const confirmBatchDelete = () => {
+        if (selectedProducts.value.length > 0) {
+          const notAllowedToDelete = selectedProducts.value.some(product => product.isOnSale);
+          if (notAllowedToDelete) {
+            ElMessage({
+              message: '所选商品中包含已经出售的商品，无法删除',
+              type: 'warning'
+            });
+          } else {
+            confirmDialogVisible.value = true;
+          }
+        } else {
           ElMessage({
-            message: '删除商品失败: ' + error.message,
-            type: 'error'
+            message: '请选择要删除的商品',
+            type: 'warning'
           });
         }
-      } else {
-        ElMessage({
-          message: '请选择要删除的商品',
-          type: 'warning'
-        });
-      }
-    };
-    //添加商品
-    const newProduct = ref({
-      name: '',
-      categorySys: '',
-      categoryInit: '',
-      price: null,
-      description: '',
-      images: [],
-      imagesWithText: [],
-      Tag: ''
-    });
-    // 定义用于瑕疵图文描述的变量
-    const newImageText = ref('');
-    const newImageFile = ref(null);
-    // 定义用于预览的URL
-    const previewImageURL = ref('');
-    const previewDefectImageURL = ref('');
-    //打开添加商品的窗口
-    const showAddDialog = () => {
-      newProduct.value = {
+      };
+      const deleteSelectedCommodities = async () => {
+        if (selectedProducts.value.length > 0) {
+          try {
+            const storeId = localStorage.getItem('userId');
+            const productIds = selectedProducts.value.map(product => product.id);
+
+            // 发送请求到后端批量删除商品
+            const response = await axiosInstance.delete('/StoreViewProduct/deleteProducts', {
+              params: {
+                storeId: storeId
+              },
+              data: productIds // 传递请求体
+            });
+
+            if (response.status === 200) {
+              // 从本地商品列表中删除选中的商品
+              products.value = products.value.filter(product => !selectedProducts.value.includes(product));
+              selectedProducts.value = [];
+              confirmDialogVisible.value = false;
+
+              ElMessage({
+                message: '选中的商品已删除',
+                type: 'success'
+              });
+            } else {
+              ElMessage({
+                message: '删除商品失败',
+                type: 'error'
+              });
+            }
+          } catch (error) {
+            console.error('删除商品失败:', error.response ? error.response.data : error.message);
+            ElMessage({
+              message: '删除商品失败: ' + error.message,
+              type: 'error'
+            });
+          }
+        } else {
+          ElMessage({
+            message: '请选择要删除的商品',
+            type: 'warning'
+          });
+        }
+      };
+      //添加商品
+      const newProduct = ref({
         name: '',
         categorySys: '',
         categoryInit: '',
         price: null,
         description: '',
-        images: [], // 存储多个商品图片
+        images: [],
         imagesWithText: [],
         Tag: ''
+      });
+      // 定义用于瑕疵图文描述的变量
+      const newImageText = ref('');
+      const newImageFile = ref(null);
+      // 定义用于预览的URL
+      const previewImageURL = ref('');
+      const previewDefectImageURL = ref('');
+      //打开添加商品的窗口
+      const showAddDialog = () => {
+        newProduct.value = {
+          name: '',
+          categorySys: '',
+          categoryInit: '',
+          price: null,
+          description: '',
+          images: [], // 存储多个商品图片
+          imagesWithText: [],
+          Tag: ''
+        };
+        previewImageURL.value = '';
+        previewDefectImageURL.value = '';
+        addDialogVisible.value = true;
       };
-      previewImageURL.value = '';
-      previewDefectImageURL.value = '';
-      addDialogVisible.value = true;
-    };
-    //处理商品图片的添加
-    const onFileChange = (event) => {
-      const files = event.target.files;
-      if (files.length > 0) {
-        const fileArray = Array.from(files);
-        // 将新选择的文件追加到现有的 images 数组中
-        newProduct.value.images = [...newProduct.value.images, ...fileArray];
-      } else {
-        console.log('没有选择文件');
-      }
-    };
-  
-    //处理前端图片的展示
-    const generateImageURL = (file) => {
-      return URL.createObjectURL(file);
-    };
-    //处理瑕疵图文的添加
-    const addImageWithText = () => {
-      if (newImageFile.value && newImageText.value.trim() !== '') {
-        // 直接使用 File 对象存储到 imagesWithText 数组中
-        newProduct.value.imagesWithText.push({ image: newImageFile.value, text: newImageText.value.trim() });
-        newImageFile.value = null; // 清空图片文件
-        newImageText.value = ''; // 清空文字描述
-        // 清空文件输入框的值
-        const fileInput = document.getElementById('defect-image-input');
-        if (fileInput) {
-          fileInput.value = '';
+      //处理商品图片的添加
+      const onFileChange = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+          const fileArray = Array.from(files);
+          // 将新选择的文件追加到现有的 images 数组中
+          newProduct.value.images = [...newProduct.value.images, ...fileArray];
+        } else {
+          console.log('没有选择文件');
         }
-      } else {
-        ElMessage.warning('请先选择详细图片并输入描述');
-      }
-    };
-    //给后端传大分类名称Tag
-    const updateTag = (selectedSubCategoryId) => {
-      // 查找选中的系统分类对应的大标题名字
-      const selectedCategory = categories.find(group =>
-        group.subCategories.some(item => item.subCategoryId === selectedSubCategoryId)
-      );
+      };
 
-      // 更新 Tag 字段
-      newProduct.value.Tag = selectedCategory ? selectedCategory.largeCategoryName : '';
-    };
-    //添加商品总接口
-    const addNewProduct = async () => {
-      // 先验证表单
-      if (form.value) {
-        form.value.validate(async (valid) => {
-          if (valid) {
-            const formData = new FormData();
-            const storeId = localStorage.getItem('userId');
-            if (!storeId) {
-              ElMessage.error('未找到有效的 storeId');
-              return;
-            }
-            formData.append('storeId', storeId || ''); // 添加 storeId
-            formData.append('ProductName', newProduct.value.name || '');
-            formData.append('ProductPrice', newProduct.value.price || '');
-            formData.append('Tag', newProduct.value.Tag || ''); // 添加 Tag
-            formData.append('SubTag', newProduct.value.categorySys || '');
-            formData.append('Description', newProduct.value.description || '');
-            formData.append('StoreTag', newProduct.value.categoryInit || '');
-
-            // // 上传商品图片文件
-            //newProduct.value.images.forEach((file, index) => {
-            //   formData.append("ProductImages", file); // 确保是 File 对象
-            // });
-
-            // // 上传瑕疵图片和描述
-            // newProduct.value.imagesWithText.forEach((item, index) => {
-            //   formData.append(`PicDes[${index}].DetailPic`, item.image); // 确保 item.image 是 File 对象
-            //   formData.append(`PicDes[${index}].Description`, item.text);
-            // });
-
-            const newProductData = {
-              ProductName: newProduct.value.name || '',
-              ProductPrice: newProduct.value.price || '',
-              Tag: newProduct.value.Tag || '',
-              SubTag: newProduct.value.categorySys || '',
-              Description: newProduct.value.description || '',
-              StoreTag: newProduct.value.categoryInit || '',
-              Quantity: 1,
-            };
-
-            try {
-              const token = localStorage.getItem('token');
-              console.log(newProductData.Tag);
-              console.log(newProductData.SubTag);
-              const response = await axiosInstance.post(`/productController/addNewProduct`, {
-                "productName": newProductData.ProductName,
-                "productPrice": newProductData.ProductPrice,
-                "tag": newProductData.Tag,
-                "subTag": newProductData.SubTag,
-                "description": newProductData.Description,
-                "storeTag": newProductData.StoreTag,
-                "quantity": newProductData.Quantity
-              }, {
-                headers: {
-                  Authorization: `${token}`
-                }
-              });
-
-              if (response.status === 200) {
-                fetchProducts();
-                ElMessage.success('商品已添加');
-                newProduct.value = {
-                  name: '',
-                  categorySys: '',
-                  categoryInit: '',
-                  price: null,
-                  description: '',
-                  images: [],
-                  imagesWithText: [],
-                  Tag: ''
-                };
-                previewImageURL.value = '';
-                previewDefectImageURL.value = '';
-                addDialogVisible.value = false;
-              } else {
-                ElMessage.error('添加商品失败');
-              }
-            } catch (error) {
-              console.error('添加商品失败:', error.response ? error.response.data : error.message);
-              ElMessage.error('添加商品失败: ' + error.message);
-            }
-          } else {
-            ElMessage.error('请完善表单内容');
+      //处理前端图片的展示
+      const generateImageURL = (file) => {
+        return URL.createObjectURL(file);
+      };
+      //处理瑕疵图文的添加
+      const addImageWithText = () => {
+        if (newImageFile.value && newImageText.value.trim() !== '') {
+          // 直接使用 File 对象存储到 imagesWithText 数组中
+          newProduct.value.imagesWithText.push({image: newImageFile.value, text: newImageText.value.trim()});
+          newImageFile.value = null; // 清空图片文件
+          newImageText.value = ''; // 清空文字描述
+          // 清空文件输入框的值
+          const fileInput = document.getElementById('defect-image-input');
+          if (fileInput) {
+            fileInput.value = '';
           }
-        });
-      } else {
-        ElMessage.error('未找到表单引用');
-      }
-    }
+        } else {
+          ElMessage.warning('请先选择详细图片并输入描述');
+        }
+      };
+      //给后端传大分类名称Tag
+      const updateTag = (selectedSubCategoryId) => {
+        // 查找选中的系统分类对应的大标题名字
+        const selectedCategory = categories.find(group =>
+            group.subCategories.some(item => item.subCategoryId === selectedSubCategoryId)
+        );
 
-    return {
-      value,
-      products,
-      PLYProducts,
-      dialogVisible,
-      dialogVisibleTwo,
-      currentProduct,
-      totalProducts,
-      currentPageData,
-      pageSize,
-      preProduct,
-      newProduct,
-      newImageText,
-      addDialogVisible,
-      confirmDialogVisible,
-      selectedProducts,
-      PLYshow,
-      handleCheck,
-      handleDelete,
-      handlePageChange,
-      handleEdit,
-      onsubmit,
-      showAddDialog,
-      addNewProduct,
-      handleSelectionChange,
-      confirmBatchDelete,
-      deleteSelectedCommodities,
-      rules,
-      form,
-      editForm,
-      searchName,
-      searchcategoryInit,
-      fetchProducts,
-      viewType,
-      handleChange,
-      filterProducts,
-      filterProductsTag,
-      onFileChange,
-      addImageWithText,
-      handleFileChange,
-      removeImage,
-      handleFile,
-      removeSelectedImage,
-      selectedImages,
-      handleCancel,
-      deletedImages,
-      handleDefectFile,
-      removeSelectedDefectImage,
-      submitDefectUpload,
-      removeDefectImage,
-      selectedDefectImages,
-      deletedDefectImages,
-      categories,
-      message01,
-      updateTag,
-      updateTagT,
-      generateImageURL,
-      limitInputLength,
-      currentPage,
-      totalProducts,
-      uploadImagesDialogVisible,
-      uploadIDDialogVisible,
-      currentProductImages,
-      selectedFiles,
-      handleUploadImages,
-      submitUpload,
-      fetchPDs,
-      currentIDImages,
-      handleUploadIDImages,
-    };
+        // 更新 Tag 字段
+        newProduct.value.Tag = selectedCategory ? selectedCategory.largeCategoryName : '';
+      };
+      //添加商品总接口
+      const addNewProduct = async () => {
+        // 先验证表单
+        if (form.value) {
+          form.value.validate(async (valid) => {
+            if (valid) {
+              const formData = new FormData();
+              const storeId = localStorage.getItem('userId');
+              if (!storeId) {
+                ElMessage.error('未找到有效的 storeId');
+                return;
+              }
+              formData.append('storeId', storeId || ''); // 添加 storeId
+              formData.append('ProductName', newProduct.value.name || '');
+              formData.append('ProductPrice', newProduct.value.price || '');
+              formData.append('Tag', newProduct.value.Tag || ''); // 添加 Tag
+              formData.append('SubTag', newProduct.value.categorySys || '');
+              formData.append('Description', newProduct.value.description || '');
+              formData.append('StoreTag', newProduct.value.categoryInit || '');
+
+              // // 上传商品图片文件
+              //newProduct.value.images.forEach((file, index) => {
+              //   formData.append("ProductImages", file); // 确保是 File 对象
+              // });
+
+              // // 上传瑕疵图片和描述
+              // newProduct.value.imagesWithText.forEach((item, index) => {
+              //   formData.append(`PicDes[${index}].DetailPic`, item.image); // 确保 item.image 是 File 对象
+              //   formData.append(`PicDes[${index}].Description`, item.text);
+              // });
+
+              const newProductData = {
+                ProductName: newProduct.value.name || '',
+                ProductPrice: newProduct.value.price || '',
+                Tag: newProduct.value.Tag || '',
+                SubTag: newProduct.value.categorySys || '',
+                Description: newProduct.value.description || '',
+                StoreTag: newProduct.value.categoryInit || '',
+                Quantity: 1,
+              };
+
+              try {
+                const token = localStorage.getItem('token');
+                console.log(newProductData.Tag);
+                console.log(newProductData.SubTag);
+                const response = await axiosInstance.post(`/productController/addNewProduct`, {
+                  "productName": newProductData.ProductName,
+                  "productPrice": newProductData.ProductPrice,
+                  "tag": newProductData.Tag,
+                  "subTag": newProductData.SubTag,
+                  "description": newProductData.Description,
+                  "storeTag": newProductData.StoreTag,
+                  "quantity": newProductData.Quantity
+                }, {
+                  headers: {
+                    Authorization: `${token}`
+                  }
+                });
+
+                if (response.status === 200) {
+                  fetchProducts();
+                  ElMessage.success('商品已添加');
+                  newProduct.value = {
+                    name: '',
+                    categorySys: '',
+                    categoryInit: '',
+                    price: null,
+                    description: '',
+                    images: [],
+                    imagesWithText: [],
+                    Tag: ''
+                  };
+                  previewImageURL.value = '';
+                  previewDefectImageURL.value = '';
+                  addDialogVisible.value = false;
+                } else {
+                  ElMessage.error('添加商品失败');
+                }
+              } catch (error) {
+                console.error('添加商品失败:', error.response ? error.response.data : error.message);
+                ElMessage.error('添加商品失败: ' + error.message);
+              }
+            } else {
+              ElMessage.error('请完善表单内容');
+            }
+          });
+        } else {
+          ElMessage.error('未找到表单引用');
+        }
+      }
+
+      return {
+        value,
+        products,
+        PLYProducts,
+        dialogVisible,
+        dialogVisibleTwo,
+        currentProduct,
+        currentPageData,
+        pageSize,
+        preProduct,
+        newProduct,
+        newImageText,
+        addDialogVisible,
+        confirmDialogVisible,
+        selectedProducts,
+        PLYshow,
+        handleCheck,
+        handleDelete,
+        handlePageChange,
+        handleEdit,
+        onsubmit,
+        showAddDialog,
+        addNewProduct,
+        handleSelectionChange,
+        confirmBatchDelete,
+        deleteSelectedCommodities,
+        rules,
+        form,
+        editForm,
+        searchName,
+        searchcategoryInit,
+        fetchProducts,
+        viewType,
+        handleChange,
+        filterProducts,
+        filterProductsTag,
+        onFileChange,
+        addImageWithText,
+        handleFileChange,
+        removeImage,
+        handleFile,
+        removeSelectedImage,
+        selectedImages,
+        handleCancel,
+        deletedImages,
+        handleDefectFile,
+        removeSelectedDefectImage,
+        submitDefectUpload,
+        removeDefectImage,
+        selectedDefectImages,
+        deletedDefectImages,
+        categories,
+        message01,
+        updateTag,
+        updateTagT,
+        generateImageURL,
+        limitInputLength,
+        currentPage,
+        totalProducts,
+        uploadImagesDialogVisible,
+        uploadIDDialogVisible,
+        currentProductImages,
+        selectedFiles,
+        handleUploadImages,
+        submitUpload,
+        fetchPDs,
+        currentIDImages,
+        handleUploadIDImages,
+        setOneYuan,
+        oneYuanVisible,
+        oneYuanMin,
+        oneYuanStart,
+        oneYuanEnd,
+        cancelOneYuan,
+        confirmOneYuan,
+        currentOneYuan,
+        myOneYuan,
+        getOneYuan,
+        FKYshow,
+        FKY,
+        handleWinner
+      };
+    }
   }
-}
 </script>
 
 <style scoped>
@@ -1416,6 +1626,17 @@ export default {
   position: fixed;
   top: 7vh;
   left: 480px;
+  right: 0;
+  bottom: 0;
+  width: 150px;
+  height: 3vh;
+  border-radius: 20px;
+}
+
+#Button4 {
+  position: fixed;
+  top: 7vh;
+  left: 640px;
   right: 0;
   bottom: 0;
   width: 150px;

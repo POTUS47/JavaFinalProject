@@ -143,6 +143,21 @@ const router = createRouter({
       component: () => import('../views/ProductDetail.vue')
     },
     {
+      path: '/oneYuanDetail',
+      name: 'oneYuanDetail',
+      component:  () => import('../views/OneYuanDetail.vue')
+    },
+    {
+      path: '/oneYuanPay',
+      name: 'oneYuanPay',
+      component:  () => import('../views/OneYuanPay.vue')
+    },
+    {
+      path: '/oneYuan',
+      name: 'oneYuan',
+      component:  () => import('../views/OneYuan.vue')
+    },
+    {
       path: '/pay',
       name: 'Pay',
       component: () => import('../views/PayView.vue')

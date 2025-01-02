@@ -160,5 +160,12 @@ public class AfterSellController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    //管理员调取所有申诉记录
+    @GetMapping("/getAllComplain")
+    public ResponseEntity<Result<List<AfterSellDTOs.ComDTO>>> getAllComplain(Authentication authentication) {
+        Result<List<AfterSellDTOs.ComDTO>> response=complainService.getAllComplain();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 }
 

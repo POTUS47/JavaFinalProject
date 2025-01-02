@@ -183,6 +183,7 @@ export default {
       reason: '',
       itemId: null
     })
+    const viewTypeValue=ref(1)
 
     //展示订单状态展示订单
     const fetchOrders = async () => {
@@ -207,11 +208,6 @@ export default {
                 // }
 
                 let orderStatusText = order.orderStatus;
-                if (order.orderStatus === '待处理') {
-                  orderStatusText = '待发货';
-                } else if (order.orderStatus === '待付款') {
-                  return null;
-                }
 
                 return {
                   id: order.orderId || 'N/A',
@@ -244,7 +240,21 @@ export default {
               .filter(order => order !== null);
 
           console.log('Processed Orders:', processedOrders);
-          products.value = processedOrders;
+
+          // products.value = processedOrders;
+          if (orderStatus.value === 2) {
+            products.value = processedOrders.filter(order => order.orderStatus === '处理中');
+          } else if (orderStatus.value === 3) {
+            products.value = processedOrders.filter(order => order.orderStatus === '运输中');
+          } else if (orderStatus.value === 4) {
+            products.value = processedOrders.filter(order => order.orderStatus === '已完成');
+          } else {
+            // 默认情况，显示所有订单
+            products.value = processedOrders;
+          }
+          console.log('status', orderStatus.value);
+          console.log('结果', products);
+
         } else {
           console.error('Unexpected response format:', response.data);
         }
@@ -254,6 +264,7 @@ export default {
     };
 
     const handleChange = (viewTypeValue) => {
+      console.log("切换",viewTypeValue);
       orderStatus.value = viewTypeValue;
       fetchOrders();
     };
@@ -552,7 +563,8 @@ export default {
       searchOrderByTime,
       updateDeliveryNumber,
       showArbitrateDialog,
-      arbitrate
+      arbitrate,
+
     };
   }
 };

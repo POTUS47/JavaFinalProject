@@ -185,6 +185,67 @@ public class AfterSellDTOs {
         }
     }
 
+    public static class ComDTO{
+        private String itemId;
+        private String buyerReason;
+        private String sellerReason;
+        private LocalDateTime complainDate;
+        private String adminId;
+        private String complainStatus;
+        private boolean isComplainSuccess;
+        private String resultReason;
+
+        public String getItemId() {
+            return itemId;
+        }
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
+        }
+        public String getBuyerReason() {
+            return buyerReason;
+        }
+        public void setBuyerReason(String buyerReason) {
+            this.buyerReason = buyerReason;
+        }
+        public String getSellerReason() {
+            return sellerReason;
+        }
+        public void setSellerReason(String sellerReason) {
+            this.sellerReason = sellerReason;
+        }
+        public LocalDateTime getComplainDate() {
+            return complainDate;
+        }
+        public void setComplainDate(LocalDateTime complainDate) {
+            this.complainDate = complainDate;
+        }
+        public String getAdminId() {
+            return adminId;
+        }
+        public void setAdminId(String adminId) {
+            this.adminId = adminId;
+        }
+        public String getComplainStatus() {
+            return complainStatus;
+        }
+        public void setComplainStatus(String complainStatus) {
+            this.complainStatus = complainStatus;
+        }
+        public boolean isComplainSuccess() {
+            return isComplainSuccess;
+        }
+        public void setComplainSuccess(boolean complainSuccess) {
+            isComplainSuccess = complainSuccess;
+        }
+        public String getResultReason() {
+            return resultReason;
+        }
+        public void setResultReason(String resultReason) {
+            this.resultReason = resultReason;
+        }
+
+    }
+
 
 
 }

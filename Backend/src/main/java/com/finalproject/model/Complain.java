@@ -20,7 +20,7 @@ public class Complain implements Serializable {
     private String sellerReason;
 
     @Column(name = "is_complain_success")
-    private Boolean isComplainSuccess;
+    private Boolean isComplainSuccess=false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "complain_status")

@@ -350,7 +350,6 @@ public class ShoppingController {
 
         String userId = authentication.getName();
         Result<?> response = oneYuanService.createOneYuanRecord(recordDTO, productId, userId);
-
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -378,5 +377,24 @@ public class ShoppingController {
         Result<?> response = oneYuanService.drawWinner(recordId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    // 所有一元购
+    @GetMapping("/all-one-yuan")
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllProperRecords() {
+        Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getAllRecords();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 卖家查看自己店铺的一元购记录
+    @GetMapping("/store-records")
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getStoreOneYuanRecords(
+            Authentication authentication) {
+        // 从认证信息中获取商家ID
+        String storeId = (String) authentication.getPrincipal();
+        Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getStoreOneYuanRecords(storeId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+
 
 }

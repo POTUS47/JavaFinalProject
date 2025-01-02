@@ -8,9 +8,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ComplainService {
@@ -72,4 +70,21 @@ public class ComplainService {
     }
 
 
+    public Result<List<AfterSellDTOs.ComDTO>> getAllComplain() {
+        List<AfterSellDTOs.ComDTO> response = new ArrayList<>();
+        List<Complain> complainList = complainRepository.findAll();
+        for (Complain complain : complainList) {
+            AfterSellDTOs.ComDTO comDTO = new AfterSellDTOs.ComDTO();
+            comDTO.setItemId(complain.getItemId());
+            comDTO.setComplainStatus(complain.getComplainStatus().toString());
+            comDTO.setComplainDate(complain.getComplainTime());
+            comDTO.setComplainSuccess(complain.getIsComplainSuccess());
+            comDTO.setBuyerReason(complain.getBuyerReason());
+            comDTO.setSellerReason(complain.getSellerReason());
+            comDTO.setResultReason(complain.getResultReason());
+            comDTO.setAdminId(complain.getHandlerId());
+            response.add(comDTO);
+        }
+        return Result.success(response);
+    }
 }

@@ -1,6 +1,6 @@
 <!-- 卖家用户的订单中心页面 -->
 <script setup lang="ts">
-import { ref ,computed} from 'vue';
+import { ref ,computed,reactive} from 'vue';
 import { ElMenu,ElButton, ElInput,ElRate,ElMessage} from 'element-plus';
 import 'element-plus/dist/index.css';
 import Navbar from '../components/Navbar.vue';
@@ -55,10 +55,15 @@ const filteredOrders = computed(() => {
     5: '已完成',
     6: '售后中',
     7: '售后结束',
+    8: '一元购'
   };
-  return myOrders.value.filter(order => order.status === statusMapping[option.value]);
+  if(option.value!=8) {
+  return myOrders.value.filter(order => order.status === statusMapping[option.value]);}
+  else{
+    return myOneYuanOrders.value;}
 });
 const myOrders = ref<Order[]>([])
+
 //   const getMyOrder = async () => {
 //   axiosInstance.get('/shopping/order/get-all-buyer-orders', {
 //       })
@@ -142,6 +147,38 @@ const getOrders = async () => {
   }
 }
 getOrders();
+const myOneYuanOrders = ref([]);
+const getOneYuanOrders = async () => {
+  try {
+    const response = await axiosInstance.get('/shopping/participated-records')
+    // 存储原始一元购记录的数组
+    const originalProducts = response.data.data;
+    // console.log("一元购商品详情", originalProducts);
+    // 遍历一元购记录，获取每个商品的详细信息
+    for (const product of originalProducts) {
+      try {
+        // 根据商品ID获取详细信息
+        const orderResponse = await axiosInstance.get(`/productController/product/${product.productId}`);
+
+        // 合并两次返回的数据
+        const combinedOrderInfo = {
+          ...product, // 原始记录的信息
+          ...orderResponse.data, // 详细订单信息
+        };
+        // 将详细信息放入 myOneYuanOrders
+        myOneYuanOrders.value.push(combinedOrderInfo);
+        console.log("一元购商品详情", myOneYuanOrders);
+      } catch (productError) {
+        console.error(`获取商品 ${product.productId} 详情失败`, productError);
+      }
+    }
+  } catch (error) {
+    console.error('获取一元购订单失败:', error)
+    isNoData.value=true;
+    isLoading.value=false;
+  }
+}
+getOneYuanOrders();
 // const isStarred = async (order: Order) => {
 //   axiosInstance.get('/Shopping/CheckOrderRemark', {
 //         params: {
@@ -341,6 +378,7 @@ const menuItems = ref([
   { index: 5, title: '已完成' },
   { index: 6, title: '售后中' },
   { index: 7, title: '售后结束' },
+  { index: 8, title: '一元购' }
 ]);
 const menuChange = (index) => {
   activeIndex.value = index.toString();
@@ -388,11 +426,12 @@ const menuChange = (index) => {
           <span v-if="option === 5" style="font-size: 2vh; color: #333;">已完成</span>
           <span v-if="option === 6" style="font-size: 2vh; color: #333;">售后中</span>
           <span v-if="option === 7" style="font-size: 2vh; color: #333;">售后结束</span>
+          <span v-if="option === 8" style="font-size: 2vh; color: #333;">一元购</span>
         </div>
       </el-header>
       <Loading v-if="isLoading" />
       <div v-else-if="isNoData">暂无订单</div>
-      <el-table  v-else :data="filteredOrders" style="width: 100%">
+      <el-table  v-else-if="option!=8" :data="filteredOrders" style="width: 100%">
         <el-table-column label="商品信息">
           <template v-slot="scope">
             <div class="order-header">
@@ -457,7 +496,40 @@ const menuChange = (index) => {
         <!--    </template>-->
         <!--  </el-table-column>-->
       </el-table>
+
+<!--      一元购-->
+      <el-table  v-else :data="myOneYuanOrders" style="width: 100%">
+        <el-table-column label="商品信息">
+          <template v-slot="scope">
+            <div class="order-header">
+              <p>记录: {{ scope.row.recordId }}</p>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <div   style="display: flex; margin-bottom: 10px;">
+                <div style="margin-left: 10px;">
+                  <p>{{  scope.row.productName }}</p>
+                  <p>价格: {{  scope.row.productPrice }}</p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+<!--        <el-table-column prop="store" label="店铺" width="160"></el-table-column>-->
+        <el-table-column  prop="province" label="结果" width="160">
+          <template v-slot="scope">
+           <div v-if="scope.row.result!=null">
+             {{scope.row.result}}
+           </div>
+            <div v-else>结果未出</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="endTime" label="结束时间" width="160"></el-table-column>
+        <el-table-column prop="minParticipants" label="最小参与者" width="160"></el-table-column>
+        <el-table-column prop="currentParticipants" label="当前参与者" width="160"></el-table-column>
+      </el-table>
     </el-container>
+
+
     <div v-if="currentRow_star!=null">
       <el-dialog
           customClass="custom-dialog"
@@ -476,25 +548,6 @@ const menuChange = (index) => {
         <el-button type="primary" @click="confirmStar(currentRow_star)">确定</el-button>
       </el-dialog>
     </div>
-    <!--    <div v-if="currentRow_cancel!=null">-->
-    <!--    <el-dialog-->
-    <!--      customClass="custom-dialog"-->
-    <!--      :draggable="true"-->
-    <!--      :modalAppendToBody="false" -->
-    <!--      :modal="false"-->
-    <!--       v-model="currentRow_cancel.dialogVisible_order" title="取消订单原因" width="460px" @close="resetForm(currentRow_cancel)">-->
-    <!--     <el-select v-model="returnProduct" placeholder="请选择原因">-->
-    <!--        <el-option label="买错了" value="买错了"></el-option>-->
-    <!--        <el-option label="不想要了" value="不想要了"></el-option>-->
-    <!--        <el-option label="其他" value="其他"></el-option>-->
-    <!--      </el-select>-->
-    <!--      <div style="margin-top: 10px;"></div>-->
-    <!--      <el-input v-if="returnProduct === '其他' "v-model="returnProduct_else" placeholder="请输入原因"></el-input>-->
-    <!--      <el-divider></el-divider>-->
-    <!--      <div slot="footer" class="dialog-footer">-->
-    <!--    <el-button type="primary" @click="admitOrder(currentRow_cancel)">确 定</el-button>-->
-    <!--    </div>-->
-    <!--      </el-dialog>-->
     <div v-if="currentRow_return!=null">
       <el-dialog
           customClass="custom-dialog"
