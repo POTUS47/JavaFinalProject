@@ -2,28 +2,34 @@ import torch
 
 from extract_feature import extract_description_feature, extract_image_feature
 from initialize_model import ModelManager
-from json_about import load_user_features, append_feature_to_json, rewrite_json
+from json_about import load_user_features, append_feature_to_json, rewrite_json, remove_feature_from_json
 
 
-def generate_product_vector(product_id, descriptions, image_path):
+def generate_product_vector(product_id, descriptions):
     # 获取单例的模型实例
     model_manager = ModelManager.get_instance()
-
-    # 调用模型生成特征向量
-    text_vector = extract_description_feature(descriptions,
-                                              model_manager.model,
-                                              model_manager.device)
-    text_vector = text_vector.mean(dim=0)  # 平均值
-
-    img_vector = extract_image_feature(image_path, model_manager.model, model_manager.preprocess, model_manager.device)
-
-    # 保存文字特征到JSON文件
-    append_feature_to_json("features/product_text_feature.json", product_id, text_vector)
-    # 保存图片特征到JSON文件
-    append_feature_to_json("features/product_img_feature.json", product_id, img_vector)
-
+    if descriptions is not None and len(descriptions) != 0:
+        # 调用模型生成特征向量
+        text_vector = extract_description_feature(descriptions,
+                                                  model_manager.model,
+                                                  model_manager.device)
+        text_vector = text_vector.mean(dim=0)  # 平均值
+        # 保存文字特征到JSON文件
+        append_feature_to_json("features/product_text_feature.json", product_id, text_vector)
     return True
 
+
+def generate_product_image_vector(product_id, image_path):
+    # 获取单例的模型实例
+    model_manager = ModelManager.get_instance()
+    if image_path is not None:
+        img_vector = extract_image_feature(image_path, model_manager.model, model_manager.preprocess,
+                                           model_manager.device)
+        # 保存图片特征到JSON文件
+        append_feature_to_json("features/product_img_feature.json", product_id, img_vector)
+        return True
+
+    return False
 
 def update_user_features(user_id, strings, file_name="features/user_feature.json"):
     """更新用户特征向量"""
@@ -62,3 +68,13 @@ def generate_user_vector(strings):
     new_user_feature = description_vectors.mean(dim=0)
     # 合并所有特征并计算最终的用户特征向量
     return new_user_feature
+
+
+def update_product_vector(product_id, strings, file_name="features/product_feature.json"):
+    remove_feature_from_json(file_name, product_id)
+    generate_product_vector(product_id, strings)
+
+
+def update_product_image_vector(product_id, image_path, file_name="features/product_img_feature.json"):
+    remove_feature_from_json(file_name, product_id)
+    generate_product_image_vector(product_id, image_path)

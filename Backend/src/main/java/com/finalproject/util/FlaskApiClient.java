@@ -30,13 +30,13 @@ public class FlaskApiClient {
      * 调用 Flask 的 /generate_product_feature 接口
      */
     public boolean generateProductFeature(String productId, String description,
-                                          String name,String imagePath) {
+                                          String name) {
         String url = BASE_URL + "/generate_product_feature";
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("id", productId);
         requestBody.put("name", name);
         requestBody.put("description", description);
-        requestBody.put("imagePath", imagePath);
+        //requestBody.put("imagePath", imagePath);
 
         try {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
@@ -59,7 +59,7 @@ public class FlaskApiClient {
 
         try {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
-            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, request, List.class);
+            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.POST, request, List.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
             System.err.println("Error calling findSimilarProducts: " + e.getResponseBodyAsString());
@@ -97,13 +97,91 @@ public class FlaskApiClient {
 
         try {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
-            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, request, List.class);
+            ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.POST, request, List.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
             System.err.println("Error calling recommendForUser: " + e.getResponseBodyAsString());
             return Collections.emptyList();
         }
     }
+
+    // 更新商品特征向量
+    public void updateProductFeature(String productId, String productName, String productDescription) {
+        String url = BASE_URL + "/update_product_feature";
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", productId);
+        requestBody.put("name", productName);
+        requestBody.put("description", productDescription);
+
+        try {
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("商品特征向量保存成功！");
+            } else {
+                System.out.println("商品特征向量保存失败！");
+            }
+        } catch (Exception e) {
+            System.err.println("Error calling updateProductFeature: " + e.getMessage());
+        }
+    }
+
+    // 生成商品图片特征向量
+    public void generateProductImgFeature(String productId, String imagePath) {
+        String url = BASE_URL + "/generate_product_img_feature";
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", productId);
+        requestBody.put("imagePath", imagePath);
+
+        try {
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("商品图片特征向量保存成功！");
+            } else {
+                System.out.println("商品图片特征向量保存失败！");
+            }
+        } catch (Exception e) {
+            System.err.println("Error calling generateProductImgFeature: " + e.getMessage());
+        }
+    }
+
+    // 更新商品图片特征向量
+    public void updateProductImageFeature(String productId, String imagePath) {
+        String url = BASE_URL + "/update_product_feature";
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("id", productId);
+        requestBody.put("imagePath", imagePath);
+
+        try {
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("商品图片特征向量保存成功！");
+            } else {
+                System.out.println("商品图片特征向量保存失败！");
+            }
+        } catch (Exception e) {
+            System.err.println("Error calling updateProductImageFeature: " + e.getMessage());
+        }
+    }
+
+    // 测试接口
+    public void testAPI(String userId) {
+        String url = BASE_URL + "/test";
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("user_id", userId);
+        try {
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, getHeaders());
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("成功！！！！");
+            }
+        } catch (HttpClientErrorException e) {
+            System.err.println("失败了: " + e.getResponseBodyAsString());
+        }
+    }
+
 
     /**
      * 获取默认的 HTTP Headers

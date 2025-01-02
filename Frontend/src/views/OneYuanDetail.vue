@@ -81,12 +81,16 @@
           <div class="from2">{{ product.fromWhere }}</div>
         </div>
         <div class="baozhang">
-          <div class="baozhang1">保&nbsp障</div>
-          <div class="baozhang2">假一赔十&nbsp七天无理由退货 </div>
+          <div class="baozhang1">结束时间：</div>
+          <div class="baozhang2">{{ record.endTime}} </div>
         </div>
         <div class="baozhang">
-          <div class="baozhang1">数&nbsp量</div>
-          <div class="baozhang2">{{ product.quantity != 0 ? '有&nbsp货' : '无&nbsp货' }} </div>
+          <div class="baozhang1">最小参与：</div>
+          <div class="baozhang2">{{ record.minParticipants}} </div>
+        </div>
+        <div class="baozhang">
+          <div class="baozhang1">当前参与：</div>
+          <div class="baozhang2">{{ record.currentParticipants}} </div>
         </div>
 
         <div class="star_and_buy">
@@ -178,9 +182,31 @@ const displayProducts = reactive([]);
 const remarks = reactive([]);
 const isRemarksNull = ref(false);
 const message = ref('');
+const record=ref();
+
+const getRecord = async () => {
+  try {
+    const response = await axiosInstance.get(`/shopping/${recordId}`);
+    if (response.data.code === 200) {
+      record.value = response.data.data;
+    } else {
+      message.value = response.data.msg || '获取记录失败';
+    }
+  } catch (error) {
+    if (error.response) {
+      message.value = error.response.data.msg;
+    } else {
+      message.value = '获取记录失败';
+    }
+  }
+  console.log(message.value);
+};
+getRecord();
+
 onMounted(async () => {
   console.log(`当前登录用户id为${userId}`);
   console.log(`当前商品为${productId}`);
+  console.log(`当前一元为${recordId}`);
   //获取商品信息
   try {
     const response = await axiosInstance.post(`/productController/GetProductInfo`, null, {

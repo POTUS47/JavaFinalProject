@@ -40,8 +40,6 @@ public class ShoppingController {
 
     @Resource
     private OrderItemService orderItemService;
-    @Autowired
-    private ProductService productService;
 
     @Resource
     private OneYuanShoppingRecordService oneYuanService;
@@ -394,6 +392,13 @@ public class ShoppingController {
         // 从认证信息中获取商家ID
         String storeId = (String) authentication.getPrincipal();
         Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getStoreOneYuanRecords(storeId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 查询单个一元购记录
+    @GetMapping("/{recordId}")
+    public ResponseEntity<Result<OneYuanShoppingRecordDTO>> getRecordById(@PathVariable String recordId) {
+        Result<OneYuanShoppingRecordDTO> response = oneYuanService.getRecordById(recordId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
