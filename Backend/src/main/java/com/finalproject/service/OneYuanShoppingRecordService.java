@@ -365,4 +365,25 @@ public class OneYuanShoppingRecordService {
         dto.setProductId(record.getProductId());
         return dto;
     }
+
+    @Transactional
+    public Result<OneYuanShoppingRecordDTO> getRecordById(String recordId) {
+        try {
+            // 1. 查询记录是否存在
+            Optional<OneYuanShoppingRecord> recordOpt = oneYuanShoppingRecordRepository.findById(recordId);
+            if (recordOpt.isEmpty()) {
+                return Result.error(404, "未找到该一元购记录");
+            }
+
+            // 2. 转换为DTO
+            OneYuanShoppingRecord record = recordOpt.get();
+            OneYuanShoppingRecordDTO dto = convertToDTO(record);
+
+            return Result.success(dto);
+
+        } catch (Exception e) {
+            return Result.error(500, "获取一元购记录失败：" + e.getMessage());
+        }
+    }
+
 }

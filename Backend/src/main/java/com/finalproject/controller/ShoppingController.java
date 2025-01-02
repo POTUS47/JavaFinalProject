@@ -395,6 +395,13 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    // 查询单个一元购记录
+    @GetMapping("/{recordId}")
+    public ResponseEntity<Result<OneYuanShoppingRecordDTO>> getRecordById(@PathVariable String recordId) {
+        Result<OneYuanShoppingRecordDTO> response = oneYuanService.getRecordById(recordId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 
 
 }
