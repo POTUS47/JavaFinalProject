@@ -34,7 +34,7 @@
     <div class="Topbar">
       <span class="Website">
           <img src="@/assets/logo1.png" alt="Website" id="WebsiteIcon">
-          <span>瑕宝阁</span>
+          <span>创意购</span>
       </span>
       <ul>
           <li>

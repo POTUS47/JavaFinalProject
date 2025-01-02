@@ -2,7 +2,7 @@
 
     <swiper-slide>
       <div class="slide1">
-        <aside class="sidebar-category">
+<!--        <aside class="sidebar-category">-->
           <!-- <div>
             <img src="@/assets/mmy/arrow_left.svg"/>
            </div> -->
@@ -11,7 +11,7 @@
 <!--               @click="filter(subCategory, index)">-->
 <!--            {{ subCategory.subCategoryName }}-->
 <!--          </div>-->
-        </aside>
+<!--        </aside>-->
         <div class="display-container">
 <!--          <div class="container-block"-->
 <!--               v-show="AllCategories.length > 0 && AllCategories[currentSumCategory].subCategories[selectedCategory].subCategoryName === '全部' && AllCategories[currentSumCategory].largeCategoryName !== '其他'">-->
@@ -146,7 +146,7 @@ const filter = (subCategory, index) => {
 const displayProducts = reactive([]);
 const getProducts = async (Id) => {
   try {
-    const response = await axiosInstance.get('/shopping/all-one-yuan', {
+    const response = await axiosInstance.get('/shopping/proper-one-yuan', {
     });
     // 存储原始一元购记录的数组
     const originalProducts = response.data.data.filter(product => !product.saleOrNot);

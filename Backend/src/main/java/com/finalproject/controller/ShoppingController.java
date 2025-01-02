@@ -380,8 +380,15 @@ public class ShoppingController {
 
     // 所有一元购
     @GetMapping("/all-one-yuan")
-    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllProperRecords() {
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllRecords() {
         Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getAllRecords();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    // 当前有的一元购
+    @GetMapping("/proper-one-yuan")
+    public ResponseEntity<Result<List<OneYuanShoppingRecordDTO>>> getAllProperRecords() {
+        Result<List<OneYuanShoppingRecordDTO>> response = oneYuanService.getAllProperRecords();
         return ResponseEntity.status(response.getCode()).body(response);
     }
 

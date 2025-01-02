@@ -14,6 +14,7 @@ def generate_product_vector(product_id, descriptions):
                                                   model_manager.model,
                                                   model_manager.device)
         text_vector = text_vector.mean(dim=0)  # 平均值
+        text_vector = text_vector.tolist()  # 转换为列表
         # 保存文字特征到JSON文件
         append_feature_to_json("features/product_text_feature.json", product_id, text_vector)
     return True

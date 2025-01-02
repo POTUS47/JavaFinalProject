@@ -33,7 +33,7 @@ def generate_item_vector():
 
 # 更新商品特征向量的接口
 @app.route('/update_product_feature', methods=['POST'])
-def generate_item_vector():
+def update_item_vector():
     try:
         data = request.json
         product_name = data.get('name')
@@ -50,7 +50,7 @@ def generate_item_vector():
 
 # 生成商品图片特征向量的接口
 @app.route('/generate_product_img_feature', methods=['POST'])
-def generate_item_vector():
+def generate_item_img_vector():
     try:
         data = request.json
         image_path = data.get('imagePath')
@@ -64,7 +64,7 @@ def generate_item_vector():
 
 # 更新商品图片特征向量的接口
 @app.route('/update_product_feature', methods=['POST'])
-def generate_item_vector():
+def update_item_img_vector():
     try:
         data = request.json
         product_id = data.get('id')
@@ -120,13 +120,17 @@ def recommend_for_user():
         data = request.json
         user_id = data.get('user_id')
 
+        print("成功获取"+user_id)
+
         if not user_id:
             return jsonify({"error": "Missing required fields"}), 400
 
         recommendations = make_recommendation(user_id)
+        print(recommendations)
         return jsonify({"recommendations": recommendations}), 200
 
     except Exception as e:
+        print("start"+str(e))
         return jsonify({"error": str(e)}), 500
 
 
@@ -146,6 +150,6 @@ if __name__ == '__main__':
     # 在本地启动服务，端口号5000
     print("Starting Flask server...")
     app.run(host='127.0.0.1', port=5000, debug=True)
-    # app.run(host='localhost', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)
 
 

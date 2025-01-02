@@ -142,7 +142,7 @@ const fetchProducts = async () => {
     isLoading.value = false;
 
   } catch (error) {
-    ElMessage.error(error.response.data.msg);
+    //ElMessage.error(error.response.data.msg);
   }
 
 };
@@ -190,7 +190,7 @@ const fetchStores = async () => {
     isLoading.value = false;
   } catch (error) {
     isLoading.value = false;
-    ElMessage.error(error.response.data.msg);
+    //ElMessage.error(error.response.data.msg);
   }
 };
 

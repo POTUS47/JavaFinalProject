@@ -5,10 +5,13 @@ from torch.nn.functional import normalize
 
 
 # 提取文本特征(文本可多个)
-def extract_description_feature(description, model, device):
+def extract_description_feature(description, model, device, max_length=25):
     # 如果输入是单个文本，转化为列表
     if isinstance(description, str):
         description = [description]
+    # 截断每个字符串，使其长度不超过 max_length 个汉字
+    description = [desc[:max_length] for desc in description]
+
     description_tokenized = clip.tokenize(description).to(device)
     with torch.no_grad():
         description_features = model.encode_text(description_tokenized)

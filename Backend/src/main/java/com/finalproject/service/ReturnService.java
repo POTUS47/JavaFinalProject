@@ -211,8 +211,6 @@ public class ReturnService {
 
     // 退款相关
     public Result<Map<String,String>> refund(String userID,String returnId) {
-        //逻辑待补充。。。。。。。。
-        // refund函数待完成：
         // 检查退货单return状态是否为“已收货”。
         if(!hasRecieved(returnId).getData()){
             return Result.error(400,"用户未收货，不可以退货");

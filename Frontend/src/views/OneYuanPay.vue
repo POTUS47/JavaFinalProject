@@ -121,7 +121,7 @@
             margin-left: 10px;
             margin-bottom:0px">
         <el-radio label="wallet">钱包</el-radio>
-        <el-radio label="alipay">支付宝</el-radio>
+        <!-- <el-radio label="alipay">支付宝</el-radio> -->
       </el-radio-group>
       <el-button @click="openPay" style="
               font-size: 16px;
@@ -187,7 +187,7 @@ const isPaySuccess = ref(false);
 const returnUrl = ref('');
 const router = useRouter();
 const routerPath = localStorage.getItem('routerPath');
-const recordPayId = localStorage.getItem('recordPay');
+const recordPay = localStorage.getItem('recordPayId');
 
 watch(payVisible, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
@@ -350,10 +350,10 @@ const openPay = async () => {
 
 // 参与一元购
 const confirmOneYuan = async () => {
+  console.log(recordPay);
     try {
-      const response = await axiosInstance.post(`/shopping/participate/{recordPayId}`, {
+      const response = await axiosInstance.post(`/shopping/participate/${recordPay}`, {
       });
-      recordPayId.value=null;
     } catch (error) {
       console.log("参与失败",error);
     }
