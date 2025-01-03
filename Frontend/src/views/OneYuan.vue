@@ -35,7 +35,7 @@
               <div class="display-items">
                 <div v-for="product in paginatedProducts" :key="product.productId" class="product-item"
                      @click="handleProductClick(product.productId,product.recordId)">
-                  <img :src="product.imageUrl" :alt="product.productId" class="product-image" />
+                  <img :src="getImageUrl" :alt="product.productId" class="product-image" />
                   <h2>{{ product.productName }}</h2>
                   <p>价格: ¥{{ product.productPrice }}</p>
                 </div>
@@ -106,7 +106,9 @@ const typeChange = (id, name) => {
   currentType.value = name;
 
 };
-
+function getImageUrl() {
+  return `http://127.0.0.1:8080/images/${this.product.imageUrl}`
+}
 
 //关于分类
 const selectedCategory = ref(0);
