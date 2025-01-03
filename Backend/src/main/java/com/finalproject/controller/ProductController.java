@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     // 根据 productId 修改 product 库存
-    @PutMapping("/product/{productId}")
+    @PutMapping("/product/quantity/{productId}")
     public Integer reduceProductById(@PathVariable String productId) {
         System.out.println("Received PATCH request for productId: " + productId);
         return productService.reduceProductById(productId);
@@ -266,6 +266,13 @@ public class ProductController {
         return ResponseEntity.status(200).body("success");
     }
 
+    // 下架商品
+    @PostMapping("/delete_product/{productId}")
+    public ResponseEntity<Result<String>> deleteProduct(Authentication auth,@PathVariable String productId) {
+        String userId = (String) auth.getPrincipal();
+        Result<String> response=productService.deleteProduct(userId,productId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 
     // 测试用
     @PostMapping("/recommend/test")
