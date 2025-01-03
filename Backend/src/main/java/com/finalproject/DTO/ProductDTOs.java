@@ -500,5 +500,39 @@ public class ProductDTOs {
         }
     }
 
+    public static class OneYuanDetail{
+        private String productId;
+        private String productName;
+        private BigDecimal productPrice;
+        private String imageUrl;
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public BigDecimal getProductPrice() {
+            return productPrice;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+        public void setProductPrice(BigDecimal productPrice) {
+            this.productPrice = productPrice;
+        }
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+    }
 
 }
