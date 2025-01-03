@@ -26,23 +26,18 @@ public class AccountService {
 
     @Resource
     private AccountRepository accountRepository;
-
     @Resource
     private StoreRepository storeRepository;
     @Value("${api.base-url}")
     private String baseUrl;
 
-    @Autowired
     private final JavaMailSender mailSender;
-
     private final Map<String, String> verificationCodes; // 用于存储验证码
-    @Autowired
-    private BuyerRepository buyerRepository;
-    @Autowired
-    private ImageService imageService;
+    private final ImageService imageService;
 
-    public AccountService(JavaMailSender mailSender) {
+    public AccountService(JavaMailSender mailSender, ImageService imageService) {
         this.mailSender = mailSender;
+        this.imageService = imageService;
         this.verificationCodes = new ConcurrentHashMap<>();
     }
 
@@ -216,34 +211,6 @@ public class AccountService {
         return Result.success(data);
     }
 
-    // 修改卖家地址
-    public Result<Map<String, String>> updateStoreAdress(String userId, String newAddress) {
-        Optional<Store> userOptional= storeRepository.findByAccountId(userId);
-        if (userOptional.isEmpty()) {
-            return Result.error(404, "想要修改地址的卖家账号不存在");
-        }
-        Store user = userOptional.get();
-        user.setAddress(newAddress);
-        storeRepository.save(user);
-        Map<String, String> data = new HashMap<>();
-        data.put("message", userId+"地址修改成功！");
-        return Result.success(data);
-    }
-
-    // 修改卖家店铺名
-    public Result<Map<String, String>> updateStoreName(String userId, String newName) {
-        Optional<Store> userOptional= storeRepository.findByAccountId(userId);
-        if (userOptional.isEmpty()) {
-            return Result.error(404, "想要修改店铺名的卖家账号不存在");
-        }
-        Store user = userOptional.get();
-        user.setStoreName(newName);
-        storeRepository.save(user);
-        Map<String, String> data = new HashMap<>();
-        data.put("message", userId+"店铺名修改成功！");
-        return Result.success(data);
-    }
-
     // 上传用户头像
     public Result<Map<String, String>> updatePhoto(String userId, String photoId){
         Optional<Account> userOptional= accountRepository.findByAccountId(userId);
@@ -277,62 +244,7 @@ public class AccountService {
         return Result.success(userInfo);
     }
 
-    // 获取买家全部基本信息
-    public Result<AccountDTOs.BuyerInfoDTO> getBuyerInfo(String userId) {
-        // 查找用户
-        Optional<Buyer> userOptional = buyerRepository.findByAccountId(userId);
-        // 如果没有找到用户
-        if (userOptional.isEmpty()) {
-            return Result.error(404, "想获取基本信息的用户不存在");
-        }
-        Buyer user = userOptional.get();
-        AccountDTOs.BuyerInfoDTO userInfo = new AccountDTOs.BuyerInfoDTO();
-        userInfo.setAddress(user.getAddress());
-        userInfo.setEmail(user.getEmail());
-        userInfo.setAge(user.getAge());
-        userInfo.setGender(user.getGender());
-        userInfo.setUserName(user.getUserName());
-        userInfo.setTotalCredits(user.getTotalCredits());
-        userInfo.setPhotoId(user.getPhotoId());
-        userInfo.setPhotoUrl(baseUrl + "/images/" + user.getPhotoId());
-        userInfo.setUserId(userId);
-        userInfo.setDescription(user.getDescription());
-        // 返回成功结果
-        return Result.success(userInfo);
-    }
-
-    // 获取商家全部基本信息
-    public Result<AccountDTOs.StoreInfoDTO> getStoreInfo(String userId) {
-        // 查找用户
-        Optional<Store> userOptional = storeRepository.findByAccountId(userId);
-        // 如果没有找到用户
-        if (userOptional.isEmpty()) {
-            return Result.error(404, "想获取基本信息的用户不存在");
-        }
-        Store user = userOptional.get();
-        String Id="";
-        if(user.getPhotoId()==null){
-            Id="1";
-        }
-        else{
-            Id=user.getPhotoId();
-        }
-        String imageUrl=baseUrl+"/images/"+Id;
-        AccountDTOs.StoreInfoDTO userInfo = new AccountDTOs.StoreInfoDTO();
-        userInfo.setAddress(user.getAddress());
-        userInfo.setEmail(user.getEmail());
-        userInfo.setStoreName(user.getStoreName());
-        userInfo.setStoreScore(user.getStoreScore().floatValue());
-        userInfo.setUserName(user.getUserName());
-        userInfo.setHasCertificate(user.isCertification());
-        userInfo.setPhotoId(imageUrl);
-        userInfo.setUserId(userId);
-        userInfo.setDescription(user.getDescription());
-        // 返回成功结果
-        return Result.success(userInfo);
-    }
-
-
+    // 检查用户信息是否存在（JWT用）
     public boolean isUserExists(String userId) {
         Optional<Account> userOptional = accountRepository.findByAccountId(userId);
         if (userOptional.isEmpty()) {
@@ -341,32 +253,7 @@ public class AccountService {
         return true;
     }
 
-    public Optional<Buyer> getBuyerByAccountId(String buyerId) {
-        return buyerRepository.findByAccountId(buyerId);
-    }
-
-    public Integer addCredit(String userId, Integer amount) {
-        Optional<Buyer> buyerOptional = buyerRepository.findByAccountId(userId);
-        if (buyerOptional.isEmpty()) {
-            return 404;
-        }
-        Buyer buyer = buyerOptional.get();
-        buyer.setTotalCredits(buyer.getTotalCredits() + amount);
-        buyerRepository.save(buyer);
-        return 200;
-    }
-
-    public Integer reduceCredit(String userId, Integer amount) {
-        Optional<Buyer> buyerOptional = buyerRepository.findByAccountId(userId);
-        if (buyerOptional.isEmpty()) {
-            return 404;
-        }
-        Buyer buyer = buyerOptional.get();
-        buyer.setTotalCredits(buyer.getTotalCredits() - amount);
-        buyerRepository.save(buyer);
-        return 200;
-    }
-
+    // 获取用户的头像和简介
     public Result<AccountDTOs.PandDDTO> getPandD(String userId) {
         Optional<Account>temp= accountRepository.findByAccountId(userId);
         if (temp.isEmpty()) {
@@ -389,27 +276,14 @@ public class AccountService {
         return Result.success(re);
     }
 
-    public String updateStoreScore(String userId, BigDecimal score) {
-        Optional<Store> storeOptional = storeRepository.findByAccountId(userId);
-        Store store = storeOptional.get();
-        store.setStoreScore(score);
-        storeRepository.save(store);
-        return store.getStoreName();
-    }
-
+    // 修改用户的头像和简介
     public Result<String> setPandD(MultipartFile productImages, String description,String userId,String role) throws IOException {
-        Account user=new Account();
-        if(role.equals("商家")){
-            Optional<Store> userOption = storeRepository.findByAccountId(userId);
-            user = userOption.get();
+        Optional<Account> userOption=accountRepository.findByAccountId(userId);
+        if (userOption.isEmpty()) {
+            return Result.error(404,"用户不存在！");
         }
-        else{
-            Optional<Buyer> userOption = buyerRepository.findByAccountId(userId);
-            user = userOption.get();
-        }
-
+        Account user= userOption.get();
         String oldImageUrl=user.getPhotoId();
-
         Result<String> result=imageService.saveImage(productImages,"头像");
         if(result.getCode()==200) {
             String picId = result.getData();
@@ -423,4 +297,7 @@ public class AccountService {
         }
         return result;
     }
+
+
+
 }

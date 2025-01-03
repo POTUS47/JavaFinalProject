@@ -118,22 +118,21 @@ public class AfterSellController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-
-    // 买家-发起申诉仲裁
+    // 卖家-发起申诉仲裁
     @PostMapping("/return/{returnId}/arbitration")
     public ResponseEntity<Result<Map<String,String>>> applyArbitration(@PathVariable String returnId,
                                                            @RequestBody AfterSellDTOs.ComplainRequestDTO dto) {
-        String buyerReason=dto.getReason();
+        String sellerReason=dto.getReason();
         Result<Map<String,String>> response =returnService.checkReturnForComplain(returnId);
         if(response.getCode()!=200){
             return ResponseEntity.status(response.getCode()).body(response);
         }
-        String sellerReason= response.getData().get("seller_reason");
+        String buyerReason= response.getData().get("buyer_reason");
         response = complainService.applyComplain(returnId,buyerReason,sellerReason);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 管理员-仲裁申诉结果(仲裁完要强制进入退货流程吗？)
+    // 管理员-仲裁申诉结果
     @PostMapping("/arbitration/{complainId}/resolve")
     public ResponseEntity<Result<Map<String,String>>> resolveArbitration(@PathVariable String complainId,
                                                              @RequestBody AfterSellDTOs.approveComplainDTO dto,
@@ -148,6 +147,12 @@ public class AfterSellController {
             boolean isApproved=dto.getResult();
             String reason=dto.getReason();
             response = complainService.approveComplain(complainId,isApproved,reason,adminId);
+            if(response.getCode()==200){
+                Result<Map<String,String>> response2=returnService.approveReturn(complainId,isApproved,"管理员审核意见："+reason);
+                if(response2.getCode()!=200){
+                    return ResponseEntity.status(response2.getCode()).body(response2);
+                }
+            }
         }
         return ResponseEntity.status(response.getCode()).body(response);
     }

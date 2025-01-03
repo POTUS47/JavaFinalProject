@@ -1,15 +1,17 @@
 package com.finalproject.controller;
 
 import com.finalproject.DTO.AccountDTOs;
+import com.finalproject.DTO.AdministratorDTOs;
 import com.finalproject.DTO.Result;
+import com.finalproject.model.Market;
 import com.finalproject.model.Product;
 import com.finalproject.model.Store;
 import com.finalproject.model.Buyer;
 import com.finalproject.repository.BuyerRepository;
 import com.finalproject.repository.WalletRepository;
-import com.finalproject.service.AccountService;
-import com.finalproject.service.StoreService;
-import com.finalproject.service.WalletService;
+import com.finalproject.service.*;
+import jakarta.annotation.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +30,18 @@ public class UserController {
     private final AccountService userService;
     private final StoreService storeService;
     private final WalletService walletService;
+    private final AdministratorService administratorService;
+    private final BuyerService buyerService;
+//    private final MarketService marketService;
 
     public UserController(AccountService userService, StoreService storeService,
-                          WalletService walletService) {
+                          WalletService walletService, AdministratorService administratorService, MarketService marketService, BuyerService buyerService) {
         this.storeService = storeService;
         this.userService = userService;
         this.walletService = walletService;
+        this.administratorService = administratorService;
+//        this.marketService = marketService;
+        this.buyerService = buyerService;
     }
 
     // 示例 访问保护数据
@@ -130,7 +138,7 @@ public class UserController {
     public ResponseEntity<Result<Map<String, String>>>
     updateStoreAdress(@RequestParam String newAdress,Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<Map<String, String>> result = userService.updateStoreAdress(userId, newAdress);
+        Result<Map<String, String>> result = storeService.updateStoreAdress(userId, newAdress);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
@@ -139,7 +147,7 @@ public class UserController {
     public ResponseEntity<Result<Map<String, String>>>
     updateStoreName(@RequestParam String newName,Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<Map<String, String>> result = userService.updateStoreName(userId, newName);
+        Result<Map<String, String>> result = storeService.updateStoreName(userId, newName);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
@@ -154,7 +162,7 @@ public class UserController {
     @GetMapping("/buyer/myInfo")
     public ResponseEntity<Result<AccountDTOs.BuyerInfoDTO>> getBuyerSelfInfo(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<AccountDTOs.BuyerInfoDTO> result = userService.getBuyerInfo(userId);
+        Result<AccountDTOs.BuyerInfoDTO> result = buyerService.getBuyerInfo(userId);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
@@ -162,20 +170,21 @@ public class UserController {
     @GetMapping("/store/myInfo")
     public ResponseEntity<Result<AccountDTOs.StoreInfoDTO>> getStoreSelfInfo(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        Result<AccountDTOs.StoreInfoDTO> result = userService.getStoreInfo(userId);
+        Result<AccountDTOs.StoreInfoDTO> result = storeService.getStoreInfo(userId);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
     // 获取某商家基本信息接口
     @GetMapping("/store/Info/{store_id}")
     public ResponseEntity<Result<AccountDTOs.StoreInfoDTO>> getStoreInfo(@PathVariable String store_id) {
-        Result<AccountDTOs.StoreInfoDTO> result = userService.getStoreInfo(store_id);
+        Result<AccountDTOs.StoreInfoDTO> result = storeService.getStoreInfo(store_id);
         return ResponseEntity.status(result.getCode()).body(result);
     }
 
     // 根据 account_id 获取 Store 信息
     @GetMapping("/store/{accountId}")
     public ResponseEntity<Optional<Store>> getStoreByAccountId(@PathVariable String accountId) {
+
         return ResponseEntity.ok(storeService.getStoreByAccountId(accountId));
     }
 
@@ -214,7 +223,7 @@ public class UserController {
     // 获取买家信息
     @GetMapping("/buyer/{buyerId}")
     public Optional<Buyer> getBuyerById(@PathVariable String buyerId) {
-        return userService.getBuyerByAccountId(buyerId);
+        return buyerService.getBuyerByAccountId(buyerId);
     }
 
     // 买家支付
@@ -230,14 +239,14 @@ public class UserController {
     @PutMapping("/credit/add/{userId}/{amount}")
     public Integer addCredit(@PathVariable String userId,
                              @PathVariable Integer amount                             ){
-        return userService.addCredit(userId,amount);
+        return buyerService.addCredit(userId,amount);
     }
 
     // 减少积分
     @PutMapping("/credit/reduce/{userId}/{amount}")
     public Integer reduceCredit(@PathVariable String userId,
                              @PathVariable Integer amount                             ){
-        return userService.reduceCredit(userId,amount);
+        return buyerService.reduceCredit(userId,amount);
     }
 
     //加载头像和简介
@@ -251,7 +260,7 @@ public class UserController {
     //跨子系统调用，更新店铺评分
     @PutMapping("/UpdateStoreScore/{storeId}/{score}")
     public String updateStoreScore(@PathVariable String storeId, @PathVariable BigDecimal score) {
-        return userService.updateStoreScore(storeId,score);
+        return storeService.updateStoreScore(storeId,score);
     }
 
     //添加头像和简介
@@ -269,4 +278,62 @@ public class UserController {
         return ResponseEntity.status(response.getCode()).body(response);
 
     }
+    @PostMapping("/get-all-authentication")
+    public ResponseEntity<List<AdministratorDTOs.ShowAuthenticationDTO>> getAllAuthentication(@RequestBody AdministratorDTOs.GAAModel model) {
+        List<AdministratorDTOs.ShowAuthenticationDTO> authentications = administratorService.getAllAuthentication(model.getAdminId());
+        if (authentications.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(authentications);
+    }
+
+    @PutMapping("/update-store-authentication")
+    public ResponseEntity<String> updateStoreAuthentication(@RequestBody AdministratorDTOs.USAModel model) {
+        // 调用 Service 层处理认证更新
+        String result = administratorService.updateStoreAuthentication(model);
+
+        if (result.startsWith("No authentication found") || result.startsWith("Store not found")) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+    }
+
+//    @PostMapping("/invite-stores")
+//    public ResponseEntity<String> inviteStores(@RequestBody AdministratorDTOs.ISModel model) {
+//        String result = administratorService.inviteStores(model);
+//
+//        if (result.startsWith("传入错误的小分类Id")) {
+//            return ResponseEntity.badRequest().body(result);
+//        }
+//
+//        return ResponseEntity.ok(result);
+//    }
+//
+//
+//    @PostMapping("/add-market")
+//    public ResponseEntity<String> addMarket(@RequestBody AdministratorDTOs.AMModel model) {
+//        try {
+//            String marketId = marketService.addMarket(model);
+//            return ResponseEntity.ok("市集添加成功，市集id: " + marketId);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred while processing the image: " + e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred: " + e.getMessage());
+//        }
+//    }
+//
+//    @GetMapping("/get-all-markets")
+//    public ResponseEntity<List<Market>> getAllMarkets() {
+//        List<Market> markets = administratorService.getAllMarkets();
+//        return ResponseEntity.ok(markets);
+//    }
+//
+//    @DeleteMapping("/delete-market")
+//    public ResponseEntity<String> deleteMarket(@RequestBody AdministratorDTOs.DMModel model) {
+//        marketService.deleteMarket(model.getMarketId());
+//        return ResponseEntity.ok("Market deleted: Id= "+model.getMarketId());
+//    }
 }
