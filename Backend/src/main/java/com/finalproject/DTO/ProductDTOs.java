@@ -67,73 +67,95 @@ public class ProductDTOs {
     }
 
     public static class ProductDTO{
-        private String ProductId;
-        private String ProductName;
-        private BigDecimal ProductPrice ;
-        private String Tag ;
-        private String SubTag ;
-        private String Description;
-        private String StoreTag ;
-        private Integer Quantity ;
-        private String imageurl;
+        private String productId;
+        private String productName;
+        private BigDecimal productPrice ;
+        private String tag ;
+        private String subTag ;
+        private String description;
+        private String storeTag ;
+        private Integer quantity ;
+        private Boolean isOnSale;
+        private String imageUrl;
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public Boolean getOnSale() {
+            return isOnSale;
+        }
+
+        public void setOnSale(Boolean onSale) {
+            isOnSale = onSale;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public String getStoreTag() {
+            return storeTag;
+        }
+
+        public void setStoreTag(String storeTag) {
+            this.storeTag = storeTag;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getSubTag() {
+            return subTag;
+        }
+
+        public void setSubTag(String subTag) {
+            this.subTag = subTag;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
+        public BigDecimal getProductPrice() {
+            return productPrice;
+        }
+
+        public void setProductPrice(BigDecimal productPrice) {
+            this.productPrice = productPrice;
+        }
 
         public String getProductName() {
-            return ProductName;
-        }
-        public void setProductName(String ProductName) {
-            this.ProductName = ProductName;
-        }
-        public BigDecimal getProductPrice() {
-            return ProductPrice;
-        }
-        public void setProductPrice(BigDecimal ProductPrice) {
-            this.ProductPrice = ProductPrice;
-        }
-        public String getTag() {
-            return Tag;
-        }
-        public void setTag(String Tag) {
-            this.Tag = Tag;
-        }
-        public String getSubTag() {
-            return SubTag;
-        }
-        public void setSubTag(String SubTag) {
-            this.SubTag = SubTag;
-        }
-        public String getDescription() {
-            return Description;
-        }
-        public void setDescription(String Description) {
-            this.Description = Description;
-        }
-        public String getStoreTag() {
-            return StoreTag;
-        }
-        public void setStoreTag(String StoreTag) {
-            this.StoreTag = StoreTag;
-        }
-        public Integer getQuantity() {
-            return Quantity;
-        }
-        public void setQuantity(Integer Quantity) {
-            this.Quantity = Quantity;
+            return productName;
         }
 
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
 
         public String getProductId() {
-            return ProductId;
-        }
-        public void setProductId(String ProductId) {
-            this.ProductId = ProductId;
+            return productId;
         }
 
-        public String getImageurl() {
-            return imageurl;
-        }
-
-        public void setImageurl(String imageurl) {
-            this.imageurl = imageurl;
+        public void setProductId(String productId) {
+            this.productId = productId;
         }
     }
     public static class DesPic{
@@ -317,12 +339,10 @@ public class ProductDTOs {
         private String description;
         private String productPic;
         private String storeTag;
-
+        private Boolean isOnSale;
         ShowProductDTO(){
 
         }
-
-
         public ShowProductDTO(String productId, String productName,
                               BigDecimal productPrice, int quantity,
                               String tag, String subTag,
@@ -374,6 +394,14 @@ public class ProductDTOs {
 
         public String getStoreTag() {
             return storeTag;
+        }
+
+        public Boolean getOnSale() {
+            return isOnSale;
+        }
+
+        public void setOnSale(Boolean onSale) {
+            isOnSale = onSale;
         }
     }
 

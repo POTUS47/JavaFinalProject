@@ -137,10 +137,10 @@ public class ReturnService {
         if(!returnStatus.equals("申请被拒绝") ){
             return Result.error(500,"无可申诉内容！");
         }
-        String sellerReason=returns.getResultReason();
+        String buyer_reason=returns.getReturnReason();
         Map<String, String> data = new HashMap<>();
         data.put("message","退货单可被申诉！");
-        data.put("seller_reason",sellerReason);
+        data.put("buyer_reason",buyer_reason);
         return Result.success(data);
     }
 

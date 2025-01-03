@@ -174,6 +174,7 @@ public class ProductService {
                     product.getDescription(),
                     imageId,
                     product.getStoreTag());
+            dto.setOnSale(product.getOnsale());
             result.add(dto);
         }
         return Result.success(result);
@@ -434,9 +435,6 @@ public class ProductService {
         }
         productRepository.save(product);
 
-
-
-
         //商家运营方向管理
         manageStoreBusinessDirection(combinedTag,storeId,combinedTag,false);
         return Result.success(product.getProductId());
@@ -457,6 +455,9 @@ public class ProductService {
         }
         Product pro = product.get();
         pro.setQuantity(pro.getQuantity()-1);
+        if(pro.getQuantity()==0){
+            pro.setOnsale(false);
+        }
         productRepository.save(pro);
         return 200;
     }
@@ -492,7 +493,8 @@ public class ProductService {
             dto.setDescription(product.getDescription());
             dto.setStoreTag(product.getStoreTag());
             dto.setProductId(product.getProductId());
-            dto.setImageurl(imageurl);
+            dto.setImageUrl(imageurl);
+            dto.setOnSale(product.getOnsale());
             response.add(dto);
         }
         return Result.success(response);
@@ -592,4 +594,20 @@ public class ProductService {
         productDetailRepository.save(productDetail);
         return Result.success(productId);
     }
+
+    public Result<String> deleteProduct(String userId,String productId){
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            return Result.error(404, "未找到商品!");
+        }
+        Product product = productOptional.get();
+        if(!Objects.equals(product.getStoreId(), userId)){
+            return  Result.error(403,"无权限操作商品!");
+        }
+        product.setQuantity(0);
+        product.setOnsale(false);
+        productRepository.save(product);
+        return Result.success("商品下架成功");
+    }
+
 }

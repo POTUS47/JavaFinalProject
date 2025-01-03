@@ -68,7 +68,7 @@ public class OrderService {
 
     @Transactional
     public Integer reduceProductById(String productId) {
-        String url = baseUrl + "/api/productController/product/" + productId;
+        String url = baseUrl + "/api/productController/product/quantity/" + productId;
         ResponseEntity<Integer> response = restTemplate.exchange(
                 url,
                 HttpMethod.PUT,
@@ -186,7 +186,6 @@ public class OrderService {
 
 
     /////////////////////////////////////////////////////////////////////////以下是面向外部接口
-    // 当前是一种商品只有一个，所以暂时没有处理数量问题
     @Transactional
     public Result<List<OrderRelatedDTO>> addOrders(String userId, List<String> productIds) {
 
@@ -649,4 +648,14 @@ public class OrderService {
                 });
         return response.getBody();
     }
+
+    @Transactional
+    public Result<String> getOrderIdByItemId(String itemId) {
+        Optional<OrderItem> orderItem = orderItemRepository.findByItemId(itemId);
+        if (orderItem.isEmpty()) {
+            return Result.error(404, "订单项不存在");
+        }
+        return Result.success(orderItem.get().getOrderId());
+    }
+
 }
