@@ -13,8 +13,8 @@
                     appear
             >
             <div class="login_head" v-show="isLogin">
-              <h2>瑕宝阁</h2>
-              <p>专注于微瑕非物质文化遗产产品交易</p>
+              <h2>创意购</h2>
+              <p>一个专注于创意产品交易的网站</p>
             </div>
 
         </transition>
@@ -256,7 +256,7 @@ const login = async () => {
       } else if (role == '商家') {
         router.push('/merchantpage');
       } else {
-        router.push('/merchant-certification');
+        router.push('/report-management');
       }
     } catch (error) {
       ElMessage.error(error.response.data.msg);

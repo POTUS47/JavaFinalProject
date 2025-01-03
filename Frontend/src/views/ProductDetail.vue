@@ -126,7 +126,7 @@
       <img src="../assets/mmy/pat.png"  style="width: 100%;  margin-top: 10px;" />
       <div v-for="(item, index) in imagesWithDescriptions" :key="index" class="image-and-text">
         <p>{{ item.description }}</p>
-        <img :src="item" :alt="`缩略图 ${index + 1}`" />
+        <img :src="item.url" :alt="`缩略图 ${index + 1}`" />
       </div>
       
 
@@ -177,9 +177,11 @@ const displayProducts = reactive([]);
 const remarks = reactive([]);
 const isRemarksNull = ref(false);
 const message = ref('');
+
+
 onMounted(async () => {
-  console.log(`当前登录用户id为${userId}`);
-  console.log(`当前商品为${productId}`);
+  // console.log(`当前登录用户id为${userId}`);
+  // console.log(`当前商品为${productId}`);
   //获取商品信息
   try {
     const response = await axiosInstance.post(`/productController/GetProductInfo`, null, {
@@ -193,13 +195,26 @@ onMounted(async () => {
     isLoading.value = false;
     product.value = response.data.data;
     imagesWithDescriptions.value = product.value.imageAndText || [];
-    console.log(`product is ${JSON.stringify(product.value, null, 2)}`);
+    console.log(imagesWithDescriptions.value)
+    //console.log(`product is ${JSON.stringify(product.value, null, 2)}`);
     productImages.value = product.value.pictures || [];
     currentImage.value = productImages.value[0] || null;
     isAbleBuy.value = product.value.quantity > 0;
   } catch (error) {
     ElMessage.error('页面加载失败！');
   }
+
+
+  try {
+    const response = await axiosInstance.get(`/shopping/UpdateStoreScore`);
+    // product.value = response.data.data;
+    product.value.score = response.data.data.storeScore;
+  } catch (error) {
+    product.value.score =4.0;
+    //ElMessage.error('店铺评分加载失败');
+  }
+
+
 })
 const enterStore = () => {
   localStorage.setItem('storeIdOfDetail', product.value.storeId);
@@ -220,6 +235,8 @@ const starProduct = async () => {
     );
     if (response.data.code == 200) {
       product.value.productStared = !product.value.productStared;
+      ElMessage.success("商品操作成功！");
+
     } 
   } catch (error) {
     ElMessage.error(error.response.data.msg);
@@ -237,6 +254,7 @@ const starStore = async () => {
     );
     if (response.data.code == 200) {
       product.value.storeStared = !product.value.storeStared;
+      ElMessage.success("店铺操作成功！");
     } 
   } catch (error) {
     ElMessage.error(error.response.data.msg);

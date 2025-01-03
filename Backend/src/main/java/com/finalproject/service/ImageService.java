@@ -4,6 +4,8 @@ import com.finalproject.DTO.Result;
 import com.finalproject.model.Image;
 import com.finalproject.repository.ImageRepository;
 import com.finalproject.util.SnowflakeIdGenerator;
+import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,6 +29,9 @@ public class ImageService {
 
     @Value("${upload.path}")
     private String uploadPath;
+
+    @Autowired
+    private ServletContext servletContext;
 
     private final ImageRepository imageRepository;
     private final ResourceLoader resourceLoader;
@@ -48,16 +54,16 @@ public class ImageService {
         String originalFilename = file.getOriginalFilename();
         String fileExtension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
         String imageId = snowflakeIdGenerator.nextId();
-        String uniqueFileName = imageId + fileExtension;
+        String uniqueFileName = imageId + fileExtension;//id+扩展名
 
         // 构建完整的上传路径（包括特定的文件夹）
-        Path specificUploadDir = Paths.get(uploadPath, type);
+        Path specificUploadDir = Paths.get(uploadPath, type);//相对路径 ../uploads/type
         if (!Files.exists(specificUploadDir)) {
             Files.createDirectories(specificUploadDir);
         }
 
         // 将文件保存到指定路径
-        Path targetLocation = specificUploadDir.resolve(uniqueFileName);
+        Path targetLocation = specificUploadDir.resolve(uniqueFileName);//相对路径 ../uploads/type/id+jpg
         Files.copy(file.getInputStream(), targetLocation);
 
         // 存储图片信息到数据库
@@ -66,10 +72,10 @@ public class ImageService {
         image.setImageType(type);
         image.setFileName(uniqueFileName);
 
-        // 使用绝对路径存储
-        String absoluteFilePath = targetLocation.toAbsolutePath().toString();
+        // 使用相对路径存储
+        String relativeFilePath = targetLocation.toString();
 
-        image.setFilePath(absoluteFilePath);
+        image.setFilePath(relativeFilePath);
         imageRepository.save(image);
         return Result.success(imageId);
     }
@@ -82,11 +88,15 @@ public class ImageService {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("找不到对应的图片"));
 
-        // 直接使用数据库中存储的绝对路径来加载图片资源
-        String absoluteFilePath = image.getFilePath();
+        // 使用数据库中存储的相对路径来构建绝对路径
+        String relativeFilePath = image.getFilePath();
 
-        // 打印或日志记录绝对路径用于调试
-        System.out.println("Loading image from: " + absoluteFilePath);
+        // 获取项目的根目录（假设您的应用是一个Spring Boot应用）
+        Path projectRootPath = getProjectRoot();
+
+        Path absoluteFilePath = Paths.get(projectRootPath.toString(), relativeFilePath).normalize();
+        // 直接使用数据库中存储的绝对路径来加载图片资源
+        //String absoluteFilePath = image.getFilePath();
 
         // 加载图片资源
         Resource resource = resourceLoader.getResource("file:" + absoluteFilePath);
@@ -120,6 +130,19 @@ public class ImageService {
         }
     }
 
+    private Path getProjectRoot() {
+        // 由于application.yml位于src/main/resources下，我们可以利用Spring Boot的ServletContext来确定根路径
+        ServletContextResourcePatternResolver resolver = new ServletContextResourcePatternResolver(servletContext);
+        try {
+            // 获取项目的根路径。在开发环境中，这通常是项目根目录，在生产环境中可能是jar/war包所在的目录。
+            Resource resource = resolver.getResource("classpath:.");
+            return Paths.get(resource.getFile().getAbsolutePath()).getParent().getParent(); // 回退两级到项目根目录
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Result<String> deleteImage(String imageId) {
         Optional<Image> imageOptional = imageRepository.findById(imageId);
         if (imageOptional.isEmpty()) {
@@ -128,9 +151,18 @@ public class ImageService {
         Image image = imageOptional.get();
 
         Path imagePath = Paths.get(image.getFilePath());
+
+        // 使用数据库中存储的相对路径来构建绝对路径
+        String relativeFilePath = image.getFilePath();
+
+        // 获取项目的根目录（假设您的应用是一个Spring Boot应用）
+        Path projectRootPath = getProjectRoot();
+
+        Path absoluteFilePath = Paths.get(projectRootPath.toString(), relativeFilePath).normalize();
+
         try {
-            if (Files.exists(imagePath)) {
-                Files.delete(imagePath);
+            if (Files.exists(absoluteFilePath)) {
+                Files.delete(absoluteFilePath);
             } else {
                 return Result.error(404, "图片文件不存在");
             }

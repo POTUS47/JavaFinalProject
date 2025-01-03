@@ -220,15 +220,15 @@ public class ProductController {
 
     // 为用户推荐商品
     @PostMapping("/recommend/user")
-    public ResponseEntity<List<String>> recommendForUser(Authentication auth) {
+    public ResponseEntity<Result<List<ShowProductDTO>>> recommendForUser(Authentication auth) {
         String userId = (String) auth.getPrincipal();
         try {
             List<String> recommendations = recommendService.recommendForUser(userId);
-            return ResponseEntity.ok(recommendations);
+            Result<List<ShowProductDTO>> resultProducts=productService.recommendProductsGetDetail(recommendations);
+
+            return ResponseEntity.ok(resultProducts);
         } catch (Exception e) {
-            List<String> list = new ArrayList<>();
-            list.add(e.getMessage());
-            return ResponseEntity.status(500).body(list);
+            return ResponseEntity.status(500).body(null);
         }
     }
 

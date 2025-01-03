@@ -113,35 +113,26 @@ public class AfterSellController {
     @PostMapping("/orderItem/{orderItemId}/refund")
     public ResponseEntity<Result<Map<String,String>>> refundOrderItem(@PathVariable String orderItemId,
                                                                       Authentication authentication) {
-        // refund函数待完成：
-        // 检查退货单状态是否为“已收货”。
-        // 根据returnid找到相应的订单项，获取退货价格。
-        // 根据returnid找到订单，获取买卖双方的ID。（这一步顺便要检查user是不是订单中的卖家）
-        // 根据买卖双方的ID，获取对应的钱包并扣款交易
-        // 调用支付子系统进行真实退款处理？
-        // 修改订单项状态为“售后结束”（已有）
-        // 修改退货单状态为“已退款”（已有）
         String userId = (String) authentication.getPrincipal();
         Result<Map<String,String>> response = returnService.refund(userId,orderItemId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-
-    // 买家-发起申诉仲裁
+    // 卖家-发起申诉仲裁
     @PostMapping("/return/{returnId}/arbitration")
     public ResponseEntity<Result<Map<String,String>>> applyArbitration(@PathVariable String returnId,
                                                            @RequestBody AfterSellDTOs.ComplainRequestDTO dto) {
-        String buyerReason=dto.getReason();
+        String sellerReason=dto.getReason();
         Result<Map<String,String>> response =returnService.checkReturnForComplain(returnId);
         if(response.getCode()!=200){
             return ResponseEntity.status(response.getCode()).body(response);
         }
-        String sellerReason= response.getData().get("seller_reason");
+        String buyerReason= response.getData().get("buyer_reason");
         response = complainService.applyComplain(returnId,buyerReason,sellerReason);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 管理员-仲裁申诉结果(仲裁完要强制进入退货流程吗？)
+    // 管理员-仲裁申诉结果
     @PostMapping("/arbitration/{complainId}/resolve")
     public ResponseEntity<Result<Map<String,String>>> resolveArbitration(@PathVariable String complainId,
                                                              @RequestBody AfterSellDTOs.approveComplainDTO dto,
@@ -156,6 +147,12 @@ public class AfterSellController {
             boolean isApproved=dto.getResult();
             String reason=dto.getReason();
             response = complainService.approveComplain(complainId,isApproved,reason,adminId);
+            if(response.getCode()==200){
+                Result<Map<String,String>> response2=returnService.approveReturn(complainId,isApproved,"管理员审核意见："+reason);
+                if(response2.getCode()!=200){
+                    return ResponseEntity.status(response2.getCode()).body(response2);
+                }
+            }
         }
         return ResponseEntity.status(response.getCode()).body(response);
     }

@@ -32,15 +32,14 @@ const fetchStores = async (keyword: string, type: string) => {
       products.value = [];
       errorMessage.value = '没找到相关的宝贝...'; // 设置错误信息
     }
-  } catch (error) {
-    console.error('Error fetching stores:', error);
-    errorMessage.value = '没找到相关的宝贝...'; // 设置错误信息
-  } finally {
     if(response.data.data.length>12){
       loading.value = false;  // 数据获取完毕后关闭缓冲页面
     }
-    
-  }
+  } catch (error) {
+    console.error('Error fetching stores:', error);
+    errorMessage.value = '没找到相关的宝贝...'; // 设置错误信息
+    loading.value = false; 
+  } 
 };
 
 const goToProductDetail = (productId: string) => {
@@ -58,10 +57,10 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 onMounted(() => {
-  // const keyword = localStorage.getItem('keyword') || '';
-  // const type = localStorage.getItem('searchType') || '0';
-  // fetchStores(keyword, type);
-  fetchStores(keyword.value, type.value);
+  const keyword = localStorage.getItem('keyword') || '';
+  const type = localStorage.getItem('searchType') || '0';
+  fetchStores(keyword, type);
+  //fetchStores(keyword.value, type.value);
  
 });
 </script>

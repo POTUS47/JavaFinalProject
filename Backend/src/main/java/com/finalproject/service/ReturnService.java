@@ -137,10 +137,10 @@ public class ReturnService {
         if(!returnStatus.equals("申请被拒绝") ){
             return Result.error(500,"无可申诉内容！");
         }
-        String sellerReason=returns.getResultReason();
+        String buyer_reason=returns.getReturnReason();
         Map<String, String> data = new HashMap<>();
         data.put("message","退货单可被申诉！");
-        data.put("seller_reason",sellerReason);
+        data.put("buyer_reason",buyer_reason);
         return Result.success(data);
     }
 
@@ -211,8 +211,6 @@ public class ReturnService {
 
     // 退款相关
     public Result<Map<String,String>> refund(String userID,String returnId) {
-        //逻辑待补充。。。。。。。。
-        // refund函数待完成：
         // 检查退货单return状态是否为“已收货”。
         if(!hasRecieved(returnId).getData()){
             return Result.error(400,"用户未收货，不可以退货");

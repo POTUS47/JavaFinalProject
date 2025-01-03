@@ -121,7 +121,7 @@
             margin-left: 10px;
             margin-bottom:0px">
         <el-radio label="wallet">钱包</el-radio>
-        <el-radio label="alipay">支付宝</el-radio>
+        <!-- <el-radio label="alipay">支付宝</el-radio> -->
       </el-radio-group>
       <el-button @click="openPay" style="
               font-size: 16px;

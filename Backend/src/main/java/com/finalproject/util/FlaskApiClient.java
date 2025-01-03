@@ -20,6 +20,7 @@ import java.util.*;
 public class FlaskApiClient {
 
     private static final String BASE_URL = "http://127.0.0.1:5000";
+//    private static final String BASE_URL = "http://0.0.0.0:5000";
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 

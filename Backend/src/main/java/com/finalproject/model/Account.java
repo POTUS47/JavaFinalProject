@@ -24,7 +24,7 @@ public class Account implements Serializable {
 
     // 新增字段，外键关联到 image 表的 IMAGE_ID
     @Column(name = "photo_id")
-    private String photoId;
+    private String photoId="1";
 
     @Enumerated(EnumType.STRING)
     @Column(name="type")
