@@ -435,9 +435,9 @@ const menuChange = (index) => {
 </script>
 
 <template>
-  <Navbar />
+  <Navbar  />
   <el-container>
-    <el-aside width="18vh" style="background-color:  #82111f; ">
+    <el-aside width="18vh" style="background-color:  #82111f; position:fixed;">
       <div class="big-title" style="display: flex; justify-content: center; align-items: center; width: 100%;">
         <!--    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />-->
         <span>订单</span>
@@ -464,7 +464,7 @@ const menuChange = (index) => {
         </el-menu>
       </div>
     </el-aside>
-    <el-container>
+    <el-container style="margin-left: 18vh;">
       <el-header style="text-align: left">
         <div style="line-height: 6vh;">
           <span v-if="option === 1" style="font-size: 2vh; color: #333;">全部</span>

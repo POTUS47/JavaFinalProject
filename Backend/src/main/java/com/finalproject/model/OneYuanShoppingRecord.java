@@ -2,14 +2,13 @@ package com.finalproject.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "one_yuan_orders")
 public class OneYuanShoppingRecord {
 
     @Id
-    @Column(name = "record_id", nullable = false)
+    @Column(name = "record_time", nullable = false)
     private String recordId;
 
     @Column(name = "product_id", nullable = false)
