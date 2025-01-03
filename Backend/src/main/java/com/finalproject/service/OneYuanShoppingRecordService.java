@@ -278,7 +278,7 @@ public class OneYuanShoppingRecordService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        if (now.isAfter(record.getEndTime())) {
+        if (now.isBefore(record.getEndTime())) {
             return Result.error(409, "活动尚未结束，不能开奖");
         }
 

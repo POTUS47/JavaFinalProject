@@ -409,6 +409,13 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
+    //
+    @GetMapping("/getOrderIdByItemId/{itemId}")
+    public ResponseEntity<Result<String>> getOrderIdByItemId(@PathVariable String itemId) {
+        Result<String> response = orderService.getOrderIdByItemId(itemId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
 
 
 }

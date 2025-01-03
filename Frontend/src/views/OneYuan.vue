@@ -1,6 +1,7 @@
 <template>
 
     <swiper-slide>
+      <Navbar />
       <div class="slide1">
 <!--        <aside class="sidebar-category">-->
           <!-- <div>

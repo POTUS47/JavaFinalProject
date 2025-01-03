@@ -1,7 +1,7 @@
 <!-- 卖家用户的订单中心页面 -->
 <script setup lang="ts">
 import { ref ,computed,reactive} from 'vue';
-import { ElMenu,ElButton, ElInput,ElRate,ElMessage} from 'element-plus';
+import { ElMenu,ElButton, ElInput,ElRate,ElMessage,ElDialog} from 'element-plus';
 import 'element-plus/dist/index.css';
 import Navbar from '../components/Navbar.vue';
 import axiosInstance from '../router/axios';
@@ -23,7 +23,9 @@ const dialogVisible=ref(false);
 const star=ref(null);
 const returnProduct=ref('');
 const returnProduct_else=ref('');
-
+const returnVisible=ref(true);
+const deliveryNumberInput=ref(null);
+const returnToSalerId=ref(null);
 
 interface OrderItemDTO {
   itemId:string;
@@ -57,9 +59,13 @@ const filteredOrders = computed(() => {
     7: '售后结束',
     8: '一元购'
   };
-  if(option.value!=8) {
-  return myOrders.value.filter(order => order.status === statusMapping[option.value]);}
-  else{
+  if(option.value===6||option.value===7) {
+    return myOrders.value.filter(order =>
+        order.orderItems.some(item => item.itemStatus === statusMapping[option.value])
+    );}
+  else if(option.value!=8) {
+    return  myOrders.value.filter(order => order.status === statusMapping[option.value]);}
+  else {
     return myOneYuanOrders.value;}
 });
 const myOrders = ref<Order[]>([])
@@ -321,6 +327,48 @@ function confirmArrive(order)
   });
 }
 
+const returnToSaler = (id) => {
+  returnVisible.value = true;
+  returnToSalerId.value = id;
+  console.log("退货",returnVisible.value);
+};
+
+const resetReturnForm=()=>{
+  returnVisible.value = false;
+  returnToSalerId.value = null;
+}
+
+//更新快递单号
+const updateDeliveryNumber = async () => {
+  console.log(deliveryNumberInput.value)
+  try {
+    const deliveryNumber = deliveryNumberInput.value;
+
+    // 发送请求到后端更新快递单号
+    const response = await axiosInstance.put('/afterSell/return/${returnToSalerId.value}/addExpressNumber', {
+      deliveryNumber: deliveryNumber
+    });
+
+    if (response.status === 200) {
+      ElMessage({
+        message: '快递单号已更新',
+        type: 'success'
+      });
+    } else {
+      ElMessage({
+        message: '更新快递单号失败',
+        type: 'error'
+      });
+    }
+  } catch (error) {
+    console.error('更新快递单号失败:', error.response ? error.response.data : error.message);
+    ElMessage({
+      message: '更新快递单号失败: ' + error.message,
+      type: 'error'
+    });
+  }
+};
+
 // function deleteRow(order) {
 //   this.orders = this.orders.filter(order => order !== row);
 //   this.filteredOrders = this.filteredOrders.filter(order => order !== row);
@@ -387,9 +435,9 @@ const menuChange = (index) => {
 </script>
 
 <template>
-  <Navbar />
+  <Navbar  />
   <el-container>
-    <el-aside width="18vh" style="background-color:  #82111f; ">
+    <el-aside width="18vh" style="background-color:  #82111f; position:fixed;">
       <div class="big-title" style="display: flex; justify-content: center; align-items: center; width: 100%;">
         <!--    <img class="image" src="@/assets/czw/aside.svg" alt="Original Image"  />-->
         <span>订单</span>
@@ -416,7 +464,7 @@ const menuChange = (index) => {
         </el-menu>
       </div>
     </el-aside>
-    <el-container>
+    <el-container style="margin-left: 18vh;">
       <el-header style="text-align: left">
         <div style="line-height: 6vh;">
           <span v-if="option === 1" style="font-size: 2vh; color: #333;">全部</span>
@@ -438,12 +486,6 @@ const menuChange = (index) => {
               <p>{{ scope.row.time }} 订单号: {{ scope.row.id }}</p>
             </div>
             <div style="display: flex; flex-direction: column;">
-              <!--         <img :src="`data:image/png;base64,${scope.row.pic}`" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
-              <!--        <img :src="scope.row.orderItems[0].productImage" alt="Order Image" style="max-width: 100px; max-height: 100px; margin-bottom: 5px;" />-->
-              <!--        <div style="margin-left: 10px;">-->
-              <!--          <p>{{ scope.row.orderItems[0].productName }}</p>-->
-              <!--          <p>价格:{{ scope.row.orderItems[0].productPrice }}</p>-->
-              <!--        </div>-->
               <div  v-for="item in scope.row.orderItems" :key="item.productId" style="display: flex; margin-bottom: 10px;">
                 <img
                     :src="item.productImage"
@@ -478,14 +520,20 @@ const menuChange = (index) => {
         <el-table-column prop="zip" label="操作" width="160">
           <template v-slot="scope">
             <!--      <el-button type="text" v-if="scope.row.isStar === false&&scope.row.status === '已完成'" @click="startRating(scope.row)">去评价</el-button>-->
+            <div v-for="item in scope.row.orderItems" :key="'status-' + (item?.itemId || '')">
             <el-button
                 type="text"
-                v-for="item in scope.row.orderItems"
-                :key="'rating-' + item.itemId"
-                v-if="scope.row.status === '已完成'"
+                v-if="scope.row.status === '已完成'&&item.itemStatus!='售后中'"
                 @click="startRating(item.itemId)"
             >去评价
             </el-button>
+              <el-button
+                  type="text"
+                  v-if="scope.row.status === '已完成'&&item.itemStatus==='售后中'"
+                  @click="returnToSaler(item.itemId)"
+              >邮寄退货
+              </el-button>
+            </div>
             <el-button type="text" v-if="scope.row.status === '运输中'" @click="confirmArrive(scope.row)">确认收货</el-button>
           </template>
         </el-table-column>
@@ -514,7 +562,6 @@ const menuChange = (index) => {
             </div>
           </template>
         </el-table-column>
-<!--        <el-table-column prop="store" label="店铺" width="160"></el-table-column>-->
         <el-table-column  prop="province" label="结果" width="160">
           <template v-slot="scope">
            <div v-if="scope.row.result!=null">
@@ -529,6 +576,20 @@ const menuChange = (index) => {
       </el-table>
     </el-container>
 
+    <!-- 快递单号 -->
+    <div >
+      <el-dialog
+          customClass="custom-dialog"
+          title="快递单号"
+          @close="resetReturnForm()">
+        :style="{ zIndex: 9999 }"
+        <div style="margin-top: 10px;"></div>
+        <el-input v-model="deliveryNumberInput" placeholder="请输入快递单号"></el-input>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="updateDeliveryNumber">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
 
     <div v-if="currentRow_star!=null">
       <el-dialog

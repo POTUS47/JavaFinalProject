@@ -4,64 +4,31 @@
     <div class="SearchContainer">
       <el-input v-model="searchOrder" placeholder="请输入订单ID（在全部订单中搜索）" style="display: inline-block;"></el-input>
       <el-button type="primary" @click="searchOrderById" >搜索</el-button>
-      <el-input v-model="searchTime" placeholder="根据创建时间筛选（在全部订单中搜索）" style="display: inline-block;"></el-input>
-      <el-button type="primary" @click="searchOrderByTime">筛选</el-button>
+<!--      <el-input v-model="searchTime" placeholder="根据创建时间筛选（在全部订单中搜索）" style="display: inline-block;"></el-input>-->
+<!--      <el-button type="primary" @click="searchOrderByTime">筛选</el-button>-->
     </div>
 
     <!-- 表格 -->
     <div class="TableContainer">
       <el-table :data="currentPageData" class="CommodityTable" height="760">
         <el-table-column type="index" />
-        <el-table-column label="订单信息" width="200">
+        <el-table-column label="订单信息" width="300">
           <template #default="scope">
             <div>订单号：{{ scope.row.id }}</div>
             <div v-for="item in scope.row.orderItems" :key="item.itemId" class="product-info">
-              <div>{{ item.productName }}</div>
-              <div>￥{{ item.productPrice }}</div>
+              <div>商品：{{ item.productName }}</div>
+              <div>价格：￥{{ item.productPrice }}</div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="creationTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column prop="orderStatus" label="订单状态" width="150"></el-table-column>
-        <el-table-column prop="orderPrice" label="订单金额" width="150"></el-table-column>
-        <el-table-column prop="practicalPrice" label="" width="150"></el-table-column>
-        <el-table-column label="售后状态">
+        <el-table-column prop="creationTime" label="创建时间" width="200"></el-table-column>
+        <el-table-column prop="orderStatus" label="订单状态" width="200"></el-table-column>
+        <el-table-column prop="orderPrice" label="订单金额" width="200"></el-table-column>
+        <el-table-column label="售后状态" width="200">
           <template #default="scope">
             <div v-for="item in scope.row.orderItems" :key="item.itemId" class="after-sale-status">
               <div class="status-content">
-                <template v-if="item.itemStatus === '无售后'">
-                  <span>无</span>
-                </template>
-                <template v-else-if="item.itemStatus === '售后中' && item.result===true && item.returnResult!=null">
-                  <el-button
-                      size="small"
-                      type="warning"
-                      @click="handleReturnRequest(item,true)"
-                  >
-                    同意退货
-                  </el-button>
-                </template>
-                <template v-else-if="item.itemStatus === '售后中' && item.result===true && item.returnResult!=null">
-                  <el-button
-                      size="small"
-                      type="warning"
-                      @click="handleReturnRequest(item,false)"
-                  >
-                    拒绝退货
-                  </el-button>
-                </template>
-                <template v-else-if="item.itemStatus === '售后中' && item.result===false">
-                  <el-button
-                      size="small"
-                      type="warning"
-                      @click="showArbitrateDialog(item.itemId)"
-                  >
-                    申请仲裁
-                  </el-button>
-                </template>
-                <template v-else-if="item.itemStatus === '售后结束'">
-                  <span class="finished-status">已售后结束</span>
-                </template>
+                  <span>{{item.itemStatus}}</span>
               </div>
             </div>
           </template>
@@ -114,30 +81,6 @@
       </div>
     </div>
 
-    <!-- 仲裁 -->
-    <el-dialog
-        title="申请仲裁"
-        v-model="arbitrateDialogVisible"
-        width="30%"
-    >
-      <el-form :model="arbitrateForm">
-        <el-form-item label="仲裁理由">
-          <el-input
-              v-model="arbitrateForm.reason"
-              type="textarea"
-              rows="4"
-              placeholder="请输入仲裁理由"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="arbitrateDialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="arbitrate(arbitrateForm)">确定</el-button>
-    </span>
-      </template>
-    </el-dialog>
-
     <!-- 翻页 -->
     <div class="paginationContainer">
       <el-pagination
@@ -178,11 +121,7 @@ export default {
     const searchOrder = ref('');
     const searchTime = ref('');
     const products = ref([]);
-    const arbitrateDialogVisible = ref(false)
-    const arbitrateForm = ref({
-      reason: '',
-      itemId: null
-    })
+
     const viewTypeValue=ref(1)
 
     //展示订单状态展示订单
@@ -219,7 +158,6 @@ export default {
                   remark: order.remark || 'No remarks',
                   score: order.score !== undefined ? order.score : 'N/A',
                   deliveryNumber: order.deliveryNumber || '',
-                  arbitration:'',
                   // 新增字段
                   username: order.username || 'N/A',
                   storeName: order.storeName || 'N/A',
@@ -270,65 +208,65 @@ export default {
     };
     //根据订单Id搜索订单
     const searchOrderById = () => {
-      if (searchOrder.value.trim() !== '') {
-        fetchOrderById(searchOrder.value.trim());
-      } else {
-        fetchOrders();
-      }
+        fetchOrderById(searchOrder.value);
     };
+
+
     const fetchOrderById = async (orderId) => {
-      const storeId = localStorage.getItem('userId'); // 替换为实际的 storeId
+      console.log("查询中查询查询查询", orderId);
       try {
-        const response = await axiosInstance.get('/StoreOrder/GetOrderById', {
+        const response = await axiosInstance.get('/shopping/order/get-one-order', {
           params: {
-            storeId: storeId,
             orderId: orderId
           }
         });
 
-        if (response.data) {
-          // 处理返回的订单数据
-          const order = response.data;
-          const creationTime = order.creatE_TIME ? new Date(order.creatE_TIME).toLocaleString() : 'N/A';
-          let returnStatus = '';
+        // 检查响应格式并获取订单数据
+        const orderData = response.data.data;  // 因为响应格式是 { code: 200, data: {...}, msg: 'ok' }
 
-          if (order.ordeR_STATUS === '待退货' && order.returN_OR_NOT) {
-            returnStatus = '待同意';
-          } else if (order.ordeR_STATUS === '已退货' && order.returN_OR_NOT) {
-            returnStatus = '已同意';
-          } else if (!order.returN_OR_NOT) {
-            returnStatus = '待同意';
-          }
-
-          let orderStatusText = order.ordeR_STATUS;
-          if (order.ordeR_STATUS === '已付款') {
-            orderStatusText = '待发货';
-          } else if (order.ordeR_STATUS === '待付款') {
-            return null; // 过滤掉 "待付款" 的订单
-          }
-
-          const orderData = {
-            id: order.ordeR_ID || 'N/A',
-            creationTime: creationTime,
-            orderStatus: orderStatusText || 'Unknown',
-            orderPrice: order.totaL_PAY !== undefined ? order.totaL_PAY : 'N/A',
-            practicalPrice: order.actuaL_PAY !== undefined ? order.actuaL_PAY : 'N/A',
-            returnRequested: order.returN_OR_NOT != null ? order.returN_OR_NOT : false,
-            returnStatus: returnStatus,
-            remark: order.remark || 'No remarks',
-            score: order.score !== undefined ? order.score : 'N/A',
-            deliveryNumber: order.deliverY_NUMBER || 'N/A',
-          };
-
-          products.value = [orderData]; // 更新products为单个订单的数据
-        } else {
-          console.error('未找到订单');
+        if (!orderData) {
+          console.error('No order data found');
+          return;
         }
+
+        // 处理单个订单数据
+        const processedOrder = {
+          id: orderData.orderId || 'N/A',
+          creationTime: orderData.createTime,
+          orderStatus: orderData.orderStatus || 'Unknown',
+          orderPrice: orderData.totalPay !== undefined ? orderData.totalPay : 'N/A',
+          returnRequested: orderData.returN_OR_NOT != null ? orderData.returN_OR_NOT : false,
+          returnStatus: '',
+          remark: orderData.remark || 'No remarks',
+          score: orderData.score !== undefined ? orderData.score : 'N/A',
+          deliveryNumber: orderData.deliveryNumber || '',
+          username: orderData.username || 'N/A',
+          storeName: orderData.storeName || 'N/A',
+          address: orderData.address || 'N/A',
+          paid: orderData.paid || false,
+          orderItems: orderData.orderItems?.map(item => ({
+            itemId: item.itemId,
+            productId: item.productId,
+            productName: item.productName,
+            productImage: item.productImage,
+            productPrice: item.productPrice,
+            itemStatus: item.itemStatus,
+            result: true,
+            returnResult: null
+          })) || []
+        };
+
+        console.log('Processed Order:', processedOrder);
+
+        // 直接设置处理后的订单
+        products.value = [processedOrder];  // 将单个订单包装成数组
+
       } catch (error) {
-        products.value = [];
-        console.error('通过订单ID获取订单数据失败:', error);
+        console.error('获取订单数据失败:', error);
       }
     };
+
+
     //根据创建时间筛选订单
     const searchOrderByTime = () => {
       if (searchTime.value.trim() !== '') {
@@ -485,43 +423,6 @@ export default {
         });
       }
     };
-    const showArbitrateDialog = (itemId) => {
-      arbitrateForm.value.itemId = itemId
-      arbitrateDialogVisible.value = true
-    }
-
-    //申请仲裁请求
-    const arbitrate = async (form) => {
-      try {
-        console.log(form.itemId);
-        // 发送仲裁请求
-        const response = await axiosInstance.post(
-            `/afterSell/return/${form.itemId}/arbitration`,
-            {
-              reason: form.reason  // 仲裁原因
-            }
-        );
-
-        if (response.data.code === 200) {  // 使用 response.data.code 判断
-          ElMessage({
-            message: response.data.msg || '仲裁申请已提交',
-            type: 'success'
-          });
-          fetchOrders();  // 刷新订单列表
-        } else {
-          ElMessage({
-            message: response.data.msg || '仲裁申请失败',
-            type: 'error'
-          });
-        }
-      } catch (error) {
-        console.error('申请仲裁时发生错误:', error);
-        ElMessage({
-          message: error.response?.data?.msg || '仲裁申请失败',
-          type: 'error'
-        });
-      }
-    };
 
     //翻页
     const pageSize = 20;
@@ -543,8 +444,6 @@ export default {
       selectedFilter,
       dialogVisible,
       dialogVisibleTwo,
-      arbitrateForm,
-      arbitrateDialogVisible,
       currentProduct,
       searchOrder,
       products,
@@ -562,9 +461,6 @@ export default {
       searchTime,
       searchOrderByTime,
       updateDeliveryNumber,
-      showArbitrateDialog,
-      arbitrate,
-
     };
   }
 };
@@ -586,7 +482,7 @@ export default {
 }
 
 .SearchContainer {
-  margin-left: 950px;
+  margin-left: 1150px;
   display: flex;
   align-items: center;
   height: 60px;

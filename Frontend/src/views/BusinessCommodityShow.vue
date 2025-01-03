@@ -29,15 +29,21 @@
     <div v-if="FKY" class="TableContainer">
       <el-table :data="currentPageData" class="CommodityTable" height="760" @selection-change="handleSelectionChange">
         <el-table-column type="selection" />
-        <el-table-column prop="productId" label="商品ID"></el-table-column>
-        <el-table-column prop="productName" label="商品名称"></el-table-column>
-        <el-table-column prop="startTime" label="开始时间"></el-table-column>
-        <el-table-column prop="endTime" label="结束时间" width="100"></el-table-column>
-        <el-table-column prop="minParticipants" label="最小参与人数" width="100"></el-table-column>
-        <el-table-column prop="currentParticipants" label="当前参与人数" width="100"></el-table-column>
-        <el-table-column prop="currentParticipants" label="开奖" width="100">
+        <el-table-column prop="productId" label="商品ID" ></el-table-column>
+        <el-table-column prop="productName" label="商品名称" ></el-table-column>
+        <el-table-column prop="startTime" label="开始时间" ></el-table-column>
+        <el-table-column prop="endTime" label="结束时间" ></el-table-column>
+        <el-table-column prop="minParticipants" label="最小参与人数" ></el-table-column>
+        <el-table-column prop="currentParticipants" label="当前参与人数" ></el-table-column>
+        <el-table-column prop="result" label="是否已开奖">
           <template #default="scope">
-            <el-button size='small' type="primary" icon="check" @click="handleWinner(scope.row.record)">开奖</el-button>
+            <span v-if="scope.row.result===null">否</span>
+            <span v-else>是</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开奖" >
+          <template #default="scope">
+            <el-button v-if="scope.row.result===null" size='small' type="primary" icon="check" @click="handleWinner(scope.row.recordId)">开奖</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -58,7 +64,7 @@
             <el-tag type="info" v-else>否</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" >
           <template #default="scope">
             <el-button-group>
               <el-button size='small' type="primary" icon="check" @click="handleCheck(scope.row)">查看</el-button>
