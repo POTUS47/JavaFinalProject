@@ -28,6 +28,7 @@ import BusinessLogout from '../views/LogoutSettingBusiness.vue'
 import BusinessHomePage from '../views/BusinessHomePage.vue';
 import BusinessOrder from '../views/BusinessOrderManage.vue';
 import BusinessCommodity from '../views/BusinessCommodity.vue';
+import BusinessAfterSale from '../views/BusinessAfterSale.vue';
 
 
 const router = createRouter({
@@ -111,6 +112,11 @@ const router = createRouter({
       path: '/businesscommodity',
       name: 'BusinessCommodity',
       component: () => import('../views/BusinessCommodity.vue')
+    },
+    {
+      path: '/businessaftersale',
+      name: 'BusinessAfterSale',
+      component: () => import('../views/BusinessAfterSale.vue')
     },
     {
       path: '/viewpost',
@@ -212,6 +218,10 @@ const router = createRouter({
     { path: '/BusinessCommodity', 
       name: 'BusinessCommodity', 
       component: BusinessCommodity
+    },
+    { path: '/BusinessAfterSale',
+      name: 'BusinessAfterSale',
+      component: BusinessAfterSale
     },
     {
       path:'/picTextContainer',

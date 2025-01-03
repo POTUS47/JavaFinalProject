@@ -27,6 +27,14 @@
               </div>
             </router-link>
           </li>
+          <li>
+            <router-link to="/BusinessAfterSale" class="nav-link" active-class="active-link">
+              <div class="button-content">
+                <img src="@/assets/wy/order.png" alt="Icon5" class="sidebar-icon white-icon">
+                <span>售后管理</span>
+              </div>
+            </router-link>
+          </li>
         </ul>
       </nav>
     </aside>

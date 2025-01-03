@@ -649,4 +649,14 @@ public class OrderService {
                 });
         return response.getBody();
     }
+
+    @Transactional
+    public Result<String> getOrderIdByItemId(String itemId) {
+        Optional<OrderItem> orderItem = orderItemRepository.findByItemId(itemId);
+        if (orderItem.isEmpty()) {
+            return Result.error(404, "订单项不存在");
+        }
+        return Result.success(orderItem.get().getOrderId());
+    }
+
 }
