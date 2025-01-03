@@ -27,6 +27,9 @@ public class Product {
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
+    @Column(name = "is_onsale")
+    private Boolean isOnsale=true;
+
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable=false,updatable = false)
     @JsonBackReference // 解决循环引用问题，防止 Store 被序列化
@@ -156,5 +159,13 @@ public class Product {
 
     public void setStoreId(String storeId) {
         this.storeId = storeId;
+    }
+
+    public Boolean getOnsale() {
+        return isOnsale;
+    }
+
+    public void setOnsale(Boolean onsale) {
+        isOnsale = onsale;
     }
 }

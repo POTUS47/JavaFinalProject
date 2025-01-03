@@ -613,7 +613,7 @@ body {
   padding: 20px;
   /* border: 1px solid #e7e7e7; */
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.23);
+  background-color: rgba(0, 0, 0, 0.25);
   /* background-color: rgba(255, 255, 255, 0.69); */
   display: flex;
   flex-direction: column;
@@ -651,13 +651,15 @@ body {
 
 .product-name {
   font-size: 16px;
-  color: #333;
+  /* color: #333; */
+  color: #f2f0f0;
   margin-bottom: 10px;
 }
 
 .product-price {
   font-size: 18px;
-  color: #a61b29;
+  /* color: #a61b29; */
+  color: #f01026;
   margin-bottom: 10px;
 }
 
