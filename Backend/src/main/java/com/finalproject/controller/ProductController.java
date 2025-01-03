@@ -54,6 +54,13 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
+    // 根据 productId 获取 yiyuangou 信息
+    @GetMapping("/productOneYuan/{productId}")
+    public ResponseEntity<Result<OneYuanDetail>> getOneYuanById(@PathVariable String productId) {
+        Result<OneYuanDetail> response= productService.getOneYuanById(productId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
     // 根据 productId 修改 product 库存
     @PutMapping("/product/quantity/{productId}")
     public Integer reduceProductById(@PathVariable String productId) {

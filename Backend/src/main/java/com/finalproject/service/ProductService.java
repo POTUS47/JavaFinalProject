@@ -277,6 +277,24 @@ public class ProductService {
         return productRepository.findById(productId);
     }
 
+    public Result<OneYuanDetail> getOneYuanById(String productId) {
+        Optional<Product> temp=productRepository.findById(productId);
+        Optional<ProductImage> tem=productImageRepository.findFirstByProductId(productId);
+
+        Product product=temp.get();
+        OneYuanDetail oneYuanDetail=new OneYuanDetail();
+        oneYuanDetail.setProductId(productId);
+        oneYuanDetail.setProductName(product.getProductName());
+        oneYuanDetail.setProductPrice(product.getProductPrice());
+        if(tem.isEmpty()){
+            oneYuanDetail.setImageUrl(baseUrl+"/images/1");
+        }
+        else{
+            oneYuanDetail.setImageUrl(baseUrl+"/images/"+tem.get().getImageId());
+        }
+        return Result.success(oneYuanDetail);
+    }
+
     private void manageStoreBusinessDirection(String tag, String storeId,String oldTag,Boolean isUpdate) {
         if(isUpdate){
             Optional<StoreBusinessDirection> old=storeBusinessDirectionRepository.
