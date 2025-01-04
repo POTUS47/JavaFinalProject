@@ -146,6 +146,7 @@ const getOrders = async () => {
 
       console.log("成功获得订单", myOrders.value)
       isLoading.value=false;
+      isNoData.value=true;
     }
   } catch (error) {
     console.error('获取订单失败:', error)
@@ -499,7 +500,7 @@ const menuChange = (index) => {
         </div>
       </el-header>
       <Loading v-if="isLoading" />
-      <div v-else-if="isNoData">暂无订单</div>
+      <div v-else-if="!isNoData">暂无订单</div>
       <el-table  v-else-if="option!=8" :data="filteredOrders" style="width: 100%">
         <el-table-column label="商品信息">
           <template v-slot="scope">
