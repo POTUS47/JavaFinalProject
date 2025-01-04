@@ -188,7 +188,7 @@ public class UserController {
         return ResponseEntity.ok(storeService.getStoreByAccountId(accountId));
     }
 
-    // 钱包充值（需要有沙盒逻辑！！！！）
+    // 钱包充值
     @PutMapping("/recharge")
     public ResponseEntity<Result<Map<String, String>>>
     recharge(@RequestParam BigDecimal amount, Authentication authentication) {
