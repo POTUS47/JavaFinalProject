@@ -100,7 +100,7 @@ public class AfterSellController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 卖家-退货单确认收货（是否需要增加库存????）
+    // 卖家-退货单确认收货
     @PostMapping("/return/{returnId}/confirmReceive")
     public ResponseEntity<Result<Map<String,String>>> confirmReceive(@PathVariable String returnId,
                                                                      Authentication authentication) {
@@ -109,7 +109,7 @@ public class AfterSellController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 卖家-为订单项退款(支付宝接口还没有，只是操作钱包！！！！！！)
+    // 卖家-为订单项退款
     @PostMapping("/orderItem/{orderItemId}/refund")
     public ResponseEntity<Result<Map<String,String>>> refundOrderItem(@PathVariable String orderItemId,
                                                                       Authentication authentication) {

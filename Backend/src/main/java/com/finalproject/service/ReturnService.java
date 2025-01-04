@@ -258,8 +258,6 @@ public class ReturnService {
     }
 
 
-
-
     //用于子系统沟通(买家申请退货)
     public Result<Map<String,String>> checkBuyerReturn(String userId,String itemId){
         String url = baseUrl + "/api/shopping/order/return/" + userId+"/"+itemId;
