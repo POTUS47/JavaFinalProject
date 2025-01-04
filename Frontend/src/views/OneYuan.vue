@@ -35,7 +35,7 @@
               <div class="display-items">
                 <div v-for="product in paginatedProducts" :key="product.productId" class="product-item"
                      @click="handleProductClick(product.productId,product.recordId)">
-                  <img :src="`http://127.0.0.1:8080/images/${product.imageUrl}`" :alt="product.productId" class="product-image" />
+                  <img :src="product.imageUrl" :alt="product.productId" class="product-image" />
                   <h2>{{ product.productName }}</h2>
                   <p>价格: ¥{{ product.productPrice }}</p>
                 </div>
@@ -163,11 +163,11 @@ const getProducts = async (Id) => {
     for (const product of originalProducts) {
       try {
         // 根据商品ID获取详细信息
-        const productResponse = await axiosInstance.get(`/productController/product/${product.productId}`);
+        const productResponse = await axiosInstance.get(`/productController/productOneYuan/${product.productId}`);
 
         // 将详细信息放入 displayProducts
         displayProducts.push({
-          ...productResponse.data,
+          ...productResponse.data.data,
           recordId: product.recordId
         });
       } catch (productError) {

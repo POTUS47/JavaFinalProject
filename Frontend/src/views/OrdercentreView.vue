@@ -23,9 +23,9 @@ const dialogVisible=ref(false);
 const star=ref(null);
 const returnProduct=ref('');
 const returnProduct_else=ref('');
-const returnVisible=ref(true);
-const deliveryNumberInput=ref(null);
-const returnToSalerId=ref(null);
+const returnVisible=ref(false);
+const deliveryNumberInput=ref('');
+const returnToSalerId=ref('');
 
 interface OrderItemDTO {
   itemId:string;
@@ -143,6 +143,7 @@ const getOrders = async () => {
         starVisible: false,
         isStar: false
       }))
+
       console.log("成功获得订单", myOrders.value)
       isLoading.value=false;
     }
@@ -330,42 +331,62 @@ function confirmArrive(order)
 const returnToSaler = (id) => {
   returnVisible.value = true;
   returnToSalerId.value = id;
-  console.log("退货",returnVisible.value);
+  console.log("退货",returnToSalerId.value);
 };
 
 const resetReturnForm=()=>{
   returnVisible.value = false;
-  returnToSalerId.value = null;
+  returnToSalerId.value ='';
 }
 
 //更新快递单号
 const updateDeliveryNumber = async () => {
-  console.log(deliveryNumberInput.value)
   try {
     const deliveryNumber = deliveryNumberInput.value;
+    const id=returnToSalerId.value;
+    console.log("ididididid",deliveryNumber)
 
     // 发送请求到后端更新快递单号
-    const response = await axiosInstance.put('/afterSell/return/${returnToSalerId.value}/addExpressNumber', {
-      deliveryNumber: deliveryNumber
-    });
-
+    const response = await axiosInstance.post(
+        `/afterSell/return/${id}/addExpressNumber`,
+        deliveryNumber
+    );
     if (response.status === 200) {
       ElMessage({
         message: '快递单号已更新',
         type: 'success'
       });
+      resetReturnForm();
     } else {
       ElMessage({
         message: '更新快递单号失败',
         type: 'error'
       });
+      resetReturnForm();
     }
   } catch (error) {
     console.error('更新快递单号失败:', error.response ? error.response.data : error.message);
     ElMessage({
-      message: '更新快递单号失败: ' + error.message,
+      message: '更新快递单号失败: ',
       type: 'error'
     });
+    resetReturnForm();
+  }
+};
+
+//获取退货详情
+const getReturnDetails = async (returnId) => {
+  try {
+    const response = await axiosInstance.get(`/afterSell/return/${returnId}`);
+    if (response.data.code === 200) {
+      return response.data.data;
+    } else {
+      console.error('获取退货详情失败:', response.data.msg);
+      return null;
+    }
+  } catch (error) {
+    console.error('获取退货详情请求失败:', error);
+    return null;
   }
 };
 
@@ -577,18 +598,38 @@ const menuChange = (index) => {
     </el-container>
 
     <!-- 快递单号 -->
-    <div >
-      <el-dialog
-          customClass="custom-dialog"
-          title="快递单号"
-          @close="resetReturnForm()">
-        :style="{ zIndex: 9999 }"
-        <div style="margin-top: 10px;"></div>
-        <el-input v-model="deliveryNumberInput" placeholder="请输入快递单号"></el-input>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateDeliveryNumber">确 定</el-button>
+<!--    <div >-->
+<!--      <el-dialog-->
+<!--          customClass="custom-dialog"-->
+<!--          title="快递单号"-->
+<!--          @close="resetReturnForm()">-->
+<!--        :style="{ zIndex: 9999 }"-->
+<!--        <div style="margin-top: 10px;"></div>-->
+<!--        <el-input v-model="deliveryNumberInput" placeholder="请输入快递单号"></el-input>-->
+<!--        <div slot="footer" class="dialog-footer">-->
+<!--          <el-button type="primary" @click="updateDeliveryNumber">确 定</el-button>-->
+<!--        </div>-->
+<!--      </el-dialog>-->
+<!--    </div>-->
+    <div v-if="returnVisible">
+      <div  class="dialog-overlay">
+        <div class="dialog-content">
+          <div class="dialog-header">
+            <span class="dialog-title">快递单号</span>
+            <span class="dialog-close" @click="resetReturnForm">&times;</span>
+          </div>
+          <div class="dialog-body">
+            <input
+                v-model="deliveryNumberInput"
+                class="dialog-input"
+                placeholder="请输入快递单号"
+            >
+          </div>
+          <div class="dialog-footer">
+            <button class="dialog-button" @click="updateDeliveryNumber">确 定</button>
+          </div>
         </div>
-      </el-dialog>
+      </div>
     </div>
 
     <div v-if="currentRow_star!=null">
@@ -717,5 +758,64 @@ const menuChange = (index) => {
   border-bottom: 1px solid #839fe0; /* 添加底部边框样式 */
   width: 100%;
 }
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.dialog-content {
+  background: #fff;
+  border-radius: 4px;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dialog-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.dialog-close {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.dialog-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.dialog-button {
+  background: #409eff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dialog-button:hover {
+  background: #66b1ff;
+}
+
 
 </style>

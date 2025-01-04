@@ -88,9 +88,9 @@ public class ReturnService {
         if (returnOrder.isEmpty()){
             return Result.error(404, "想填写快递单号的退货单不存在！");
         }
-        if(!returnOrder.get().getShippingNumber().isEmpty()){
-            return Result.error(400, "退货单已经存在快递单号！");
-        }
+//        if(!returnOrder.get().getShippingNumber().isEmpty()){
+//            return Result.error(400, "退货单已经存在快递单号！");
+//        }
         returnOrder.get().setShippingNumber(expressNumber);
         returnOrder.get().setReturnStatus(Returns.ReturnStatus.已退货);
         returnRepository.save(returnOrder.get());
@@ -106,7 +106,7 @@ public class ReturnService {
         if (returnOrder.isEmpty()){
             return Result.error(404, "想确认收货的退货单不存在！");
         }
-        if(!returnOrder.get().getReturnStatus().equals(Returns.ReturnStatus.已收货)){
+        if(returnOrder.get().getReturnStatus().equals(Returns.ReturnStatus.已收货)){
             return Result.error(400, "无法重复确认收货！");
         }
         returnOrder.get().setReturnStatus(Returns.ReturnStatus.已收货);
@@ -166,7 +166,7 @@ public class ReturnService {
         if(response.getCode()!=200){
             return response;
         }
-        response=refund(userID,returnId);
+       // response=refund(userID,returnId);
         return response;
     }
 
