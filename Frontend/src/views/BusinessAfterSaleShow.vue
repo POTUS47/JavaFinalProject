@@ -14,12 +14,12 @@
         <el-table-column prop="returnDate" label="退货时间" width="200"></el-table-column>
         <el-table-column prop="returnReason" label="退货原因" width="150"></el-table-column>
         <el-table-column prop="returnStatus" label="退货状态" width="150"></el-table-column>
-        <el-table-column prop="practicalPrice" label="" width="150"></el-table-column>
+<!--        <el-table-column prop="practicalPrice" label="" width="150"></el-table-column>-->
         <el-table-column label="操作">
           <template #default="scope">
             <div v-for="item in scope" :key="item.returnId" class="after-sale-status">
               <div class="status-content">
-                <template v-if="item.itemStatus === '待审核'">
+                <template v-if="item.returnStatus === '待审核'">
                   <el-button
                       size="small"
                       type="warning"
@@ -28,13 +28,22 @@
                     同意退货
                   </el-button>
                 </template>
-                <template v-if="item.itemStatus === '申请被拒绝'">
+                <template v-if="item.returnStatus === '待审核'">
                   <el-button
                       size="small"
                       type="warning"
                       @click="showArbitrateDialog(item.itemId)"
                   >
                     申请仲裁
+                  </el-button>
+                </template>
+                <template v-if="item.returnStatus === '已退货'">
+                  <el-button
+                      size="small"
+                      type="warning"
+                      @click="receiveReturn(item.itemId)"
+                  >
+                    确认收货
                   </el-button>
                 </template>
               </div>
@@ -258,6 +267,34 @@ export default {
       }
     };
 
+
+    //确认收货
+    const receiveReturn = async (id) => {
+      try {
+
+        // 发送请求到后端
+        const response = await axiosInstance.post(`/afterSell/return/${id}/confirmReceive`);
+
+        if (response.status === 200) {
+          ElMessage({
+            message: '已确认收货',
+            type: 'success'
+          });
+        } else {
+          ElMessage({
+            message: '确认失败',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        console.error('确认失败:', error.response ? error.response.data : error.message);
+        ElMessage({
+          message: '确认失败: ' + error.message,
+          type: 'error'
+        });
+      }
+    };
+
     //同意退货请求
     const handleReturnRequest = async (item,result) => {
       try {
@@ -372,7 +409,7 @@ export default {
       updateDeliveryNumber,
       showArbitrateDialog,
       arbitrate,
-
+      receiveReturn
     };
   }
 };
