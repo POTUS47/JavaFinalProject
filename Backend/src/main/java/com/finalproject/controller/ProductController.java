@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/productController")
 public class ProductController {
 
-    private final ProductRepository productRepository;
     private ProductService productService;
     private RecommendService recommendService;
 
@@ -35,7 +34,6 @@ public class ProductController {
     ProductController(ProductService productService, RecommendService recommendService, ProductRepository productRepository) {
         this.productService = productService;
         this.recommendService = recommendService;
-        this.productRepository = productRepository;
     }
 
     //通过id获取本店所有商品
