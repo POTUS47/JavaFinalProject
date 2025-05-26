@@ -12,8 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -53,19 +56,50 @@ public class SecurityConfig {
 
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 允许前端域名
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setExposedHeaders(Arrays.asList("Authorization")); // 如果需要暴露 token 到前端
+        config.setAllowCredentials(true); // 允许携带 cookie/token
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", config); // 只对 /api 开头的路径生效
+        return source;
+    }
+
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF
+//                .authorizeHttpRequests(auth -> auth
+//                        // 配置允许的请求
+//                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/send-code/**"
+//                        ,"api/users/changePassword").permitAll() // 注册、登录、验证码、修改密码不需要验证
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // 允许访问 Swagger UI 和 API 文档
+//                        // 对来自白名单 IP 的请求进行放行，无需 JWT 认证
+//                        .requestMatchers(request -> isTrustedIp(request.getRemoteAddr())).permitAll() // IP 白名单
+//                        .anyRequest().authenticated() // 其他请求需要身份验证
+//                )
+//                // 添加 JWT 认证过滤器
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 启用 CORS
                 .authorizeHttpRequests(auth -> auth
-                        // 配置允许的请求
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/send-code/**"
-                        ,"api/users/changePassword").permitAll() // 注册、登录、验证码、修改密码不需要验证
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // 允许访问 Swagger UI 和 API 文档
-                        // 对来自白名单 IP 的请求进行放行，无需 JWT 认证
-                        .requestMatchers(request -> isTrustedIp(request.getRemoteAddr())).permitAll() // IP 白名单
-                        .anyRequest().authenticated() // 其他请求需要身份验证
+                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/send-code/**", "/api/users/changePassword").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(request -> isTrustedIp(request.getRemoteAddr())).permitAll()
+                        .anyRequest().authenticated()
                 )
-                // 添加 JWT 认证过滤器
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
