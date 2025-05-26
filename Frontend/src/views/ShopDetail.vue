@@ -85,7 +85,7 @@
                   class="product-item"
                 >
                   <div @click="handleProductClick(product.productId)">
-                    <img :src="product.imageurl" :alt="product.productId" class="product-image" />
+                    <img :src="product.imageUrl" :alt="product.productId" class="product-image" />
                     <!-- <img 
                       src="../assets/wall.jpg"
                       class="product-image" 
@@ -250,7 +250,8 @@ const fetchAllProducts = async () => {
       products.push(product);
     });
     message3.value = '已获取全部商品信息';
-    checkLoadingStatus(); 
+    checkLoadingStatus();
+    console.log("商品商品",products);
   } catch (error) {
     if (error.response) {
       message3.value = error.response.data;
