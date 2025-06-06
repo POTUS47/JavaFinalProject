@@ -1,0 +1,39 @@
+{
+  "subsystems": {
+    "UserService": {
+      "controller": "UserController",
+      "services": ["UserManager", "UserValidator","Test","Test2"],
+      "class_calls": {
+        "UserController": ["UserManager", "UserValidator"],
+        "UserManager": ["UserValidator"],
+        "UserValidator": [],
+        "Test": [],
+        "Test2": []
+      },
+      "tested_classes": ["UserController", "UserManager"],
+      "tested_class_calls": [
+        ["UserController", "UserManager"],
+        ["UserManager", "UserValidator"]
+      ]
+    },
+    "AuthService": {
+      "controller": "AuthController",
+      "services": ["TokenService"],
+      "class_calls": {
+        "AuthController": ["TokenService"],
+        "TokenService": []
+      },
+      "tested_classes": ["AuthController", "TokenService"],
+      "tested_class_calls": [
+        ["AuthController", "TokenService"]
+      ]
+    }
+  },
+  "inter_subsystem_calls": [
+    {
+      "from": "UserService",
+      "to": "AuthService",
+      "tested": true
+    }
+  ]
+}
