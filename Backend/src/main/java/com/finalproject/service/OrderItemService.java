@@ -50,7 +50,7 @@ public class OrderItemService {
         return response.getBody();
     }
 
-    // 更新订单项评分评价
+    // 修改||更新订单项评分评价
     @Transactional
     public Result<String> remarkOrderItem(UpdateOrderItemRemarkDTO orderItemRemarkDto) {
 
@@ -87,7 +87,7 @@ public class OrderItemService {
     * Optional<Order>  只能包含 0 或 1 个元素
     * List<Order>  可以包含多个元素，返回的是一个列表（即 0 或多个）
     * */
-    // 获取店铺所有订单评论
+    // 获取||获取店铺所有订单评论
     @Transactional
     public Result<List<GetStoreRemarkDTO>> getStoreRemarks(String storeId) {
         // 确认店铺存在
@@ -98,7 +98,7 @@ public class OrderItemService {
 
         List<Order> orders = orderRepository.findByStoreId(storeId);
         if (orders.isEmpty()) {
-            return Result.error(404,"店铺评价不存在");
+            return Result.error(404,"店铺订单不存在");
         }
 
         List<GetStoreRemarkDTO> getStoreRemarkDTOs = new ArrayList<>();
@@ -122,7 +122,7 @@ public class OrderItemService {
         return Result.success(getStoreRemarkDTOs);
     }
 
-    // 判断是否存在当前商品的订单项
+    // 获取失败？||判断是否存在当前商品的订单项
     @Transactional
     public Result<Boolean> isExistProductOrder(String productId){
         Optional<Product>product=orderService.getProductById(productId);
@@ -206,7 +206,7 @@ public class OrderItemService {
         return Result.success(data);
     }
 
-    // 返回订单项的状态
+    // 获取||返回订单项的状态
     @Transactional
     public Result<String> getItemStatus(String orderItemId){
         Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
@@ -217,7 +217,7 @@ public class OrderItemService {
         return Result.success(status);
     }
 
-    // 将订单项的状态设置为"售后中"
+    // 修改||将订单项的状态设置为"售后中"
     @Transactional
     public Result<Map<String,String>> startAfterSell(String orderItemId){
         Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
@@ -235,7 +235,7 @@ public class OrderItemService {
         return Result.success(data);
     }
 
-    // 将订单项的状态设置为"售后结束"
+    // 修改||将订单项的状态设置为"售后结束"
     @Transactional
     public Result<Map<String,String>> endAfterSell(String orderItemId){
         Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
@@ -253,7 +253,7 @@ public class OrderItemService {
         return Result.success(data);
     }
 
-    // 返回商家待处理的售后订单项
+    // 获取||返回商家待处理的售后订单项
     @Transactional
     public Result<List<String>> getStoreCurrentAfterSellItem(String userId){
         Optional<List<OrderItem>> items =orderItemRepository.findAfterSalesOrderItemsByStoreId(userId);
@@ -267,7 +267,7 @@ public class OrderItemService {
         return Result.success(itemIds);
     }
 
-    // 返回商家历史售后订单项
+    // 获取||返回商家历史售后订单项
     @Transactional
     public Result<List<String>> getStoreHistoryAfterSellItem(String userId){
         Optional<List<OrderItem>> items =orderItemRepository.findHistoryAfterSalesOrderItemsByStoreId(userId);
@@ -280,7 +280,7 @@ public class OrderItemService {
                 .collect(Collectors.toList());
         return Result.success(itemIds);
     }
-    // 返回买家售后中订单项
+    // 获取||返回买家售后中订单项
     @Transactional
     public Result<List<String>> getBuyerCurrentAfterSellItem(String userId){
         Optional<List<OrderItem>> items =orderItemRepository.findAfterSalesOrderItemsByBuyerId(userId);
@@ -293,7 +293,7 @@ public class OrderItemService {
                 .collect(Collectors.toList());
         return Result.success(itemIds);
     }
-    // 返回买家历史售后订单项
+    // 获取||返回买家历史售后订单项
     @Transactional
     public Result<List<String>> getBuyerHistoryAfterSellItem(String userId){
         Optional<List<OrderItem>> items =orderItemRepository.findHistoryAfterSalesOrderItemsByBuyerId(userId);
@@ -318,6 +318,7 @@ public class OrderItemService {
         return Result.success(paymentAndIdDTO);
     }
 
+    // 外部系统使用
     public Result<BuyerShopperIdDTO> getStoreBuyerId(String orderId) {
         Optional<Order> res=orderRepository.findByOrderId(orderId);
         if(res.isEmpty()) {
@@ -328,4 +329,55 @@ public class OrderItemService {
         Ids.setStoreId(res.get().getStoreId());
         return Result.success(Ids);
     }
+
+//    // 删除||删除订单项（假函数，没人用）
+//    @Transactional
+//    public Result<String> deleteOrderitem(String orderItemId) {
+//        System.out.println("------------");
+//        System.out.println(orderItemId);
+//        Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
+//        if(orderItem.isPresent()) {
+//            orderItemRepository.delete(orderItem.get());
+//            return Result.success("订单项删除成功");
+//        } else {
+//            return Result.error(404,"不存在该订单项");
+//        }
+//    }
+
+    // 创建||创建订单项（假函数，没人用）
+//    public Result<String> addOrderItem(OrderItemDTO orderItemDTO) {
+//        // 检查订单是否存在
+//        Optional<Order> orderOpt = orderRepository.findById(orderItemDTO.getOrderId());
+//        if (orderOpt.isEmpty()) {
+//            return Result.error(404, "订单不存在");
+//        }
+//        // 检查商品是否存在
+//        Optional<Product> productOpt = orderService.getProductById(orderItemDTO.getProductId());
+//        if (productOpt.isEmpty()) {
+//            return Result.error(404, "商品不存在");
+//        }
+//        // 检查订单项是否已存在
+//        Optional<OrderItem> existingOrderItem = orderItemRepository.findById(orderItemDTO.getItemId());
+//        if (existingOrderItem.isPresent()) {
+//            return Result.error(409, "订单项已存在");
+//        }
+//
+//        // 创建新的订单项
+//        OrderItem orderItem = new OrderItem();
+//        orderItem.setItemId(orderItemDTO.getItemId());
+//        orderItem.setProductId(orderItemDTO.getProductId());
+//        orderItem.setQuantity(1);  // 假设每个商品购买数量为1,需要修改
+//        orderItem.setUnitPrice(orderItemDTO.getUnitPrice());
+//        orderItem.setOrderId(orderItemDTO.getOrderId());
+//        orderItem.setTotalPay(orderItemDTO.getTotalPay());
+//        orderItem.setActualPay(orderItemDTO.getActualPay());
+//        orderItem.setItemStatus(OrderItem.ItemStatus.无售后);
+//        orderItem.setScore(BigDecimal.ZERO);
+//
+//
+//        // 保存订单项
+//        orderItemRepository.save(orderItem);
+//
+//        return Result.success("订单项添加成功", orderItem.getItemId());
+//    }
 }

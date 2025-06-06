@@ -273,7 +273,7 @@ public class FavouriteService {
         try {
             System.out.println("保存");
             bookmarkProductRepository.insertBookmarkProduct(userId, productId);
-            bookmarkProductRecord(userId, productId);
+            // bookmarkProductRecord(userId, productId);
             return Result.success(200,"收藏成功");
         } catch (Exception e) {
             return Result.error(500, "数据库操作异常");
