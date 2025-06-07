@@ -1,0 +1,5 @@
+用例编号,测试场景,orderItemId,预期输出,实际输出,运行时间,用例来源,备注
+GIS-001,,"","Result.error(404,""orderItemId不能为空"")",,,边界值,获取订单项状态时，orderItemId为空
+GIS-002,,"123456789999876","Result.error(404,""希望查询状态的订单项不存在！"")",,,等价类,获取订单项状态时，不存在该orderItemId
+GIS-003,,"529238668238848","Result.success(""已发货"")",,,等价类,获取订单项状态时，存在该orderItemId
+GIS-004,,"o123","Result.error(404,""orderItemId格式错误"")",,,边界值,获取订单项状态时，orderItemId格式错误
