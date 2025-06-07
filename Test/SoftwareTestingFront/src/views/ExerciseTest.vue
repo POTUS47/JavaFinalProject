@@ -9,7 +9,7 @@
       <div class="select-group">
         <label>测试用例类别：</label>
         <select v-model="selectedTestCaseType">
-          <option v-for="type in exercise?.testCaseTypes" :key="type.id" :value="type.id">
+          <option v-for="type in testCaseTypes" :key="type.id" :value="type.id">
             {{ type.name }}
           </option>
         </select>
@@ -42,40 +42,82 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
 import TestResults from '../components/TestResults.vue'
 
 const route = useRoute()
 const exercise = ref(null)
+const testCaseTypes = ref([])
+
+const testResults = ref([])
 
 // 目前选择的用例版本和代码版本id
 const selectedTestCaseType = ref('')
 const selectedCodeVersion = ref('')
 
-const testResults = ref([])
-
 // 目前选择的用例版本和代码版本对象
 const currentTestCaseType = computed(() => {
-  return exercise.value?.testCaseTypes.find(t => t.id === selectedTestCaseType.value)
+  return testCaseTypes.value.find(t => t.id === selectedTestCaseType.value)
 })
-
 const currentCodeVersion = computed(() => {
   return exercise.value?.codeVersions.find(v => v.id === selectedCodeVersion.value)
 })
 
+// 用于判断能否进行测试
 const canRunTest = computed(() => {
   return selectedTestCaseType.value && selectedCodeVersion.value
 })
 
+// csv格式用例数据转化为按用例类别分类的用例数组
+const convertCSVToTestCaseTypes = (rawData) => {
+  const groupedData = []
+
+  const groupMap = new Map()
+
+  rawData.forEach(item => {
+    const { type_id, type_name, case_id, input, expected } = item
+    const parsedInput = JSON.parse(input) // 将字符串 "[3,4,5]" 转为数组 [3, 4, 5]
+
+    if (!groupMap.has(type_id)) {
+      const newGroup = {
+        id: type_id,
+        name: type_name,
+        cases: []
+      }
+      groupMap.set(type_id, newGroup)
+      groupedData.push(newGroup)
+    }
+
+    groupMap.get(type_id).cases.push({
+      id: case_id,
+      input: parsedInput,
+      expected: expected
+    })
+  })
+
+  return groupedData;
+}
+
 onMounted(async () => {
-  // 加载练习数据
   try {
-    const response = await fetch(`/src/assets/exercises/${route.params.id}.json`)
-    exercise.value = await response.json()
-    // console.log(exercise.value)
+    // 加载练习基本信息
+    const exerciseResponse = await fetch(`/src/assets/exercises/${route.params.id}.json`)
+    exercise.value = await exerciseResponse.json()
     
-    if (exercise.value.testCaseTypes.length) {
-      selectedTestCaseType.value = exercise.value.testCaseTypes[0].id
+    // 加载测试用例
+    const testCasesResponse = await fetch(`/src/assets/exercises/testcases/${route.params.id}.csv`)    
+    const csvText = await testCasesResponse.text()
+    const csvData = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    testCaseTypes.value = convertCSVToTestCaseTypes(csvData.data)
+    console.log(testCaseTypes.value);
+    
+    // 默认选择的测试用例类型及代码版本
+    if (testCaseTypes.value.length) {
+      selectedTestCaseType.value = testCaseTypes.value[0].id
     }
     if (exercise.value.codeVersions.length) {
       selectedCodeVersion.value = exercise.value.codeVersions[0].id
@@ -86,13 +128,10 @@ onMounted(async () => {
 })
 
 const runTest = () => {
-  const selectedType = exercise.value.testCaseTypes.find(t => t.id === selectedTestCaseType.value)
-  const selectedVersion = exercise.value.codeVersions.find(v => v.id === selectedCodeVersion.value)
-  
   // 创建函数执行环境
-  const testFunction = new Function('return ' + selectedVersion.code)()
+  const testFunction = new Function('return ' + currentCodeVersion.value.code)()
   
-  testResults.value = selectedType.cases.map(testCase => {
+  testResults.value = currentTestCaseType.value.cases.map(testCase => {
     try {
       // 执行测试代码
       const actual = testFunction(...testCase.input)
