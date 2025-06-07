@@ -1,0 +1,17 @@
+{
+  "id": "triangleJudge",
+  "title": "判断三角形",
+  "description": "实现一个函数，判断三条边是否能构成三角形，并判断三角形的类型（边长范围为[1,200]）",
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function triangleJudge(a, b, c) {\n  if (a < 1 || a > 200 || b < 1 || b > 200 || c < 1 || c > 200) {\n    return \"输入超出范围\";\n  }\n  if (a + b <= c || a + c <= b || b + c <= a) {\n    return \"不构成三角形\";\n  }\n  if (a === b && b === c) {\n    return \"等边三角形\";\n  } else if (a === b || a === c || b === c) {\n    return \"等腰三角形\";\n  } else {\n    return \"一般三角形\";\n  }\n}"
+    },
+    {
+      "id": "wrong-version",
+      "name": "错误版本",
+      "code": "function triangleJudge(a, b, c) {\n  // 错误版本：条件判断顺序不合理（先判断等腰再判断等边）造成判断错误\n  if (a < 1 || a > 200 || b < 1 || b > 200 || c < 1 || c > 200) {\n    return \"输入超出范围\";\n  }\n  if (a + b <= c || a + c <= b || b + c <= a) {\n    return \"不构成三角形\";\n  }\n  if (a === b || a === c || b === c) {\n    return \"等腰三角形\";\n  } else if (a === b && b === c) {\n    return \"等边三角形\";\n  } else {\n    return \"一般三角形\";\n  }\n}"
+    }
+  ]
+}
