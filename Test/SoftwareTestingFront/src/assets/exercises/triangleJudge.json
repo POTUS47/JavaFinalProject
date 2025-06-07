@@ -1,0 +1,61 @@
+{
+  "id": "triangleJudge",
+  "title": "判断三角形",
+  "description": "实现一个函数，判断三条边是否能构成三角形，并判断三角形的类型（等边、等腰、普通）",
+  "testCaseTypes": [
+    {
+      "id": "1",
+      "name": "边界值法",
+      "cases": [
+        {
+          "id": "1-1",
+          "input": [3, 4, 5],
+          "expected": "普通三角形"
+        },
+        {
+          "id": "1-2",
+          "input": [5, 5, 5],
+          "expected": "等边三角形"
+        },
+        {
+          "id": "1-3",
+          "input": [5, 5, 3],
+          "expected": "等腰三角形"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "等价类法",
+      "cases": [
+        {
+          "id": "2-1",
+          "input": [1, 2, 3],
+          "expected": "不能构成三角形"
+        },
+        {
+          "id": "2-2",
+          "input": [0, 4, 5],
+          "expected": "不能构成三角形"
+        },
+        {
+          "id": "2-3",
+          "input": [-3, 4, 5],
+          "expected": "不能构成三角形"
+        }
+      ]
+    }
+  ],
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function judgeTriangle(a, b, c) {\n  // 使用数组方法简化代码\n  const sides = [a, b, c];\n  \n  // 检查输入是否为正数\n  if (sides.some(side => side <= 0)) {\n    return '不能构成三角形';\n  }\n  \n  // 检查是否满足三角形条件\n  const maxSide = Math.max(...sides);\n  const sumOtherSides = sides.reduce((sum, side) => sum + side, 0) - maxSide;\n  if (sumOtherSides <= maxSide) {\n    return '不能构成三角形';\n  }\n  \n  // 判断三角形类型\n  const uniqueSides = new Set(sides).size;\n  if (uniqueSides === 1) {\n    return '等边三角形';\n  } else if (uniqueSides === 2) {\n    return '等腰三角形';\n  } else {\n    return '普通三角形';\n  }\n}"
+    },
+    {
+      "id": "wrong-version",
+      "name": "错误版本",
+      "code": "function judgeTriangle(a, b, c) {\n  return '普通三角形';\n}"
+    }
+  ]
+} 
