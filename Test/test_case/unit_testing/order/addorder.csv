@@ -1,0 +1,6 @@
+﻿用例编号,测试场景,userId,List<String> productIds,预期输出,实际输出,运行时间,用例来源,备注
+TC_ADDORDER01,正常情况，单个商品,"""user123""",["prod001"],"Result.success(200,""订单生成成功"",orderRelatedDTOList)",,,有效等价类,
+TC_ADDORDER02,正常情况，多个商品,"""user123""","[""prod001"", ""prod002""]","Result.success(200,""订单生成成功"",orderRelatedDTOList)",,,有效等价类,
+TC_ADDORDER03,商品列表为空,"""user123""",[],400，商品列表不能为空,,,边界值,
+TC_ADDORDER04,用户id不存在,"""nonexistent_user""",["prod001"],"Result.error(404, ""买家不存在"")",,,无效等价类,
+TC_ADDORDER05,用户id为空,"""""",["prod001"],"Result.error(404, ""买家不存在"")",,,边界值,

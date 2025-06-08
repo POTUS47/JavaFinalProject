@@ -1,0 +1,6 @@
+﻿用例编号,测试场景,orderId,预期输出,实际输出,运行时间,用例来源,备注
+TC_DELETEORDER01,删除未支付订单,"""unpaid_order123""",Result.success("订单删除成功"),,,有效等价类  ,
+TC_DELETEORDER02,删除已支付订单,"""paid_order123""",Result.success("订单删除成功"),,,有效等价类  ,
+TC_DELETEORDER03,删除不存在的订单,"""nonexistent_order""","Result.error(404, ""订单不存在"")",,,无效等价类,
+TC_DELETEORDER04,订单id为空,"""""","Result.error(404, ""订单id不能为空"")",,,边界值,
+,,,,,,,

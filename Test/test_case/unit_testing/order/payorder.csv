@@ -1,0 +1,11 @@
+﻿用例编号,测试场景,userId,orderId,userCredits,预期输出,实际输出,运行时间,用例来源,备注
+TC_PAYORDER01,用户支付订单时不使用积分,"""user123""","""order123""",0,Result.success(creditsDTO),,,有效等价类,
+TC_PAYORDER02,用户支付订单时使用小于订单金额的积分,"""user123""","""order123""",50,Result.success(creditsDTO),,,有效等价类,
+TC_PAYORDER03,使用超过订单金额的积分,"""user123""","""order123""",1500,Result.success(creditsDTO),,,边界值,
+TC_PAYORDER04,用户id不存在,"""nonexistent_user""","""order123""",0,"Result.error(404, ""买家不存在"")",,,无效等价类,
+TC_PAYORDER05,订单id不存在,"""user123""","""nonexistent_order""",0,"Result.error(404,""订单不存在"")",,,无效等价类,
+TC_PAYORDER06,积分为负数,"""user123""","""order123""",-50,"400,积分不能为负数",,,无效等价类,
+TC_PAYORDER07,用户id为空,"""""","""order123""",0,"400,用户不能为空",,,边界值,
+TC_PAYORDER08,订单为空,"""user123""","""""",0,"400,订单不能为空",,,边界值,
+TC_PAYORDER09,积分为空,"""user123""","""order123""",null,Result.success(creditsDTO),,,边界值,
+TC_PAYORDER10,使用全部的订单金额的积分,"""user123""","""order123""",100,Result.success(creditsDTO),,,边界值,
