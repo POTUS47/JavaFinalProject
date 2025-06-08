@@ -7,6 +7,10 @@
     {
       "id": "calculateCommission",
       "title": "销售系统计算佣金"
+    },
+    {
+      "id": "calculatePhoneBill",
+      "title": "电信收费系统"
     }
   ]
 } 

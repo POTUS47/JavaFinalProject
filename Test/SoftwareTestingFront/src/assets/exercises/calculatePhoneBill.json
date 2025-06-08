@@ -1,0 +1,12 @@
+{
+  "id": "calculatePhoneBill",
+  "title": "电信收费系统",
+  "description": "按照输入的本月通话时间（分钟）和年内未按时缴费次数，计算折扣后的实际的通话费",
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function calculatePhoneBill(callMinutes, missedPayments) {\n  const BASE_FEE = 25;\n  const PER_MINUTE_RATE = 0.15;\n  const MAX_CALL_MINUTES = 44640;\n  const MAX_MISSED_PAYMENTS = 11;\n  if (callMinutes < 0 || callMinutes > MAX_CALL_MINUTES || missedPayments < 0 || missedPayments > MAX_MISSED_PAYMENTS) {\n    return '-1';\n  }\n\n  let discount = 0;\n  let allowedMissed = 0;\n\n  if (callMinutes > 0 && callMinutes <= 60) {\n    discount = 0.01;\n    allowedMissed = 1;\n  } else if (callMinutes > 60 && callMinutes <= 120) {\n    discount = 0.015;\n    allowedMissed = 2;\n  } else if (callMinutes > 120 && callMinutes <= 180) {\n    discount = 0.02;\n    allowedMissed = 3;\n  } else if (callMinutes > 180 && callMinutes <= 300) {\n    discount = 0.025;\n    allowedMissed = 3;\n  } else if (callMinutes > 300) {\n    discount = 0.03;\n    allowedMissed = 6;\n  }\n\n  let actualRate = PER_MINUTE_RATE;\n  if (missedPayments <= allowedMissed && callMinutes > 0) {\n    actualRate *= (1 - discount);\n  }\n\n  const totalFee = BASE_FEE + (callMinutes * actualRate);\n  return String(parseFloat(totalFee.toFixed(4)));\n}"
+    }
+  ]
+}
