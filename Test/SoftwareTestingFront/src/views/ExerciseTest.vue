@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
@@ -49,7 +49,6 @@ import TestResults from '../components/TestResults.vue'
 const route = useRoute()
 const exercise = ref(null)
 const testCaseTypes = ref([])
-
 const testResults = ref([])
 
 // 目前选择的用例版本和代码版本id
@@ -76,7 +75,7 @@ const convertCSVToTestCaseTypes = (rawData) => {
   const groupMap = new Map()
 
   rawData.forEach(item => {
-    const { type_id, type_name, case_id, input, expected } = item
+    const { type_id, type_name, case_id, input, expected, notes } = item
     const parsedInput = JSON.parse(input) // 将字符串 "[3,4,5]" 转为数组 [3, 4, 5]
 
     if (!groupMap.has(type_id)) {
@@ -92,14 +91,16 @@ const convertCSVToTestCaseTypes = (rawData) => {
     groupMap.get(type_id).cases.push({
       id: case_id,
       input: parsedInput,
-      expected: expected
+      expected: expected,
+      notes: notes
     })
   })
 
   return groupedData;
 }
 
-onMounted(async () => {
+// 加载练习数据的函数
+const loadExerciseData = async () => {
   try {
     // 加载练习基本信息
     const exerciseResponse = await fetch(`/src/assets/exercises/${route.params.id}.json`)
@@ -125,6 +126,18 @@ onMounted(async () => {
   } catch (error) {
     console.error('加载练习数据失败:', error)
   }
+}
+
+// 监听路由参数变化
+watch(
+  () => route.params.id,
+  () => {
+    loadExerciseData()
+  }
+)
+
+onMounted(() => {
+  loadExerciseData()
 })
 
 const runTest = () => {
@@ -140,7 +153,8 @@ const runTest = () => {
         input: JSON.stringify(testCase.input),
         expected: testCase.expected,
         actual: actual,
-        passed: actual === testCase.expected
+        passed: actual === testCase.expected,
+        notes: testCase.notes ? testCase.notes : '-'
       }
     } catch (error) {
       return {
@@ -148,7 +162,8 @@ const runTest = () => {
         input: JSON.stringify(testCase.input),
         expected: testCase.expected,
         actual: `执行错误: ${error.message}`,
-        passed: false
+        passed: false,
+        notes: testCase.notes ? testCase.notes : '-'
       }
     }
   })

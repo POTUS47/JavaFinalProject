@@ -3,6 +3,10 @@
     {
       "id": "triangleJudge",
       "title": "判断三角形"
+    },
+    {
+      "id": "calculateCommission",
+      "title": "销售系统计算佣金"
     }
   ]
 } 

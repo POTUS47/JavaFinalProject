@@ -9,6 +9,7 @@
           <th>预期输出</th>
           <th>实际输出</th>
           <th>结果</th>
+          <th>用例描述</th>
         </tr>
       </thead>
       <tbody>
@@ -20,6 +21,7 @@
           <td :class="{ 'success': result.passed, 'error': !result.passed }">
             {{ result.passed ? '通过' : '失败' }}
           </td>
+          <td>{{ result.notes }}</td>
         </tr>
       </tbody>
     </table>

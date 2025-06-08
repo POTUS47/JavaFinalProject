@@ -1,0 +1,12 @@
+{
+  "id": "calculateCommission",
+  "title": "销售系统计算佣金",
+  "description": "实现一销售系统，如果销售员的年销售额大于200万RMB且请假天数不超过10天的情况下，现金到帐大于等于60%，则佣金（提成）系数为7，即佣金值为销售额除以佣金系数；现金到帐小于60%，佣金不予计算。所有其他情况且现金到帐小于等于85%，则按佣金系数均为6计算佣金，现金到账大于85%，佣金系数按5处理。",
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function calculateCommission(salesAmount, leaveDays, cashReceivedPercent) {\n  if (salesAmount < 0) {\n    return \"销售额不能为负数\";\n  }\n  if (leaveDays < 0) {\n    return \"请假天数不能为负数\";\n  }\n  if (cashReceivedPercent < 0 || cashReceivedPercent > 100) {\n    return \"现金到账百分比应在0~100之间\";\n  }\n  if (salesAmount > 2000000 && leaveDays <= 10) {\n    if (cashReceivedPercent >= 60) {\n      return `佣金为：${(salesAmount / 7).toFixed(2)} 元`;\n    } else {\n      return \"现金到帐不足60%，不计算佣金\";\n    }\n  } else {\n    if (cashReceivedPercent <= 85) {\n      return `佣金为：${(salesAmount / 6).toFixed(2)} 元`;\n    } else {\n      return `佣金为：${(salesAmount / 5).toFixed(2)} 元`;\n    }\n  }\n}"
+    }
+  ]
+}
