@@ -1,6 +1,6 @@
 <template>
   <div>
-    系统测试页面
+    集成测试页面
   </div>
 </template>
 
