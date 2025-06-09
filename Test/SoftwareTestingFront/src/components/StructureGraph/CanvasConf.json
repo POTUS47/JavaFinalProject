@@ -1,0 +1,404 @@
+{
+  "clickableCircles": [
+    {
+      "cx": 150,
+      "cy": 170,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Account"
+    },
+    {
+      "cx": 110,
+      "cy": 200,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Buyer"
+    },
+    {
+      "cx": 150,
+      "cy": 200,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Store"
+    },
+    {
+      "cx": 190,
+      "cy": 200,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Administrator"
+    },
+    {
+      "cx": 150,
+      "cy": 230,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Wallet"
+    },
+    {
+      "cx": 150,
+      "cy": 260,
+      "r": 20,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "mediumpurple",
+      "text": "User Controller"
+    },
+
+    {
+      "cx": 450,
+      "cy": 150,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Product"
+    },
+    {
+      "cx": 490,
+      "cy": 180,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Recommend"
+    },
+    {
+      "cx": 470,
+      "cy": 210,
+      "r": 20,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "mediumpurple",
+      "text": "Product Controller"
+    },
+
+    {
+      "cx": 800,
+      "cy": 120,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Image"
+    },
+    {
+      "cx": 800,
+      "cy": 160,
+      "r": 20,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "mediumpurple",
+      "text": "Image Controller"
+    },
+
+    {
+      "cx": 200,
+      "cy": 360,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Order"
+    },
+    {
+      "cx": 240,
+      "cy": 390,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Order Item"
+    },
+    {
+      "cx": 160,
+      "cy": 390,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "OneYuan ShoppingRecord"
+    },
+    {
+      "cx": 200,
+      "cy": 420,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Favorite"
+    },
+    {
+      "cx": 200,
+      "cy": 460,
+      "r": 20,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "mediumpurple",
+      "text": "Shopping Controller"
+    },
+
+    {
+      "cx": 600,
+      "cy": 360,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Return"
+    },
+    {
+      "cx": 640,
+      "cy": 390,
+      "r": 15,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "orange",
+      "text": "Complain"
+    },
+    {
+      "cx": 620,
+      "cy": 430,
+      "r": 20,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "mediumpurple",
+      "text": "Aftersell Controller"
+    }
+  ],
+
+  "unclickableCircles": [
+    {
+      "cx": 150,
+      "cy": 190,
+      "r": 120,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "none",
+      "text": "用户管理子系统"
+    },
+    {
+      "cx": 470,
+      "cy": 180,
+      "r": 80,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "none",
+      "text": "商品管理与推荐子系统"
+    },
+    {
+      "cx": 800,
+      "cy": 140,
+      "r": 60,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "none",
+      "text": "图片管理子系统"
+    },
+    {
+      "cx": 200,
+      "cy": 400,
+      "r": 100,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "none",
+      "text": "购物子系统"
+    },
+    {
+      "cx": 620,
+      "cy": 400,
+      "r": 80,
+      "stroke": "black",
+      "strokeWidth": 1,
+      "fill": "none",
+      "text": "售后管理子系统"
+    }
+  ],
+
+  "lines": [
+    {
+      "points": [
+        { "x": 150, "y": 185 },
+        { "x": 150, "y": 245 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 110, "y": 215 },
+        { "x": 150, "y": 245 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 150, "y": 215 },
+        { "x": 150, "y": 245 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 190, "y": 215 },
+        { "x": 150, "y": 245 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 150, "y": 230 },
+        { "x": 150, "y": 245 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+
+    {
+      "points": [
+        { "x": 450, "y": 165 },
+        { "x": 470, "y": 195 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 490, "y": 195 },
+        { "x": 470, "y": 195 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+
+    {
+      "points": [
+        { "x": 800, "y": 135 },
+        { "x": 800, "y": 150 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+
+    {
+      "points": [
+        { "x": 200, "y": 375 },
+        { "x": 200, "y": 445 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 240, "y": 405 },
+        { "x": 200, "y": 445 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 160, "y": 405 },
+        { "x": 200, "y": 445 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 200, "y": 435 },
+        { "x": 200, "y": 445 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+
+    {
+      "points": [
+        { "x": 600, "y": 375 },
+        { "x": 620, "y": 415 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+    {
+      "points": [
+        { "x": 640, "y": 405 },
+        { "x": 620, "y": 415 }
+      ],
+      "stroke": "gray",
+      "strokeWidth": 1
+    },
+
+    {
+      "name": "User → Shopping",
+      "points": [
+        { "x": 150, "y": 260 },
+        { "x": 150, "y": 300 },
+        { "x": 130, "y": 300 },
+        { "x": 130, "y": 460 },
+        { "x": 200, "y": 460 }
+      ],
+      "stroke": "black",
+      "strokeWidth": 2
+    },
+    {
+      "name": "User → Product",
+      "points": [
+        { "x": 150, "y": 260 },
+        { "x": 150, "y": 280 },
+        { "x": 470, "y": 280 },
+        { "x": 470, "y": 210 }
+      ],
+      "stroke": "black",
+      "strokeWidth": 2
+    },
+    {
+      "name": "User → Image",
+      "points": [
+        { "x": 150, "y": 260 },
+        { "x": 150, "y": 220 },
+        { "x": 800, "y": 220 },
+        { "x": 800, "y": 160 }
+      ],
+      "stroke": "black",
+      "strokeWidth": 2
+    },
+    {
+      "name": "Product → Image",
+      "points": [
+        { "x": 470, "y": 210 },
+        { "x": 470, "y": 250 },
+        { "x": 800, "y": 250 },
+        { "x": 800, "y": 160 }
+      ],
+      "stroke": "black",
+      "strokeWidth": 2
+    },
+    {
+      "name": "Shopping → Aftersell",
+      "points": [
+        { "x": 200, "y": 460 },
+        { "x": 200, "y": 490 },
+        { "x": 580, "y": 490 },
+        { "x": 580, "y": 430 },
+        { "x": 620, "y": 430 }
+      ],
+      "stroke": "black",
+      "strokeWidth": 2
+    }
+  ]
+}
