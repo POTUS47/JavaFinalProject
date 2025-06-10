@@ -6,6 +6,7 @@
       left: minX + 'px',
       top: minY + 'px',
       pointerEvents: 'none',
+      zIndex: 1000,
     }"
   >
     <!-- 为每个线段创建单独的点击区域 -->
@@ -136,6 +137,7 @@ svg {
   display: block;
   margin: 0 0;
   pointer-events: none;
+  z-index: 1000;
 }
 
 .click-area {

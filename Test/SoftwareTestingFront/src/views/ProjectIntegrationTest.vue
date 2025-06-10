@@ -1,6 +1,5 @@
 <template>
   <div class="project-integration-test-main">
-    <p>集成测试页面</p>
     <StructurGraph />
   </div>
 </template>
