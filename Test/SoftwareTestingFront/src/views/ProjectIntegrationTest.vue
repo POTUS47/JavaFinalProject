@@ -1,23 +1,21 @@
 <template>
   <div class="project-integration-test-main">
-    <StructurGraph />
+    <StructureGraph />
   </div>
 </template>
 
 <script setup>
-import StructurGraph from '@/components/StructureGraph/StructurGraph.vue';
+import StructureGraph from "@/components/StructureGraph/StructureGraph.vue";
 </script>
 
 <style scoped>
 .project-integration-test-main {
   padding: 20px;
-  height: calc(100% - 40px);
-  width: calc(100% - 40px);
+  min-height: calc(100vh - 40px);
+  width: 100%;
   background-color: #f5f5f5;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  overflow: auto;
+  box-sizing: border-box;
 }
-</style> 
+</style>

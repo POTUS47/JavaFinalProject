@@ -7,7 +7,10 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#d6e4f0",
-      "text": "Account"
+      "text": "Account",
+      "filename": "triangleJudge",
+      "popoverTitle": "Account",
+      "popoverContent": "用户账号信息"
     },
     {
       "cx": 150,
@@ -16,7 +19,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#d6e4f0",
-      "text": "Buyer"
+      "text": "Buyer",
+      "filename": "calculatePhoneBill"
     },
     {
       "cx": 250,
@@ -382,9 +386,8 @@
         }
       ],
       "stroke": "gray",
-      "strokeWidth": 2 
+      "strokeWidth": 2
     },
-
 
     {
       "name": "User → Shopping",
