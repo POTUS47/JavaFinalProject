@@ -166,6 +166,6 @@ public class OrderItem {
 
     // Enum for ItemStatus
     public enum ItemStatus {
-        售后中, 售后结束, 无售后
+        售后中, 售后结束, 无售后,已发货
     }
 }

@@ -333,18 +333,16 @@ public class OrderItemService {
     }
 
 //    // 删除||删除订单项（假函数，没人用）
-//    @Transactional
-//    public Result<String> deleteOrderitem(String orderItemId) {
-//        System.out.println("------------");
-//        System.out.println(orderItemId);
-//        Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
-//        if(orderItem.isPresent()) {
-//            orderItemRepository.delete(orderItem.get());
-//            return Result.success("订单项删除成功");
-//        } else {
-//            return Result.error(404,"不存在该订单项");
-//        }
-//    }
+    @Transactional
+    public Result<String> deleteOrderitem(String orderItemId) {
+        Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
+        if(orderItem.isPresent()) {
+            orderItemRepository.delete(orderItem.get());
+            return Result.success("订单项删除成功");
+        } else {
+            return Result.error(404,"不存在该订单项");
+        }
+    }
 
     // 创建||创建订单项（假函数，没人用）
     public Result<String> addOrderItem(AddOrderItemDTO orderItemDTO) {
