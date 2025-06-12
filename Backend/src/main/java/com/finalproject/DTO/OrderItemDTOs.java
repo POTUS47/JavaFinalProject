@@ -146,6 +146,67 @@ public class OrderItemDTOs {
         }
     }
 
+    public static class AddOrderItemDTO {
+        private String ItemId;
+        private String ProductId;
+        private String OrderId;
+        private BigDecimal UnitPrice;
+        private BigDecimal TotalPay;
+        private BigDecimal ActualPay;
+        private Integer Quantity;
+        private BigDecimal Score;
+
+        public String getItemId() {
+            return ItemId;
+        }
+        public void setItemId(String itemId) {
+            ItemId = itemId;
+        }
+        public String getProductId() {
+            return ProductId;
+        }
+        public void setProductId(String productId) {
+            ProductId = productId;
+        }
+        public String getOrderId() {
+            return OrderId;
+        }
+        public void setOrderId(String orderId) {
+            OrderId = orderId;
+        }
+        public BigDecimal getUnitPrice() {
+            return UnitPrice;
+        }
+        public void setUnitPrice(BigDecimal unitPrice) {
+            UnitPrice = unitPrice;
+        }
+        public BigDecimal getTotalPay() {
+            return TotalPay;
+        }
+        public void setTotalPay(BigDecimal totalPay) {
+            TotalPay = totalPay;
+        }
+        public BigDecimal getActualPay() {
+            return ActualPay;
+        }
+        public void setActualPay(BigDecimal actualPay) {
+            ActualPay = actualPay;
+        }
+        public Integer getQuantity() {
+            return Quantity;
+        }
+        public void setQuantity(Integer quantity) {
+            Quantity = quantity;
+        }
+        public BigDecimal getScore() {
+            return Score;
+        }
+        public void setScore(BigDecimal score) {
+            Score = score;
+        }
+
+    }
+
     public static class PaymentAndIdDTO{
         private String orderId;
         private BigDecimal actualPay;
