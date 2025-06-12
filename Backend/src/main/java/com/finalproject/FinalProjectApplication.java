@@ -4,8 +4,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.finalproject.util.JwtTokenUtil;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ServletComponentScan
+// 确保包含这一行
 public class FinalProjectApplication {
 
     public static void main(String[] args) {

@@ -99,4 +99,12 @@ public class Result<T> {
         rs.setMsg(msg);
         return rs;
     }
+
+    public boolean isSuccess() {
+        return code >= 200 && code < 300;
+    }
+
+    public String getMessage() {
+        return msg;
+    }
 }
