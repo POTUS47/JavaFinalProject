@@ -35,7 +35,7 @@ const exercises = ref([])
 
 onMounted(async () => {
   try {
-    const response = await fetch('/src/assets/exercises/list.json')
+    const response = await fetch('/exercises/list.json')
     const data = await response.json()
     exercises.value = data.exercises
   } catch (error) {
@@ -78,6 +78,7 @@ onMounted(async () => {
   margin-bottom: 10px;
   color: #252525;
   font-size: 16px;
+  font-weight: bold;
 }
 
 .menu-group a {

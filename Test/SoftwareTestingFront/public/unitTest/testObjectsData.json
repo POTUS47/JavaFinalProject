@@ -1,0 +1,8 @@
+{
+  "OrderItemClass": {
+    "addOrderItem": ["v1", "v2"],
+    "deleteOrderItem": ["v1"],
+    "getItemStatus": ["v1"],
+    "remarkOrderItem": ["v1"]
+  }
+}
