@@ -103,11 +103,11 @@ const convertCSVToTestCaseTypes = (rawData) => {
 const loadExerciseData = async () => {
   try {
     // 加载练习基本信息
-    const exerciseResponse = await fetch(`/src/assets/exercises/${route.params.id}.json`)
+    const exerciseResponse = await fetch(`/exercises/${route.params.id}.json`)
     exercise.value = await exerciseResponse.json()
     
     // 加载测试用例
-    const testCasesResponse = await fetch(`/src/assets/exercises/testcases/${route.params.id}.csv`)    
+    const testCasesResponse = await fetch(`/exercises/testcases/${route.params.id}.csv`)
     const csvText = await testCasesResponse.text()
     const csvData = Papa.parse(csvText, {
       header: true,

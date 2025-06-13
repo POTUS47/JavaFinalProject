@@ -30,6 +30,10 @@ const routes = [
         props: true
       }
     ]
+  },
+  {
+    path: '/test',
+    component: () => import('../views/testVue.vue')
   }
 ]
 
