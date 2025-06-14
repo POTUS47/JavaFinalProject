@@ -376,6 +376,7 @@ class OrderItemServiceTest {
             dto.setTotalPay(new BigDecimal("9.99"));
             dto.setActualPay(new BigDecimal("9.99"));
             dto.setQuantity(1);
+            dto.setScore(new BigDecimal(4));
             Order mockOrder = new Order();
             Product mockProduct = new Product();
 
@@ -620,7 +621,7 @@ class OrderItemServiceTest {
         void remarkOrderItem_WhenRemarkTooLong_ShouldReturnError() {
             UpdateOrderItemRemarkDTO dto = createBaseValidDTO();
             // 创建超过200字符的评价
-            dto.setRemark("这是一段超出200个字符的评价".repeat(10));
+            dto.setRemark("这是一段超出200个字符的评价".repeat(15));
 
             Result<String> result = orderItemService.remarkOrderItem(dto);
 
