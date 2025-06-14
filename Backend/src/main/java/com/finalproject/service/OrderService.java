@@ -322,6 +322,24 @@ public class OrderService {
     @Transactional
     public Result<CreditsDTO> payOrder (String userId, String orderId, Integer usedCredits){
 
+        if (userId == null || userId.isBlank()) {
+            return Result.error(400, "用户不能为空");
+        }
+        if (orderId == null || orderId.isBlank()) {
+            return Result.error(400, "订单不能为空");
+        }
+        if (usedCredits != null && usedCredits < 0) {
+            return Result.error(400, "积分不能为负数");
+        }
+        if (usedCredits == null) {
+            usedCredits = 0; // 如果传null，默认不使用积分
+        }
+
+        Optional<Buyer> buyer = getBuyerById(userId);
+        if (buyer.isEmpty()) {
+            return Result.error(404, "买家不存在");
+        }
+
         Optional<Order> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isEmpty()) {
             return Result.error(404,"订单不存在");
@@ -330,6 +348,18 @@ public class OrderService {
 
         // 计算实际价格
         BigDecimal totalPay = order.getTotalPrice();  // 获取总价格
+
+        if (usedCredits > 0) {
+            BigDecimal maxCredits = totalPay.multiply(BigDecimal.valueOf(100)); // 价格对应的最大积分
+            if (BigDecimal.valueOf(usedCredits).compareTo(maxCredits) > 0) {
+                usedCredits = maxCredits.intValue();  // 积分超过则调整为最大积分
+            }
+
+        } else {
+            // 积分为0，视同不使用积分，直接用0即可（其实这里不改也没影响，因为已经是0）
+            usedCredits = 0;
+        }
+
         BigDecimal usedCreditsAmount = BigDecimal.valueOf(usedCredits).divide(BigDecimal.valueOf(100));  // 将积分转为金额
         BigDecimal actualPay = totalPay.subtract(usedCreditsAmount);  // 总价格减去积分金额
 
@@ -380,13 +410,21 @@ public class OrderService {
     // 删除订单
     @Transactional
     public Result<String> deleteOrder(String orderId) {
-        System.out.println("------------");
-        System.out.println(orderId);
+        if (orderId == null || orderId.trim().isEmpty()) {
+            return Result.error(400, "订单id不能为空");
+        }
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isEmpty()) {
+            return Result.error(404, "订单不存在");
+        }
+
+        // 确认订单存在后，再查找并删除 orderItem
         List<OrderItem> orderItemList = orderItemRepository.findByOrderId(orderId);
         orderItemRepository.deleteAll(orderItemList);
-        Order order = orderRepository.findById(orderId).get();
-        orderRepository.delete(order);
-        return Result.success("订单删除成功");
+
+        orderRepository.delete(optionalOrder.get());
+
+        return Result.success(200,"订单删除成功");
     }
 
     // 根据订单实体获取单个订单信息
@@ -501,16 +539,22 @@ public class OrderService {
     // 买家确认收货
     @Transactional
     public Result<String> receiveOrder(String orderId) {
-        System.out.println("------------");
-        System.out.println(orderId);
-
-        Optional<Order> orderopt =orderRepository.findById(orderId);
-        if (orderopt.isEmpty()) {
-            return Result.error(404,"订单不存在");
+        if (orderId == null || orderId.trim().isEmpty()) {
+            return Result.error(400, "订单不能为空");
         }
+
+        Optional<Order> orderopt = orderRepository.findById(orderId);
+        if (orderopt.isEmpty()) {
+            return Result.error(404, "订单不存在");
+        }
+
+
         Order order = orderopt.get();
+        if(order.getOrderStatus()==Order.OrderStatus.已完成){
+            return Result.success(400, "订单已完成，不能重复确认收货");}
+        else{
         order.setOrderStatus(Order.OrderStatus.已完成);
-        return Result.success("确认收货成功");
+        return Result.success(200,"确认收货成功");}
     }
 
     // 获取商家某天的交易量和交易额
