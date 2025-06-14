@@ -54,13 +54,52 @@ public class OrderItemService {
 
     // 修改||更新订单项评分评价
     @Transactional
-    public Result<String> remarkOrderItem(UpdateOrderItemRemarkDTO orderItemRemarkDto) {
+    public Result<String> remarkOrderItem_v1(UpdateOrderItemRemarkDTO orderItemRemarkDto) {
 
         Optional<OrderItem> orderItemOpt = orderItemRepository.findById(orderItemRemarkDto.getOrderItemId());
         if (orderItemOpt.isEmpty()) {
             return Result.error(404, "未找到订单");
         }
 
+        OrderItem orderitem = orderItemOpt.get();
+        orderitem.setScore(orderItemRemarkDto.getScore());
+        orderitem.setRemark(orderItemRemarkDto.getRemark());
+        orderItemRepository.save(orderitem);
+
+        return Result.success(200, "订单评价已提交");
+    }
+
+    @Transactional
+    public Result<String> remarkOrderItem(UpdateOrderItemRemarkDTO orderItemRemarkDto) {
+        // 1. 检查orderItemId是否为空
+        if (orderItemRemarkDto.getOrderItemId() == null || orderItemRemarkDto.getOrderItemId().isEmpty()) {
+            return Result.error(404, "orderItemId不能为空");
+        }
+
+        // 2. 检查orderItemId格式是否为15位纯数字
+        if (!orderItemRemarkDto.getOrderItemId().matches("\\d{15}")) {
+            return Result.error(404, "orderItemId格式错误");
+        }
+
+        // 3. 检查评分范围 (0-5)
+        if (orderItemRemarkDto.getScore() == null
+                || orderItemRemarkDto.getScore().compareTo(BigDecimal.ZERO) < 0
+                || orderItemRemarkDto.getScore().compareTo(new BigDecimal("5")) > 0) {
+            return Result.error(404, "评分只能在0-5之间");
+        }
+
+        // 4. 检查remark长度 (不超过200字符)
+        if (orderItemRemarkDto.getRemark() != null && orderItemRemarkDto.getRemark().length() > 200) {
+            return Result.error(500, "remark超出200的长度限制");
+        }
+
+        // 5. 检查订单项是否存在
+        Optional<OrderItem> orderItemOpt = orderItemRepository.findById(orderItemRemarkDto.getOrderItemId());
+        if (orderItemOpt.isEmpty()) {
+            return Result.error(404, "未找到订单");
+        }
+
+        // 6. 更新订单项评价信息
         OrderItem orderitem = orderItemOpt.get();
         orderitem.setScore(orderItemRemarkDto.getScore());
         orderitem.setRemark(orderItemRemarkDto.getRemark());
@@ -124,7 +163,7 @@ public class OrderItemService {
         return Result.success(getStoreRemarkDTOs);
     }
 
-    // 获取失败？||判断是否存在当前商品的订单项
+    // 类间接口？||判断是否存在当前商品的订单项
     @Transactional
     public Result<Boolean> isExistProductOrder(String productId){
         Optional<Product>product=orderService.getProductById(productId);
@@ -210,12 +249,35 @@ public class OrderItemService {
 
     // 获取||返回订单项的状态
     @Transactional
-    public Result<String> getItemStatus(String orderItemId){
+    public Result<String> getItemStatus_v1(String orderItemId){
         Optional<OrderItem> item =orderItemRepository.findById(orderItemId);
         if(item.isEmpty()) {
             return Result.error(404,"希望查询状态的订单项不存在！");
         }
         String status =item.get().getItemStatus().toString();
+        return Result.success(status);
+    }
+
+    @Transactional
+    public Result<String> getItemStatus(String orderItemId) {
+        // 1. 检查orderItemId是否为空
+        if (orderItemId == null || orderItemId.isEmpty()) {
+            return Result.error(404, "orderItemId不能为空");
+        }
+
+        // 2. 检查orderItemId格式是否为15位纯数字
+        if (!orderItemId.matches("\\d{15}")) {
+            return Result.error(404, "orderItemId格式错误");
+        }
+
+        // 3. 检查订单项是否存在
+        Optional<OrderItem> item = orderItemRepository.findById(orderItemId);
+        if (item.isEmpty()) {
+            return Result.error(404, "希望查询状态的订单项不存在！");
+        }
+
+        // 4. 返回订单项状态
+        String status = item.get().getItemStatus().toString();
         return Result.success(status);
     }
 
@@ -334,7 +396,7 @@ public class OrderItemService {
 
 //    // 删除||删除订单项（假函数，没人用）
     @Transactional
-    public Result<String> deleteOrderitem(String orderItemId) {
+    public Result<String> deleteOrderitem_v1(String orderItemId) {
         Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
         if(orderItem.isPresent()) {
             orderItemRepository.delete(orderItem.get());
@@ -344,8 +406,28 @@ public class OrderItemService {
         }
     }
 
+    @Transactional
+    public Result<String> deleteOrderitem(String orderItemId) {
+        // 检查orderItemId是否为空
+        if (orderItemId == null || orderItemId.isEmpty()) {
+            return Result.error(404, "orderItemId不能为空");
+        }
+
+        if (!orderItemId.matches("\\d{15}")) {
+            return Result.error(404, "orderItemId格式错误");
+        }
+
+        Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
+        if(orderItem.isPresent()) {
+            orderItemRepository.delete(orderItem.get());
+            return Result.success("订单项删除成功");
+        } else {
+            return Result.error(404, "不存在该订单项");
+        }
+    }
+
     // 创建||创建订单项（假函数，没人用）
-    public Result<String> addOrderItem(AddOrderItemDTO orderItemDTO) {
+    public Result<String> addOrderItem_v1(AddOrderItemDTO orderItemDTO) {
         // 检查订单是否存在
         Optional<Order> orderOpt = orderRepository.findById(orderItemDTO.getOrderId());
         if (orderOpt.isEmpty()) {
@@ -374,6 +456,80 @@ public class OrderItemService {
         orderItem.setItemStatus(OrderItem.ItemStatus.无售后);
         orderItem.setScore(BigDecimal.ZERO);
 
+
+        // 保存订单项
+        orderItemRepository.save(orderItem);
+
+        return Result.success("订单项添加成功", orderItem.getItemId());
+    }
+
+    public Result<String> addOrderItem(AddOrderItemDTO orderItemDTO) {
+        // 检查参数是否为空
+        if (orderItemDTO.getOrderId() == null || orderItemDTO.getOrderId().isEmpty()) {
+            return Result.error(404, "orderId不能为空");
+        }
+        if (orderItemDTO.getProductId() == null || orderItemDTO.getProductId().isEmpty()) {
+            return Result.error(404, "productId不能为空");
+        }
+        if (orderItemDTO.getItemId() == null || orderItemDTO.getItemId().isEmpty()) {
+            return Result.error(404, "itemId不能为空");
+        }
+
+        // 检查数值范围
+        if (orderItemDTO.getUnitPrice() == null || orderItemDTO.getUnitPrice().compareTo(BigDecimal.ZERO) < 0
+                || orderItemDTO.getUnitPrice().compareTo(new BigDecimal("99999999")) > 0) {
+            return Result.error(400, "unitPrice只能在0-99999999之间");
+        }
+
+        if (orderItemDTO.getQuantity() == null || orderItemDTO.getQuantity() < 1 || orderItemDTO.getQuantity() > 9999) {
+            return Result.error(400, "quantity只能在1-9999之间");
+        }
+
+        if (orderItemDTO.getActualPay() == null || orderItemDTO.getActualPay().compareTo(BigDecimal.ZERO) < 0
+                || orderItemDTO.getActualPay().compareTo(new BigDecimal("99999999")) > 0) {
+            return Result.error(400, "actualPay只能在0-99999999之间");
+        }
+
+        if (orderItemDTO.getScore() == null || orderItemDTO.getScore().compareTo(BigDecimal.ZERO) < 0
+                || orderItemDTO.getScore().compareTo(new BigDecimal("5")) > 0) {
+            return Result.error(400, "评分只能在0-5之间");
+        }
+
+        // 检查totalPay计算是否正确 (unitPrice * quantity)
+        BigDecimal expectedTotalPay = orderItemDTO.getUnitPrice().multiply(new BigDecimal(orderItemDTO.getQuantity()));
+        if (orderItemDTO.getTotalPay() == null || orderItemDTO.getTotalPay().compareTo(expectedTotalPay) != 0) {
+            return Result.error(400, "totalPay与实际计算不符");
+        }
+
+        // 检查订单是否存在
+        Optional<Order> orderOpt = orderRepository.findById(orderItemDTO.getOrderId());
+        if (orderOpt.isEmpty()) {
+            return Result.error(404, "订单不存在");
+        }
+
+        // 检查商品是否存在
+        Optional<Product> productOpt = orderService.getProductById(orderItemDTO.getProductId());
+        if (productOpt.isEmpty()) {
+            return Result.error(404, "商品不存在");
+        }
+
+        // 检查订单项是否已存在
+        Optional<OrderItem> existingOrderItem = orderItemRepository.findById(orderItemDTO.getItemId());
+        if (existingOrderItem.isPresent()) {
+            return Result.error(409, "订单项已存在");
+        }
+
+        // 创建新的订单项
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItemId(orderItemDTO.getItemId());
+        orderItem.setProductId(orderItemDTO.getProductId());
+        orderItem.setQuantity(1);
+        orderItem.setUnitPrice(orderItemDTO.getUnitPrice());
+        orderItem.setOrderId(orderItemDTO.getOrderId());
+        orderItem.setTotalPay(orderItemDTO.getTotalPay());
+        orderItem.setActualPay(orderItemDTO.getActualPay());
+        orderItem.setItemStatus(OrderItem.ItemStatus.无售后);
+        orderItem.setScore(BigDecimal.ZERO);
 
         // 保存订单项
         orderItemRepository.save(orderItem);
