@@ -189,6 +189,12 @@ public class OrderService {
     @Transactional
     public Result<List<OrderRelatedDTO>> addOrders(String userId, List<String> productIds) {
 
+        if (userId == null || userId.trim().isEmpty()) {
+            return Result.error(400, "买家不能为空");
+        }
+        if (productIds == null || productIds.isEmpty()) {
+            return Result.error(400, "商品列表不能为空");
+        }
         Boolean isNull=false;
         // 查找买家信息,转为接口获取
         Optional<Buyer> buyer = getBuyerById(userId);
