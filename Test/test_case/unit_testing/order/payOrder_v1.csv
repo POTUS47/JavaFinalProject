@@ -1,0 +1,11 @@
+用例编号,测试场景,userId,orderId,userCredits,预期输出,实际输出,运行时间,用例来源,备注,运行结果
+TC_PAYORDER01,,"""user123""","""order123""",0,Result.success(creditsDTO),,4,有效等价类,用户支付订单时不使用积分,1
+TC_PAYORDER02,,"""user123""","""order123""",50,Result.success(creditsDTO),,5,有效等价类,用户支付订单时使用小于订单金额的积分,1
+TC_PAYORDER03,,"""user123""","""order123""",1500,Result.success(creditsDTO),credits=-5,18,边界值,使用超过订单金额的积分,0
+TC_PAYORDER04,,"""nonexistent_user""","""order123""",0,"Result.error(404, ""买家不存在"")",,215,无效等价类,用户id不存在,1
+TC_PAYORDER05,,"""user123""","""nonexistent_order""",0,"Result.error(404,""订单不存在"")",,3,无效等价类,订单id不存在,1
+TC_PAYORDER06,,"""user123""","""order123""",-50,"Result.error(400,""积分不能为负数"")",,4,无效等价类,积分为负数,1
+TC_PAYORDER07,,"""""","""order123""",0,"Result.error(400,""用户不能为空"")",,5,边界值,用户id为空,1
+TC_PAYORDER08,,"""user123""","""""",0,"Result.error(400,""订单不能为空"")",,2,边界值,订单为空,1
+TC_PAYORDER09,,"""user123""","""order123""",null,Result.success(creditsDTO),,4,边界值,积分为空,1
+TC_PAYORDER10,,"""user123""","""order123""",100,Result.success(creditsDTO),,5,边界值,使用全部的订单金额的积分,1
