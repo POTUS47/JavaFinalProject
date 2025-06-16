@@ -52,7 +52,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取用户收藏的商品
+    // 获取用户收藏的商品 todo
     @GetMapping("/favourite/get-favourite-products")
     public ResponseEntity<Result<List<FavouriteProductsDTO>>> getFavouriteProducts(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
@@ -68,7 +68,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 收藏商品
+    // 收藏商品 todo
     @PostMapping("/favourite/bookmark-product")
     public ResponseEntity<Result<String>> bookmarkProduct(@RequestBody ProductIdDTO model, Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
@@ -119,7 +119,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 添加商品评价
+    // 添加商品评价 todo
     @PutMapping("/order/remark-order-item")
     public ResponseEntity<Result<String>> remarkOrderItem(@RequestBody UpdateOrderItemRemarkDTO updateOrderItemRemarkDTO) {
         Result<String>response = orderItemService.remarkOrderItem(updateOrderItemRemarkDTO);
@@ -133,7 +133,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取店铺所有订单评论
+    // 获取店铺所有订单评论 todo
     @GetMapping("/order/get-store-remarks")
     public ResponseEntity<Result<List<GetStoreRemarkDTO>>> getStoreRemarks(@RequestParam String storeId) {
         Result<List<GetStoreRemarkDTO>> response = orderItemService.getStoreRemarks(storeId);
@@ -162,7 +162,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 更改订单项的状态为售后结束(子系统接口)
+    // 更改订单项的状态为售后结束(子系统接口)todo
     @PutMapping("/order/end_return/{item_id}")
     public ResponseEntity<Result<Map<String,String>>>
     endReturnOrderItem(@PathVariable String item_id){
@@ -217,7 +217,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 判断买家是否有权限修改某订单项状态（子系统接口）
+    // 判断买家是否有权限修改某订单项状态（子系统接口）todo
     @GetMapping("/order/buyer/have_item/{user_id}/{item_id}")
     public ResponseEntity<Result<Map<String,String>>>
     checkBuyerForItemChange(@PathVariable String user_id,@PathVariable String item_id){
@@ -243,7 +243,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取当前买家所有订单信息
+    // 获取当前买家所有订单信息 todo
     @GetMapping("/order/get-all-buyer-orders")
     public ResponseEntity<Result<List<OrderCenterDTO>>> getAllBuyerOrders(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
@@ -259,7 +259,7 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取单个订单信息
+    // 获取单个订单信息 todo
     @GetMapping("/order/get-one-order")
     public ResponseEntity<Result<OrderCenterDTO>> getOneOrder(@RequestParam String orderId) {
         Result<OrderCenterDTO> response = orderService.getOneOrder(orderId);

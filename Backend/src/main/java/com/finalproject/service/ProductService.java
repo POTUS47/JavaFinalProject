@@ -161,7 +161,7 @@ public class ProductService {
         List<ShowProductDTO> result = new ArrayList<>();
 
 
-        //todo 默认图片id
+        // 默认图片id
         for (Product product : products) {
             Optional<ProductImage> imageOptional = productImageRepository.findFirstByProductId(product.getProductId());
             String imageId = imageOptional.map(ProductImage::getImageId).orElse("1");
@@ -185,7 +185,7 @@ public class ProductService {
         List<Product> products = productRepository.searchAllProducts(keyword, likePattern);
         List<ShowProductDTO> result = new ArrayList<>();
 
-        //todo 默认图片id
+        // 默认图片id
         for (Product product : products) {
             setShowProductDto(result, product);
         }
@@ -402,7 +402,7 @@ public class ProductService {
 
     }
 
-    //todo 数据库存默认图片
+    // 数据库存默认图片
     public Result<List<String>> getProductImages(String productId) {
         List<ProductImage> images=getProductImagesByProductId(productId);
         List<String> res=new ArrayList<>();
