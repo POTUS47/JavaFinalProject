@@ -1,6 +1,5 @@
-ï»¿ç”¨ä¾‹ç¼–å·,æµ‹è¯•åœºæ™¯,orderId,é¢„æœŸè¾“å‡º,å®žé™…è¾“å‡º,è¿è¡Œæ—¶é—´,ç”¨ä¾‹æ¥æº,å¤‡æ³¨
-TC_DELETEORDER01,åˆ é™¤æœªæ”¯ä»˜è®¢å•,"""unpaid_order123""",Result.success("è®¢å•åˆ é™¤æˆåŠŸ"),,,æœ‰æ•ˆç­‰ä»·ç±»  ,
-TC_DELETEORDER02,åˆ é™¤å·²æ”¯ä»˜è®¢å•,"""paid_order123""",Result.success("è®¢å•åˆ é™¤æˆåŠŸ"),,,æœ‰æ•ˆç­‰ä»·ç±»  ,
-TC_DELETEORDER03,åˆ é™¤ä¸å­˜åœ¨çš„è®¢å•,"""nonexistent_order""","Result.error(404, ""è®¢å•ä¸å­˜åœ¨"")",,,æ— æ•ˆç­‰ä»·ç±»,
-TC_DELETEORDER04,è®¢å•idä¸ºç©º,"""""","Result.error(404, ""è®¢å•idä¸èƒ½ä¸ºç©º"")",,,è¾¹ç•Œå€¼,
-,,,,,,,
+ÓÃÀý±àºÅ,²âÊÔ³¡¾°,orderId,Ô¤ÆÚÊä³ö,Êµ¼ÊÊä³ö,ÔËÐÐÊ±¼ä,ÓÃÀýÀ´Ô´,±¸×¢
+TC_DELETEORDER01,,"""unpaid_order123""","Result.success(200,""¶©µ¥É¾³ý³É¹¦"")",,,ÓÐÐ§µÈ¼ÛÀà  ,É¾³ýÎ´Ö§¸¶¶©µ¥
+TC_DELETEORDER02,,"""paid_order123""","Result.success(200,""¶©µ¥É¾³ý³É¹¦"")",,,ÓÐÐ§µÈ¼ÛÀà  ,É¾³ýÒÑÖ§¸¶¶©µ¥
+TC_DELETEORDER03,,"""nonexistent_order""","Result.error(404, ""¶©µ¥²»´æÔÚ"")",,,ÎÞÐ§µÈ¼ÛÀà,É¾³ý²»´æÔÚµÄ¶©µ¥
+TC_DELETEORDER04,,"""""","Result.error(404, ""¶©µ¥id²»ÄÜÎª¿Õ"")",,,±ß½çÖµ,¶©µ¥idÎª¿Õ

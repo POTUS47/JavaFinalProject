@@ -1,0 +1,5 @@
+用例编号,测试场景,orderId,预期输出,实际输出,运行时间,用例来源,备注,运行结果
+TC_RECIEVEORDER01,,"""shipped_order123""","Result.success(200,""确认收货成功"")",,4,等价类  ,确认收货已发货的订单  ,1
+TC_RECIEVEORDER02,,"""nonexistent_order""","Result.error(404,""订单不存在"")",,4,等价类  ,确认收货不存在的订单  ,1
+TC_RECIEVEORDER03,,"""""","Result.error(400,""订单ID不能为空"")",,4,边界值  ,订单id为空,1
+TC_RECIEVEORDER04,,"""completed_order123""","Result.error(400,""订单已完成，不能重复确认收货"")",,7,等价类  ,收货一个已经完成的订单,1
