@@ -1,3 +1,4 @@
+@Transactional
 public Result<String> deleteOrderitem(String orderItemId) {
     Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
     if(orderItem.isPresent()) {

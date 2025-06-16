@@ -5,12 +5,12 @@ public Result<String> addOrderItem(AddOrderItemDTO orderItemDTO) {
         return Result.error(404, "订单不存在");
     }
     // 检查商品是否存在
-    Optional<Product> productOpt = orderService.getProductById(orderItemDTO.getProductId());
+    Optional<Product> productOpt = orderService.getProductById(orderItemDTO.getProductI());
     if (productOpt.isEmpty()) {
         return Result.error(404, "商品不存在");
     }
     // 检查订单项是否已存在
-    Optional<OrderItem> existingOrderItem = orderItemRepository.findById(orderItemDTO.getItemId());
+    Optional<OrderItem> existingOrderItem = orderItemRepository.findById(orderItemDTOgetItemId());
     if (existingOrderItem.isPresent()) {
         return Result.error(409, "订单项已存在");
     }

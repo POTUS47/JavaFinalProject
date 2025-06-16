@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { ElTabs, ElTabPane, ElSelect, ElOption, ElButton } from 'element-plus'
+import { ElTabs, ElTabPane, ElSelect, ElOption, ElNotification } from 'element-plus'
 import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
 import UnitTestResults from '../components/UnitTestResults.vue'
@@ -126,7 +126,7 @@ const handleTabsClick = (tab) => {
 // 获取当前版本代码
 const loadCode = async (className, funcName, version) => {
   if (className && funcName && version){
-    const filePath = `/unitTest/${className}/${funcName}/${version}/code.java`;
+    const filePath = `/unitTest/${className}/${funcName}/${version}/${funcName}_${version}.java`;
     console.log(filePath)
     try {
       const res = await fetch(filePath);
@@ -148,7 +148,7 @@ const loadCode = async (className, funcName, version) => {
 // 获取当前版本测试结果
 const loadCaseResult = async (className, funcName, version) => {
   if (className && funcName && version){
-    const filePath = `/unitTest/${className}/${funcName}/${version}/${funcName}.csv`;
+    const filePath = `/unitTest/${className}/${funcName}/${version}/${funcName}_${version}.csv`;
     // console.log(filePath)
     
     try {
@@ -218,6 +218,12 @@ const handleTestClick = () => {
   setTimeout(async () => {
     await loadCaseResult(selectedClass.value, selectedFunc.value, selectedVersion.value)
     await loadCode(selectedClass.value, selectedFunc.value, selectedVersion.value)
+    ElNotification({
+      title: '该函数单元测试成功!',
+      message: '可以下滑查看测试用例、结果和代码记录',
+      type: 'success',
+      showClose: false,
+    })
     showResult.value = true
     isLoading.value = false
   }, 1000)
