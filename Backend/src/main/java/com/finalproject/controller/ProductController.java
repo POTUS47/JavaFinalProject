@@ -179,7 +179,7 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //为某商品删除一个图文详情 todo test
+    //为某商品删除一个图文详情  test
     //返回了对应商品的Id
     @PostMapping("/deleteProductDetail/{imageId}")
     public ResponseEntity<Result<String>> deleteProductDetail(@PathVariable("imageId") String imageId){
@@ -195,7 +195,7 @@ public class ProductController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    //修改商品信息 todo test
+    //修改商品信息 test
     @PutMapping("/editProduct")
     public ResponseEntity<Result<String>> editProduct(@RequestBody ShowProductDTO dto,Authentication auth){
         String userId = (String) auth.getPrincipal();

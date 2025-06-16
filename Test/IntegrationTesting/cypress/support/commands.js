@@ -104,6 +104,6 @@ Cypress.Commands.add('cleanupTestData', () => {
 })
 
 // 在测试文件中使用
-afterEach(() => {
-    cy.cleanupTestData()
-  })
+// afterEach(() => {
+//     cy.cleanupTestData()
+//   })
