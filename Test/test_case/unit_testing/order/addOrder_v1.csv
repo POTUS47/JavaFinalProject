@@ -1,6 +1,6 @@
-ÓÃÀı±àºÅ,²âÊÔ³¡¾°,userId,List<String> productIds,Ô¤ÆÚÊä³ö,Êµ¼ÊÊä³ö,ÔËĞĞÊ±¼ä,ÓÃÀıÀ´Ô´,±¸×¢,ÔËĞĞ½á¹û
-TC_ADDORDER01,,"""user123""",["prod001"],"Result.success(200,""¶©µ¥Éú³É³É¹¦"",orderRelatedDTOList)",,9,ÓĞĞ§µÈ¼ÛÀà,Õı³£Çé¿ö£¬µ¥¸öÉÌÆ·,1
-TC_ADDORDER02,,"""user123""","[""prod001"", ""prod002""]","Result.success(200,""¶©µ¥Éú³É³É¹¦"",orderRelatedDTOList)",,24,ÓĞĞ§µÈ¼ÛÀà,Õı³£Çé¿ö£¬¶à¸öÉÌÆ·,1
-TC_ADDORDER03,,"""user123""",[],"Result.error(400, ""ÉÌÆ·ÁĞ±í²»ÄÜÎª¿Õ"")","Result.success(200,""¶©µ¥Éú³É³É¹¦"",orderRelatedDTOList)",5,±ß½çÖµ,ÉÌÆ·ÁĞ±íÎª¿Õ,0
-TC_ADDORDER04,,"""nonexistent_user""",["prod001"],"Result.error(404, ""Âò¼Ò²»´æÔÚ"")",,4,ÎŞĞ§µÈ¼ÛÀà,ÓÃ»§id²»´æÔÚ,0
-TC_ADDORDER05,,"""""",["prod001"],"Result.error(400, ""Âò¼Ò²»ÄÜÎª¿Õ"")",404,213,±ß½çÖµ,ÓÃ»§idÎª¿Õ,1
+ç”¨ä¾‹ç¼–å·,æµ‹è¯•åœºæ™¯,userId,List<String> productIds,é¢„æœŸè¾“å‡º,å®é™…è¾“å‡º,è¿è¡Œæ—¶é—´,ç”¨ä¾‹æ¥æº,å¤‡æ³¨,è¿è¡Œç»“æœ
+TC_ADDORDER01,æ­£å¸¸æƒ…å†µï¼Œå•ä¸ªå•†å“,"user123","[""prod001""]","Result.success(200,""è®¢å•ç”ŸæˆæˆåŠŸ"",orderRelatedDTOList)",,9,æœ‰æ•ˆç­‰ä»·ç±»,æ­£å¸¸æƒ…å†µï¼Œå•ä¸ªå•†å“,1
+TC_ADDORDER02,æ­£å¸¸æƒ…å†µï¼Œå¤šä¸ªå•†å“,"user123","[""prod001"", ""prod002""]","Result.success(200,""è®¢å•ç”ŸæˆæˆåŠŸ"",orderRelatedDTOList)",,24,æœ‰æ•ˆç­‰ä»·ç±»,æ­£å¸¸æƒ…å†µï¼Œå¤šä¸ªå•†å“,1
+TC_ADDORDER03,å•†å“åˆ—è¡¨ä¸ºç©º,"user123","[]","Result.error(400, ""å•†å“åˆ—è¡¨ä¸èƒ½ä¸ºç©º"")","Result.success(200,""è®¢å•ç”ŸæˆæˆåŠŸ"",orderRelatedDTOList)",5,è¾¹ç•Œå€¼,å•†å“åˆ—è¡¨ä¸ºç©º,0
+TC_ADDORDER04,ç”¨æˆ·idä¸å­˜åœ¨,"nonexistent_user","[""prod001""]","Result.error(404, ""ä¹°å®¶ä¸å­˜åœ¨"")",,4,æ— æ•ˆç­‰ä»·ç±»,ç”¨æˆ·idä¸å­˜åœ¨,0
+TC_ADDORDER05,ç”¨æˆ·idä¸ºç©º,"","[""prod001""]","Result.error(400, ""ä¹°å®¶ä¸èƒ½ä¸ºç©º"")","404",213,è¾¹ç•Œå€¼,ç”¨æˆ·idä¸ºç©º,1

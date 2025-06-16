@@ -1,6 +1,6 @@
-�������,���Գ���,userId,List<String> productIds,Ԥ�����,ʵ�����,����ʱ��,������Դ,��ע,���н��
-TC_ADDORDER01,,"""user123""",["prod001"],"Result.success(200,""�������ɳɹ�"",orderRelatedDTOList)",,7,��Ч�ȼ���,���������������Ʒ,1
-TC_ADDORDER02,,"""user123""","[""prod001"", ""prod002""]","Result.success(200,""�������ɳɹ�"",orderRelatedDTOList)",,29,��Ч�ȼ���,��������������Ʒ,1
-TC_ADDORDER03,,"""user123""",[],"Result.error(400, ""��Ʒ�б�����Ϊ��"")",,6,�߽�ֵ,��Ʒ�б�Ϊ��,0
-TC_ADDORDER04,,"""nonexistent_user""",["prod001"],"Result.error(404, ""��Ҳ�����"")",,5,��Ч�ȼ���,�û�id������,0
-TC_ADDORDER05,,"""""",["prod001"],"Result.error(400, ""��Ҳ���Ϊ��"")",,270,�߽�ֵ,�û�idΪ��,1
+用例编号,测试场景,userId,List<String> productIds,预期输出,实际输出,运行时间,用例来源,备注,运行结果
+TC_ADDORDER01,正常情况，单个商品,"user123","[""prod001""]","Result.success(200,""订单生成成功"",orderRelatedDTOList)",,7,有效等价类,正常情况，单个商品,1
+TC_ADDORDER02,正常情况，多个商品,"user123","[""prod001"", ""prod002""]","Result.success(200,""订单生成成功"",orderRelatedDTOList)",,29,有效等价类,正常情况，多个商品,1
+TC_ADDORDER03,商品列表为空,"user123","[]","Result.error(400, ""商品列表不能为空"")",,6,边界值,商品列表为空,0
+TC_ADDORDER04,用户id不存在,"nonexistent_user","[""prod001""]","Result.error(404, ""买家不存在"")",,5,无效等价类,用户id不存在,0
+TC_ADDORDER05,用户id为空,"","[""prod001""]","Result.error(400, ""买家不能为空"")",,270,边界值,用户id为空,1

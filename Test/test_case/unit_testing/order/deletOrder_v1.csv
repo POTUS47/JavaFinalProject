@@ -1,5 +1,5 @@
-�������,���Գ���,orderId,Ԥ�����,ʵ�����,����ʱ��,������Դ,��ע,���н��
-TC_DELETEORDER01,,"""unpaid_order123""","Result.success(200,""����ɾ���ɹ�"")",,4,��Ч�ȼ���  ,ɾ��δ֧������,1
-TC_DELETEORDER02,,"""paid_order123""","Result.success(200,""����ɾ���ɹ�"")",,10,��Ч�ȼ���  ,ɾ����֧������,1
-TC_DELETEORDER03,,"""nonexistent_order""","Result.error(404, ""����������"")",,3,��Ч�ȼ���,ɾ�������ڵĶ���,1
-TC_DELETEORDER04,,"""""","Result.error(404, ""����id����Ϊ��"")",,15,�߽�ֵ,����idΪ��,1
+用例编号,测试场景,orderId,预期输出,实际输出,运行时间,用例来源,备注,运行结果
+TC_DELETEORDER01,删除未支付订单,"unpaid_order123","Result.success(200,""订单删除成功"")",,4,有效等价类,删除未支付订单,1
+TC_DELETEORDER02,删除已支付订单,"paid_order123","Result.success(200,""订单删除成功"")",,10,有效等价类,删除已支付订单,1
+TC_DELETEORDER03,删除不存在的订单,"nonexistent_order","Result.error(404, ""订单不存在"")",,3,无效等价类,删除不存在的订单,1
+TC_DELETEORDER04,订单id为空,"","Result.error(404, ""订单id不能为空"")",,15,边界值,订单id为空,1
