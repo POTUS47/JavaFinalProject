@@ -223,6 +223,7 @@ const handleTestClick = () => {
       message: '可以下滑查看测试用例、结果和代码记录',
       type: 'success',
       showClose: false,
+      offset: 40,
     })
     showResult.value = true
     isLoading.value = false

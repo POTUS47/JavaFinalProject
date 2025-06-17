@@ -42,6 +42,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { ElNotification } from 'element-plus'
 import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
 import TestResults from '../components/TestResults.vue'
@@ -166,6 +167,14 @@ const runTest = () => {
         notes: testCase.notes ? testCase.notes : '-'
       }
     }
+  })
+  
+  ElNotification({
+    title: '测试运行结束!',
+    message: '可以下滑查看测试用例及结果',
+    type: 'success',
+    showClose: false,
+    offset: 40,
   })
 }
 </script>
