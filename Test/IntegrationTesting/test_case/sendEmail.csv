@@ -1,4 +1,4 @@
 用例编号,测试场景,email,预期输出,实际输出,运行时间,用例来源,备注
 TC_SENDEMAILO01,,2923289295@qq.com,"200,返回code",,,正向路径测试,合法邮箱发送验证码成功
 TC_SENDEMAILO02,,123@qq.com,400,,,等价类,非法邮箱格式
-TC_SENDEMAILO03,,null,400,,,边界值,非法邮箱格式
+TC_SENDEMAILO03,,null,400,,,边界值,邮箱为空
