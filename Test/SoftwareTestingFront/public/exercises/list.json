@@ -11,6 +11,10 @@
     {
       "id": "calculatePhoneBill",
       "title": "电信收费系统"
+    },
+    {
+      "id": "computerSaleSystem",
+      "title": "电脑销售系统"
     }
   ]
 } 

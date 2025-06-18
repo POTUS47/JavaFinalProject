@@ -1,0 +1,12 @@
+{
+  "id": "computerSaleSystem",
+  "title": "电脑销售系统",
+  "description": "电脑销售系统，主机（25￥单位价格，每月最多销售的数量为70），显示器（30￥单位价格，每月最多销售数量为80），外设（45￥单位价格，每月最多销售的数量为90）；每个销售员每月至少销售一台完整的机器，当系统的主机这个变量接受到-1值的时候，系统自动统计该销售员本月的销售总额。当销售额小于等于1000（包括1000）按照10%提佣金，当销售额在1000-1800之间（包括1800）的时候按照15%提佣金，当销售额大于1800时按照20%提佣金。",
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function calculateSalesCommission(hosts, displays, peripherals) {\n  if (hosts === -1) {\n    return \"输入为结束信号：无需计算销售额与佣金。\";\n  }\n\n  // 最大数量限制\n  if (\n    hosts < 1 || hosts > 70 ||\n    displays < 1 || displays > 80 ||\n    peripherals < 1 || peripherals > 90\n  ) {\n    return \"输入错误：某个组件数量超出限制范围或未能组成至少一台完整电脑。\";\n  }\n\n  // 计算总销售额\n  const totalSales =\n    hosts * 25 +\n    displays * 30 +\n    peripherals * 45;\n\n  // 计算佣金\n  let commissionRate = 0.1;\n  if (totalSales > 1800) {\n    commissionRate = 0.2;\n  } else if (totalSales > 1000) {\n    commissionRate = 0.15;\n  }\n  const commission = totalSales * commissionRate;\n\n  return `销售总额为 ¥${totalSales}，佣金为 ¥${commission.toFixed(2)}（提成比例：${commissionRate * 100}%）`;\n}"
+    }
+  ]
+}
