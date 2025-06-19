@@ -1,41 +1,43 @@
 <template>
-  <div class="exercise-test">
-    <div class="exercise-info">
-      <h1> 练习题目：{{ exercise?.title }}</h1>
-      <div class="description-text"> 问题描述：{{ exercise?.description }}</div>
-    </div>
-
-    <div class="test-controls">
-      <div class="select-group">
-        <label>测试用例类别：</label>
-        <select v-model="selectedTestCaseType">
-          <option v-for="type in testCaseTypes" :key="type.id" :value="type.id">
-            {{ type.name }}
-          </option>
-        </select>
+  <div class="main">
+    <div class="exercise-test">
+      <div class="exercise-info">
+        <h1> 练习题目：{{ exercise?.title }}</h1>
+        <div class="description-text"> 问题描述：{{ exercise?.description }}</div>
       </div>
 
-      <div class="select-group">
-        <label>代码版本：</label>
-        <select v-model="selectedCodeVersion">
-          <option v-for="version in exercise?.codeVersions" :key="version.id" :value="version.id">
-            {{ version.name }}
-          </option>
-        </select>
+      <div class="test-controls">
+        <div class="select-group">
+          <label>测试用例类别：</label>
+          <select v-model="selectedTestCaseType">
+            <option v-for="type in testCaseTypes" :key="type.id" :value="type.id">
+              {{ type.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label>代码版本：</label>
+          <select v-model="selectedCodeVersion">
+            <option v-for="version in exercise?.codeVersions" :key="version.id" :value="version.id">
+              {{ version.name }}
+            </option>
+          </select>
+        </div>
+
+        <button @click="runTest" :disabled="!canRunTest">开始测试</button>
       </div>
 
-      <button @click="runTest" :disabled="!canRunTest">开始测试</button>
+      <div class="code-section">
+        <div class="title-2">测试代码</div>
+        <CodeBlock 
+          :code="currentCodeVersion?.code || ''" 
+          language="javascript" 
+        />
+      </div>
+      
+      <TestResults v-if="testResults.length" :results="testResults" />
     </div>
-
-    <div class="code-section">
-      <div class="title-2">测试代码</div>
-      <CodeBlock 
-        :code="currentCodeVersion?.code || ''" 
-        language="javascript" 
-      />
-    </div>
-    
-    <TestResults v-if="testResults.length" :results="testResults" />
   </div>
 </template>
 
@@ -180,6 +182,10 @@ const runTest = () => {
 </script>
 
 <style scoped>
+.main {
+  padding: 20px;
+}
+
 .exercise-test {
   min-height: 100%;
   width: 100%;
