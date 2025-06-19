@@ -1,0 +1,10 @@
+用例编号,测试场景,storeId,预期输出,实际输出,用例来源,备注,运行结果  
+TC_GETSTOREBYID01,,581960972537861,正确返回 Optional<Store>,正确返回 Optional<Store>,强一般等价类,商家ID合法存在,1
+TC_GETSTOREBYID02,,581960972537862,Optional.empty(),Optional.empty(),强一般等价类,商家ID合法但不存在于数据库,1
+TC_GETSTOREBYID03,,null,Optional.empty(),报错,健壮边界值法,略低于最小值,0
+TC_GETSTOREBYID04,,"",Optional.empty(),报错,健壮边界值法,略低于最小值,0
+TC_GETSTOREBYID05,,0,正确返回 Optional<Store>,正确返回 Optional<Store>,健壮边界值法,最小值,1
+TC_GETSTOREBYID06,,1,正确返回 Optional<Store>,正确返回 Optional<Store>,健壮边界值法,略高于最小值,1
+TC_GETSTOREBYID07,,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,Optional.empty(),Optional.empty(),健壮边界值法,略高于最大值,1
+TC_GETSTOREBYID08,,1999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,正确返回 Optional<Store>,正确返回 Optional<Store>,健壮边界值法,最大值,1
+TC_GETSTOREBYID09,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,正确返回 Optional<Store>,正确返回 Optional<Store>,健壮边界值法,略低于最大值,1
