@@ -1,0 +1,7 @@
+{
+    "external-api":{
+        "id": "external-api",
+        "name": "发送邮箱验证码",
+        "description": "接口描述接口描述接口描述接口描述接口描述接口描述"
+    }
+}

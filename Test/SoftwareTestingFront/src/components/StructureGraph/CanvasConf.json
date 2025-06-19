@@ -6,11 +6,12 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
+      "fill": "#eee",
       "text": "Account",
       "filename": "triangleJudge",
       "popoverTitle": "Account",
-      "popoverContent": "用户账号信息"
+      "popoverContent": "用户账号信息",
+      "enableClick": false
     },
     {
       "cx": 150,
@@ -18,9 +19,10 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
+      "fill": "#eee",
       "text": "Buyer",
-      "filename": "calculatePhoneBill"
+      "filename": "calculatePhoneBill",
+      "enableClick": false
     },
     {
       "cx": 250,
@@ -28,8 +30,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Store"
+      "fill": "#eee",
+      "text": "Store",
+      "enableClick": false
     },
     {
       "cx": 320,
@@ -37,8 +40,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Administrator"
+      "fill": "#eee",
+      "text": "Administrator",
+      "enableClick": false
     },
     {
       "cx": 350,
@@ -46,8 +50,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Wallet"
+      "fill": "#eee",
+      "text": "Wallet",
+      "enableClick": false
     },
     {
       "cx": 250,
@@ -56,7 +61,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#f69d9d",
-      "text": "User Controller"
+      "text": "User Controller",
+      "enableClick": false
     },
 
     {
@@ -65,8 +71,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Product"
+      "fill": "#eee",
+      "text": "Product",
+      "enableClick": false
     },
     {
       "cx": 670,
@@ -74,8 +81,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Recommend"
+      "fill": "#eee",
+      "text": "Recommend",
+      "enableClick": false
     },
     {
       "cx": 600,
@@ -83,8 +91,9 @@
       "r": 35,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#f69d9d",
-      "text": "Product Controller"
+      "fill": "#eee",
+      "text": "Product Controller",
+      "enableClick": false
     },
 
     {
@@ -93,8 +102,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Image"
+      "fill": "#eee",
+      "text": "Image",
+      "enableClick": false
     },
     {
       "cx": 950,
@@ -102,8 +112,9 @@
       "r": 35,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#f69d9d",
-      "text": "Image Controller"
+      "fill": "#eee",
+      "text": "Image Controller",
+      "enableClick": false
     },
 
     {
@@ -113,7 +124,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#d6e4f0",
-      "text": "Order"
+      "text": "Order",
+      "enableClick": false
     },
     {
       "cx": 350,
@@ -122,7 +134,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#d6e4f0",
-      "text": "Order Item"
+      "text": "Order Item",
+      "enableClick": false
     },
     {
       "cx": 200,
@@ -130,8 +143,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "OneYuan ShoppingRecord"
+      "fill": "#eee",
+      "text": "OneYuan ShoppingRecord",
+      "enableClick": false
     },
     {
       "cx": 150,
@@ -140,7 +154,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#d6e4f0",
-      "text": "Favorite"
+      "text": "Favorite",
+      "enableClick": false
     },
     {
       "cx": 250,
@@ -149,17 +164,46 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#f69d9d",
-      "text": "Shopping Controller"
-    },
+      "text": "Shopping Controller",
+      "popoverTitle": "Shopping Controller",
+      "enableClick": true,
+      "items": [
+        {
+          "id": "get-all-buyer-orders",
+          "name": "前后端接口：获取某用户的全部订单"
+        },
+        {
+          "id": "get-one-order",
+          "name": "前后端接口：获取订单详情"
+        },
+        {
+          "id": "remark-order-item",
+          "name": "前后端接口：评价订单项"
+        },
+        {
+          "id": "get-store-remarks",
+          "name": "前后端接口：获取店铺评价"
+        },
+        {
+          "id": "get-favourite-products",
+          "name": "前后端接口：获取收藏商品列表"
+        },
+        {
+          "id": "bookmark-product",
+          "name": "前后端接口：收藏商品"
+        }
 
+      ]
+    },
     {
       "cx": 530,
       "cy": 520,
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Return"
+      "fill": "#eee",
+      "text": "Return",
+      "enableClick": false
     },
     {
       "cx": 670,
@@ -167,8 +211,9 @@
       "r": 30,
       "stroke": "black",
       "strokeWidth": 1,
-      "fill": "#d6e4f0",
-      "text": "Complain"
+      "fill": "#eee",
+      "text": "Complain",
+      "enableClick": false
     },
     {
       "cx": 600,
@@ -177,7 +222,8 @@
       "stroke": "black",
       "strokeWidth": 1,
       "fill": "#f69d9d",
-      "text": "Aftersell Controller"
+      "text": "Aftersell Controller",
+      "enableClick": false
     }
   ],
 
@@ -236,7 +282,8 @@
         { "x": 180, "y": 170 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -244,7 +291,8 @@
         { "x": 250, "y": 130 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -252,7 +300,8 @@
         { "x": 250, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -260,7 +309,8 @@
         { "x": 250, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -268,7 +318,8 @@
         { "x": 250, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
 
     {
@@ -277,7 +328,8 @@
         { "x": 250, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -285,7 +337,8 @@
         { "x": 250, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
 
     {
@@ -294,7 +347,8 @@
         { "x": 600, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
 
     {
@@ -303,7 +357,8 @@
         { "x": 600, "y": 300 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -311,7 +366,8 @@
         { "x": 950, "y": 475 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -319,7 +375,8 @@
         { "x": 250, "y": 650 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -327,7 +384,8 @@
         { "x": 250, "y": 650 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
 
     {
@@ -336,7 +394,8 @@
         { "x": 250, "y": 650 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -344,7 +403,8 @@
         { "x": 250, "y": 650 }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -357,8 +417,16 @@
           "y": 570
         }
       ],
-      "stroke": "gray",
-      "strokeWidth": 2
+      "stroke": "#c06c84",
+      "strokeWidth": 3,
+      "enableClick": true,
+      "popoverTitle": "类间接口",
+      "items": [
+        {
+          "id": "is-exist-product-order",
+          "name": "类间接口：商品是否存在于订单"
+        }
+      ]
     },
     {
       "points": [
@@ -372,7 +440,8 @@
         }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
     {
       "points": [
@@ -386,7 +455,8 @@
         }
       ],
       "stroke": "gray",
-      "strokeWidth": 2
+      "strokeWidth": 2,
+      "enableClick": false
     },
 
     {
@@ -398,7 +468,15 @@
         { "x": 250, "y": 650 }
       ],
       "stroke": "#c06c84",
-      "strokeWidth": 3
+      "strokeWidth": 3,
+      "enableClick": true,
+      "popoverTitle": "子系统间接口",
+      "items": [
+        {
+          "id": "have-item",
+          "name": "判断买家是否有权限修改某订单项状态"
+        }
+      ]
     },
     {
       "name": "User → Image",
@@ -409,8 +487,9 @@
         { "x": 850, "y": 475 },
         { "x": 950, "y": 475 }
       ],
-      "stroke": "#c06c84",
-      "strokeWidth": 3
+      "stroke": "#bbb",
+      "strokeWidth": 3,
+      "enableClick": false
     },
     {
       "name": "User → Aftersell",
@@ -422,8 +501,9 @@
         { "x": 440, "y": 650 },
         { "x": 600, "y": 650 }
       ],
-      "stroke": "#c06c84",
-      "strokeWidth": 3
+      "stroke": "#bbb",
+      "strokeWidth": 3,
+      "enableClick": false
     },
     {
       "name": "Product → Image",
@@ -433,8 +513,9 @@
         { "x": 880, "y": 460 },
         { "x": 950, "y": 475 }
       ],
-      "stroke": "#c06c84",
-      "strokeWidth": 3
+      "stroke": "#bbb",
+      "strokeWidth": 3,
+      "enableClick": false
     },
     {
       "name": "Shopping → Aftersell",
@@ -445,7 +526,15 @@
         { "x": 600, "y": 650 }
       ],
       "stroke": "#c06c84",
-      "strokeWidth": 3
+      "strokeWidth": 3,
+      "enableClick": true,
+      "popoverTitle": "子系统间接口",
+      "items": [
+        {
+          "id": "end-return",
+          "name": "子系统间接口：更改订单项的状态为售后结束"
+        }
+      ]
     },
     {
       "name": "Shopping → Image",
@@ -467,8 +556,9 @@
           "y": 490
         }
       ],
-      "stroke": "#c06c84",
-      "strokeWidth": 3
+      "stroke": "#bbb",
+      "strokeWidth": 3,
+      "enableClick": false
     },
     {
       "name": "Product → Shopping",
@@ -490,8 +580,9 @@
           "y": 650
         }
       ],
-      "stroke": "#c06c84",
-      "strokeWidth": 3
+      "stroke": "#bbb",
+      "strokeWidth": 3,
+      "enableClick": false
     }
   ]
 }

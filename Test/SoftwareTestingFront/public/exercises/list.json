@@ -15,6 +15,10 @@
     {
       "id": "computerSaleSystem",
       "title": "电脑销售系统"
+    },
+    {
+      "id": "calendarProblem",
+      "title": "万年历问题"
     }
   ]
 } 

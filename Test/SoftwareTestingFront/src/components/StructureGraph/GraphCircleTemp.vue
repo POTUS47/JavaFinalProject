@@ -14,8 +14,8 @@
       :stroke="props.stroke"
       :stroke-width="props.strokeWidth"
       :fill="props.fill"
-      :class="props.clickable ? 'clickable' : 'unclickable'"
-      @click="props.clickable && emit('click-circle')"
+      :class="isClickable ? 'clickable' : 'unclickable'"
+      @click="isClickable && emit('click-circle')"
     />
     <foreignObject
       :x="props.margin"
@@ -27,10 +27,10 @@
       <div
         class="slot-content"
         :class="{
-          clickable: props.clickable,
+          clickable: isClickable,
           'above-circle': !props.clickable,
         }"
-        @click="props.clickable && emit('click-circle')"
+        @click="isClickable && emit('click-circle')"
       >
         <slot />
       </div>
@@ -39,6 +39,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+
 const props = defineProps({
   cx: {
     type: Number,
@@ -72,6 +74,15 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  enableClick: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+// 计算属性：只有当clickable为true且enableClick也为true时才允许点击
+const isClickable = computed(() => {
+  return props.clickable && props.enableClick;
 });
 
 const emit = defineEmits(["click-circle"]);

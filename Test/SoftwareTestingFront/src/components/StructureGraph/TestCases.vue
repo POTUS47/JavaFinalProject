@@ -38,7 +38,7 @@ const props = defineProps({
 
 onMounted(() => {
   const csvUrl = new URL(
-    `../../assets/exercises/testcases/${props.filename}.csv`,
+    `/exercises/testcases/${props.filename}.csv`,
     import.meta.url
   ).href;
   Papa.parse(csvUrl, {

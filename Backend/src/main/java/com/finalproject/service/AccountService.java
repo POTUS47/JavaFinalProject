@@ -41,8 +41,20 @@ public class AccountService {
         this.verificationCodes = new ConcurrentHashMap<>();
     }
 
+    // 更严格的邮箱校验
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,20}$");
+    }
+
     // 发送验证码
     public Result<Map<String, String>> sendVerificationCode(String email) {
+        // 增强版邮箱校验
+        if (!isValidEmail(email)) {
+            return Result.error(400, "邮箱格式错误，请检查邮箱地址");
+        }
         // 生成 6 位随机验证码
         String verificationCode = String.format("%06d", new Random().nextInt(999999));
         // 发送邮件

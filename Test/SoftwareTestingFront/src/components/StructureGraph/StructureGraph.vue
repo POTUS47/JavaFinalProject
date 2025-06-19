@@ -37,6 +37,7 @@
           :stroke-width="line.strokeWidth"
           :stroke-linecap="line.strokeLinecap"
           :stroke-linejoin="line.strokeLinejoin"
+          :enable-click="line.enableClick !== false"
           :style="{ zIndex: 100 }"
           @click-line="clickLine(line)"
         />
@@ -60,6 +61,7 @@
           :stroke-width="circle.strokeWidth"
           :fill="circle.fill"
           :clickable="true"
+          :enable-click="circle.enableClick !== false"
           :style="{ zIndex: 200, pointerEvents: 'none' }"
           @click-circle="clickCircle(circle)"
         >
@@ -70,7 +72,11 @@
   </div>
   <Transition name="popover-fade">
     <div v-if="showPopover" class="popover-container">
-      <Popover @close="showPopover = false" :popover-table-filename="popoverTableFilename" />
+      <Popover 
+        @close="showPopover = false" 
+        :popover-title="popoverTitle"
+        :items="popoverItems" 
+      />
     </div>
   </Transition>
 </template>
@@ -87,16 +93,32 @@ const clickableCircles = ref(CanvasConf.clickableCircles);
 const unclickableCircles = ref(CanvasConf.unclickableCircles);
 const lines = ref(CanvasConf.lines);
 const showPopover = ref(false);
-const popoverTableFilename = ref("");
+const popoverTitle = ref("");
+const popoverItems = ref([]);
 
 function clickCircle(circle) {
+  // 检查是否允许点击
+  if (circle.enableClick === false) {
+    console.log(`Circle "${circle.text}" is not clickable`);
+    return;
+  }
+  
   // alert(`Clicked on ${circle.text}`);
-  popoverTableFilename.value = circle.filename || "default";
+  popoverTitle.value = circle.popoverTitle || circle.text;
+  popoverItems.value = circle.items || [];
   showPopover.value = true;
 }
 
 function clickLine(line) {
-  alert(`Clicked on line: ${line.name || "Unnamed line"}`);
+  // 检查是否允许点击
+  if (line.enableClick === false) {
+    console.log(`Line is not clickable`);
+    return;
+  }
+  
+  popoverTitle.value = line.popoverTitle || "Line Information";
+  popoverItems.value = line.items || [];
+  showPopover.value = true;
 }
 
 const padding = 10; // canvas边距
@@ -139,7 +161,7 @@ const canvasHeight = computed(() => {
 .canvas {
   min-width: 800px;
   min-height: 600px;
-  background-color: #f0f0f0;
+  background-color: #fff;
   border: 1px solid #ccc;
   font-size: 24px;
   color: #333;

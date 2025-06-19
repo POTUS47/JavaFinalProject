@@ -1,0 +1,12 @@
+{
+  "id": "calendarProblem",
+  "title": "万年历问题",
+  "description": "输入年月日，输出下一天的年月日。（年份范围为：[1900, 2100]）",
+  "codeVersions": [
+    {
+      "id": "correct-version",
+      "name": "正确版本",
+      "code": "function calendarProblem(year, month, day) {\n  // 判断是否闰年\n  function isLeapYear(y) {\n    return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);\n  }\n\n  // 每月天数，2月稍后处理\n  const daysInMonth = [31, 28, 31, 30, 31, 30,\n                       31, 31, 30, 31, 30, 31];\n\n  // 修正2月为闰年时为29天\n  if (isLeapYear(year)) {\n    daysInMonth[1] = 29;\n  }\n\n  // 日期合法性检查\n  if (\n    year < 1900 || year > 2100 ||\n    month < 1 || month > 12 ||\n    day < 1 || day > daysInMonth[month - 1]\n  ) {\n    return \"-1\"; // 非法输入\n  }\n\n  // 计算下一天\n  let nextYear = year;\n  let nextMonth = month;\n  let nextDay = day + 1;\n\n  if (nextDay > daysInMonth[month - 1]) {\n    nextDay = 1;\n    nextMonth++;\n    if (nextMonth > 12) {\n      nextMonth = 1;\n      nextYear++;\n      if (nextYear > 2100) return \"-1\"; // 超出范围\n    }\n  }\n\n  // 补0输出\n  const pad = (n) => n.toString().padStart(2, '0');\n  return `${nextYear}-${pad(nextMonth)}-${pad(nextDay)}`;\n}"
+    }
+  ]
+}
