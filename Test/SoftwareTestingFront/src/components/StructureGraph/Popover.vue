@@ -17,26 +17,52 @@
         ></path>
       </svg>
     </button>
-    <h3 class="popover-title">Popover Title</h3>
-    <TestCases :filename="props.popoverTableFilename" />
+    <h3 class="popover-title">{{ props.popoverTitle || '功能列表' }}</h3>
+    <div class="items-container">
+      <div 
+        v-for="item in props.items" 
+        :key="item.id" 
+        class="item-row"
+      >
+        <span class="item-name">{{ item.name }}</span>
+        <button 
+          class="jump-btn" 
+          @click="handleJump(item.id)"
+        >
+          跳转测试详情
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import TestCases from "./TestCases.vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 defineEmits(["close"]);
+
 const props = defineProps({
-  popoverTableFilename: {
+  popoverTitle: {
     type: String,
+    default: "功能列表"
   },
+  items: {
+    type: Array,
+    default: () => []
+  }
 });
+
+function handleJump(id) {
+  router.push({ path: `/project/integration/${id}` })
+}
 </script>
 
 <style scoped>
 .popover-card {
   background-color: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-  min-width: 50%;
+  min-width: 30%;
   max-height: 60%;
   overflow-y: auto;
   border: 1px solid #ccc;
@@ -56,9 +82,8 @@ const props = defineProps({
   padding: 10px;
   height: 35px;
   width: 50px;
-  border-radius: 8px;
   background: none;
-  border: 2px solid #ccc;
+  border: none;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
@@ -70,5 +95,55 @@ const props = defineProps({
 .icon {
   width: 100%;
   height: 100%;
+}
+
+.popover-title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.item-row:hover {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.item-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.jump-btn {
+  padding: 6px 12px;
+  background-color: #252525;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.jump-btn:hover {
+  background-color: #1a1a1a;
 }
 </style>

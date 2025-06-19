@@ -19,10 +19,10 @@
         fill="none"
         :stroke-linecap="props.strokeLinecap"
         :stroke-linejoin="props.strokeLinejoin"
-        @click="$emit('click-line')"
-        @mouseenter="hoveredSegment = index"
-        @mouseleave="hoveredSegment = -1"
-        class="click-area"
+        @click="props.enableClick && $emit('click-line')"
+        @mouseenter="props.enableClick && (hoveredSegment = index)"
+        @mouseleave="props.enableClick && (hoveredSegment = -1)"
+        :class="props.enableClick ? 'click-area' : 'no-click-area'"
       />
     </template>
 
@@ -76,6 +76,10 @@ const props = defineProps({
   margin: {
     type: Number,
     default: 10,
+  },
+  enableClick: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -143,6 +147,10 @@ svg {
 .click-area {
   cursor: pointer;
   pointer-events: all;
+}
+
+.no-click-area {
+  pointer-events: none;
 }
 
 .visible-line {

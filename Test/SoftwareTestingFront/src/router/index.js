@@ -25,15 +25,20 @@ const routes = [
         props: true
       },
       {
-        path: 'project/system',
-        component: () => import('../views/ProjecSystemtTest.vue'),
+        path: 'project/integration/:id',
+        component: () => import('../views/IntegrationTestView.vue'),
         props: true
+      },
+      {
+        path: 'project/system',
+        component: () => import('../views/ProjectSystemTest.vue'),
+        props: true
+      },
+      {
+        path: 'project/test',
+        component: () => import('../views/testVue.vue')
       }
     ]
-  },
-  {
-    path: '/test',
-    component: () => import('../views/testVue.vue')
   }
 ]
 
