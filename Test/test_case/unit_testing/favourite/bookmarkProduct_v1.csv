@@ -1,0 +1,20 @@
+用例编号,测试场景,userId,productId,预期输出,实际输出,用例来源,备注,运行结果
+TC_BOOKMARKPRODUCT01,,581960972537861,529237152305151,code=200, msg=取消收藏成功, data=null,code=200, msg=取消收藏成功, data=null,强一般等价类,ID均合法且存在，二者有订阅关系,1
+TC_BOOKMARKPRODUCT02,,581960972537861,529237152305152,code=200, msg=收藏成功, data=null,code=200, msg=收藏成功, data=null,强一般等价类,ID均合法且存在，二者无订阅关系,1
+TC_BOOKMARKPRODUCT03,,581960972537860,529237152305150,code=404, msg=未找到买家信息或商品信息, data=null,code=404, msg=未找到买家信息或商品信息, data=null,强一般等价类,ID均合法且不存在,1
+TC_BOOKMARKPRODUCT04,,581960972537860,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,强一般等价类,ID均合法，但 userId 不存在数据库,1
+TC_BOOKMARKPRODUCT05,,581960972537861,529237152305150,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,强一般等价类,ID均合法，但 productId 不存在数据库,1
+TC_BOOKMARKPRODUCT06,,null,529237152305151,code=400, msg=用户ID不能为空, data=null,报错,健壮边界值法,userId略低于最小值,0
+TC_BOOKMARKPRODUCT07,,"",529237152305151,code=400, msg=用户ID不能为空, data=null,报错,健壮边界值法,userId略低于最小值,0
+TC_BOOKMARKPRODUCT08,,0,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,健壮边界值法,userId最小值,1
+TC_BOOKMARKPRODUCT09,,1,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,健壮边界值法,userId略高于最小值,1
+TC_BOOKMARKPRODUCT10,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,健壮边界值法,userId略低于最大值,1
+TC_BOOKMARKPRODUCT11,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,健壮边界值法,userId最大值,1
+TC_BOOKMARKPRODUCT12,,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,529237152305151,code=404, msg=未找到买家信息, data=null,code=404, msg=未找到买家信息, data=null,健壮边界值法,userId略高于最大值,1
+TC_BOOKMARKPRODUCT13,,581960972537861,null,code=400, msg=商品ID不能为空, data=null,报错,健壮边界值法,productId略低于最小值,0
+TC_BOOKMARKPRODUCT14,,581960972537861,"",code=400, msg=商品ID不能为空, data=null,报错,健壮边界值法,productId略低于最小值,0
+TC_BOOKMARKPRODUCT15,,581960972537861,0,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,健壮边界值法,productId最小值,1
+TC_BOOKMARKPRODUCT16,,581960972537861,1,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,健壮边界值法,productId略高于最小值,1
+TC_BOOKMARKPRODUCT17,,581960972537861,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,健壮边界值法,productId略低于最大值,1
+TC_BOOKMARKPRODUCT18,,581960972537861,999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,健壮边界值法,productId最大值,1
+TC_BOOKMARKPRODUCT19,,581960972537861,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,code=404, msg=未找到商品信息, data=null,code=404, msg=未找到商品信息, data=null,健壮边界值法,productId略高于最大值,1

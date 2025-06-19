@@ -37,11 +37,6 @@ public class FavouriteService {
     @Value("${api.base-url}")
     private String baseUrl;
 
-    /*
-    把所有检查用户存不存在的接口都删掉了
-     */
-
-    /////////////////////////////////////////////////////////////////////////以下是面向内部接口
     @Transactional
     public Optional<Product> getProductById(String productId) {
         String url = baseUrl + "/api/productController/product/" + productId;
@@ -56,6 +51,9 @@ public class FavouriteService {
 
     @Transactional
     public List<Product> getProductsByStoreId(String storeId) {
+        if (storeId == null || storeId.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
         String url = baseUrl + "/api/productController/products/" + storeId;
         ResponseEntity<List<Product>> response = restTemplate.exchange(
                 url,
@@ -68,6 +66,9 @@ public class FavouriteService {
 
     @Transactional
     public Optional<Store> getStoreById(String storeId) {
+        if (storeId == null || storeId.trim().isEmpty()) {
+            return Optional.empty();
+        }
         String url = baseUrl + "/api/users/getStore/" + storeId;
         ResponseEntity<Optional<Store>> response = restTemplate.exchange(
                 url,
@@ -76,7 +77,7 @@ public class FavouriteService {
                 new ParameterizedTypeReference<>() {
                 }
         );
-        return response.getBody();
+        return Optional.ofNullable(response.getBody()).orElse(Optional.empty());
     }
 
     @Transactional
@@ -118,12 +119,11 @@ public class FavouriteService {
         return imageUrls;
     }
 
-
-    /////////////////////////////////////////////////////////////////////////以下是面向外部接口
-
     @Transactional
     public Result<List<FavouriteStoresDTO>>getFavouriteStores(String userId){
-
+        if (userId == null || userId.trim().isEmpty()) {
+            return Result.error(400, "用户ID不能为空");
+        }
         // 查询该用户收藏的所有店铺
         //list的是model
         List<BookmarkStore> bookmarkedStores = bookmarkStoreRepository.findByBuyerId(userId);
@@ -144,7 +144,6 @@ public class FavouriteService {
             favouriteStoreDTO.setStoreId(bookmarkStore.getStoreAccountId());
 
             // 获取店铺信息
-//            Store store = bookmarkStore.getStore();
             Store store = getStoreById(bookmarkStore.getStoreAccountId()).get();
             favouriteStoreDTO.setStoreName(store.getStoreName());
             favouriteStoreDTO.setStoreScore(store.getStoreScore());
@@ -247,6 +246,13 @@ public class FavouriteService {
 
     @Transactional
     public Result<String> bookmarkProduct(String userId, String productId) {
+        if (productId == null || productId.trim().isEmpty()) {
+            return Result.error(400, "商品ID不能为空");
+        }
+        if (userId == null || userId.trim().isEmpty()) {
+            return Result.error(400, "用户ID不能为空");
+        }
+
         Optional<Product> productOpt = getProductById(productId);
         if (productOpt.isEmpty()) {
             return Result.error(404, "未找到商品信息");
@@ -289,6 +295,10 @@ public class FavouriteService {
 
     @Transactional
     public Result<Boolean>isProductBookmarked(String userId, String productId){
+        if (userId == null || userId.trim().isEmpty() ||
+                productId == null || productId.trim().isEmpty()) {
+            return Result.error(500,"用户ID或商品ID不能为空");
+        }
         boolean isBookmarked = bookmarkProductRepository.existsByBuyerIdAndProductId(userId, productId);
         return Result.success(isBookmarked);
     }
