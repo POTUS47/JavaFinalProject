@@ -131,36 +131,41 @@ public class OrderItemService {
     // 获取||获取店铺所有订单评论
     @Transactional
     public Result<List<GetStoreRemarkDTO>> getStoreRemarks(String storeId) {
-        // 确认店铺存在
+        // 1. 参数校验（移到服务层）
+        if (storeId == null || storeId.trim().isEmpty()) {
+            return Result.error(400, "店铺ID不能为空");
+        }
+
+        // 2. 确认店铺存在
         Optional<Store> storeOpt = getStoreById(storeId);
         if (storeOpt.isEmpty()) {
-            return Result.error(404,"店铺不存在");
+            return Result.error(404, "店铺不存在");
         }
 
+        // 3. 查询店铺订单
         List<Order> orders = orderRepository.findByStoreId(storeId);
-        if (orders.isEmpty()) {
-            return Result.error(404,"店铺订单不存在");
-        }
 
+        // 4. 处理无评价情况（不再返回404，改为返回空列表）
         List<GetStoreRemarkDTO> getStoreRemarkDTOs = new ArrayList<>();
         for (Order order : orders) {
             String orderId = order.getOrderId();
             List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
 
             for (OrderItem orderItem : orderItems) {
-                if(orderItem.getScore()!=null) {
+                if (orderItem.getScore() != null) {
                     GetStoreRemarkDTO getStoreRemarkDTO = new GetStoreRemarkDTO();
                     getStoreRemarkDTO.setOrderId(orderId);
                     getStoreRemarkDTO.setOrderScore(orderItem.getScore());
                     getStoreRemarkDTO.setOrderRemark(orderItem.getRemark());
                     getStoreRemarkDTO.setBuyerName(order.getUsername());
-                    // order关联buyer,可调用父类getPhotoId()获取头像id
                     getStoreRemarkDTO.setBuyerAvatar(order.getBuyer().getPhotoId());
                     getStoreRemarkDTOs.add(getStoreRemarkDTO);
                 }
             }
         }
-        return Result.success(getStoreRemarkDTOs);
+
+        // 5. 统一返回成功（即使列表为空）
+        return Result.success("查询成功", getStoreRemarkDTOs);
     }
 
     // 类间接口？||判断是否存在当前商品的订单项

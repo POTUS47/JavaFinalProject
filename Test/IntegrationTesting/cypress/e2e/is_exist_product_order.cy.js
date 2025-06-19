@@ -1,79 +1,78 @@
-describe('获取店铺评价接口测试', () => {
-    const API_URL = `${Cypress.env('apiUrl')}/shopping/order/get-store-remarks`;
+describe('商品订单存在检查接口测试', () => {
+    const API_URL = `${Cypress.env('apiUrl')}/shopping/order/is-exist-product-order`;
 
-    // 测试用例1：获取存在店铺的所有评价
-    it('TC_STOREREMARK01 - 获取存在店铺的所有评价', () => {
+    // 测试用例1：存在订单的商品
+    it('TC_EXISTPRO01 - 存在订单的商品', () => {
         cy.request({
             method: 'GET',
             url: API_URL,
             qs: {
-                storeId: "529233017020416"
+                productId: "p529235889053696"
             }
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.code).to.eq(200);
-            expect(response.body.data).to.be.an('array').that.is.not.empty;
+            expect(response.body.data).to.be.true;
         });
     });
 
-    // 测试用例2：获取无评价的店铺
-    it('TC_STOREREMARK02 - 获取无评价的店铺', () => {
+    // 测试用例2：商品存在但没有被下单
+    it('TC_EXISTPRO02 - 商品存在但无订单', () => {
         cy.request({
             method: 'GET',
             url: API_URL,
             qs: {
-                storeId: "532695677235200"
+                productId: "p532746239836160"
             }
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.code).to.eq(200);
-            expect(response.body.data).to.be.an('array').that.is.empty;
+            expect(response.body.data).to.be.false;
         });
     });
 
-    // 测试用例3：店铺ID不存在
-    it('TC_STOREREMARK03 - 店铺ID不存在', () => {
+    // 测试用例3：商品ID不存在
+    it('TC_EXISTPRO03 - 商品ID不存在', () => {
         cy.request({
             method: 'GET',
             url: API_URL,
             qs: {
-                storeId: "529233017012345"
+                productId: "p529234076812345"
             },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(404);
             expect(response.body.code).to.eq(404);
-            expect(response.body.message).to.include('店铺不存在');
+            expect(response.body.message).to.eq('商品不存在');
         });
     });
 
-    // 测试用例4：店铺ID为空
-    it('TC_STOREREMARK04 - 店铺ID为空', () => {
-        // 测试null
+    // 测试用例4：商品ID为空
+    it('TC_EXISTPRO04 - 商品ID为空', () => {
+        // 测试null情况
         cy.request({
             method: 'GET',
             url: API_URL,
             qs: {
-                storeId: null
+                productId: null
             },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(400);
             expect(response.body.code).to.eq(400);
-            expect(response.body.message).to.eq('店铺ID不能为空');
+            expect(response.body.message).to.eq('productId 不能为空');
         });
 
-        // 测试空字符串
+        // 测试空字符串情况
         cy.request({
             method: 'GET',
             url: API_URL,
             qs: {
-                storeId: ''
+                productId: ''
             },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(400);
-            expect(response.body.code).to.eq(400);
         });
     });
 });

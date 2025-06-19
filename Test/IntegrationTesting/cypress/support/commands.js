@@ -1,39 +1,35 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
 // cypress/support/commands.js
-Cypress.Commands.add('login', () => {
-    cy.request('POST', `${Cypress.env('apiUrl')}/users/login`, {
-        identifier: Cypress.env('testUser').identifier,
-        password: Cypress.env('testUser').password
+// Cypress.Commands.add('login', () => {
+//     cy.request('POST', `${Cypress.env('apiUrl')}/users/login`, {
+//         identifier: Cypress.env('testUser').identifier,
+//         password: Cypress.env('testUser').password
+//     }).then((response) => {
+//         expect(response.status).to.eq(200)
+//         window.localStorage.setItem('token', response.body.data.JwtToken)
+//     })
+// })
+
+Cypress.Commands.add('login', (email, password) => {
+    cy.request({
+        method: 'POST',
+        url: `${Cypress.env('apiUrl')}/users/login`,
+        body: {
+            identifier: email,
+            password: password
+        },
+        failOnStatusCode: false // 允许测试失败登录
     }).then((response) => {
-        expect(response.status).to.eq(200)
-        window.localStorage.setItem('token', response.body.data.JwtToken)
-    })
-})
+        console.log('【浏览器控制台】完整响应:', response); // 浏览器控制台打印
+        console.log('【Cypress日志】状态码:', response.status); // Cypress命令行打印
+        console.log('【Cypress日志】响应体:', response.body);
+        if (response.status === 200) {
+            window.localStorage.setItem('token', response.body.data.JwtToken);
+            const token = window.localStorage.getItem('token');
+            console.log('【浏览器】localStorage.token:', token);
+        }
+        return response;
+    });
+});
 
 // // cypress/support/commands.js
 // Cypress.Commands.add('login', () => {
