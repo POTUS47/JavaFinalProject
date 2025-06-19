@@ -1,7 +1,62 @@
 {
-    "external-api":{
-        "id": "external-api",
+    "sendEmail": {
+        "id": "sendEmail",
         "name": "发送邮箱验证码",
-        "description": "接口描述接口描述接口描述接口描述接口描述接口描述"
+        "description": "第三方接口：发送邮箱验证码",
+        "version": ["v1", "v2"]
+    },
+    "get-all-buyer-orders": {
+        "id": "get-all-buyer-orders",
+        "name": "获取某用户的全部订单",
+        "description": "前后端接口：获取某用户的全部订单",
+        "version": ["v1"]
+    },
+    "get-one-order": {
+        "id": "get-one-order",
+        "name": "获取订单详情",
+        "description": "前后端接口：获取订单详情",
+        "version": ["v1"]
+    },
+    "remark-order-item": {
+        "id": "remark-order-item",
+        "name": "评价订单项",
+        "description": "前后端接口：评价订单项",
+        "version": ["v1", "v2"]
+    },
+    "get-store-remarks": {
+        "id": "get-store-remarks",
+        "name": "获取店铺评价",
+        "description": "前后端接口：获取店铺评价",
+        "version": ["v1", "v2"]
+    },
+    "get-favourite-products": {
+        "id": "get-favourite-products",
+        "name": "获取收藏商品列表",
+        "description": "前后端接口：获取收藏商品列表",
+        "version": ["v1", "v2"]
+    },
+    "bookmark-product": {
+        "id": "bookmark-product",
+        "name": "收藏商品",
+        "description": "前后端接口：收藏商品",
+        "version": ["v1", "v2"]
+    },
+    "exist-pro": {
+        "id": "exist-pro",
+        "name": "商品是否存在于订单项",
+        "description": "类间接口：商品是否存在于订单项",
+        "version": ["v1"]
+    },
+    "have-item": {
+        "id": "have-item",
+        "name": "判断买家是否有权限修改某订单项状态",
+        "description": "子系统间接口：判断买家是否有权限修改某订单项状态",
+        "version": ["v1", "v2"]
+    },
+    "end-return": {
+        "id": "end-return",
+          "name": "更改订单项的状态为售后结束",
+        "description": "子系统间接口：更改订单项的状态为售后结束",
+        "version": ["v1"]
     }
 }

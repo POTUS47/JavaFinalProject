@@ -11,28 +11,23 @@ const routes = [
       },
       {
         path: 'exercise/:id',
-        component: () => import('../views/ExerciseTest.vue'),
-        props: true
+        component: () => import('../views/ExerciseTest.vue')
       },
       {
         path: 'project/unit',
-        component: () => import('../views/ProjectUnitTest.vue'),
-        props: true
+        component: () => import('../views/ProjectUnitTest.vue')
       },
       {
         path: 'project/integration',
-        component: () => import('../views/ProjectIntegrationTest.vue'),
-        props: true
+        component: () => import('../views/ProjectIntegrationTest.vue')
       },
       {
         path: 'project/integration/:id',
-        component: () => import('../views/IntegrationTestView.vue'),
-        props: true
+        component: () => import('../views/IntegrationTestView.vue')
       },
       {
         path: 'project/system',
-        component: () => import('../views/ProjectSystemTest.vue'),
-        props: true
+        component: () => import('../views/ProjectSystemTest.vue')
       },
       {
         path: 'project/test',

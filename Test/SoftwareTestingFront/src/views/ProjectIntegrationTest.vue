@@ -14,13 +14,14 @@ import StructureGraph from "@/components/StructureGraph/StructureGraph.vue";
 const router = useRouter();
 
 const jumpToExternalAPI = () => {
-  router.push({ path: '/project/integration/external-api' })
+  router.push({ path: '/project/integration/sendEmail' })
 }
 </script>
 
 <style scoped>
 .main-container {
   display: flex;
+  padding: 20px;
 }
 
 .jump-button {

@@ -103,7 +103,6 @@ onMounted(async () => {
 
 .main {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
   height: 100%;
   background-color: #fff;

@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs-container">
+  <div class="main">
     <el-tabs v-model="selectedClass" class="tabs" @tab-click="handleTabsClick">
       <el-tab-pane 
         v-for="className in dataList.classList"
@@ -238,6 +238,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.main{
+  padding: 20px;
+}
+
 .tabs{
   --el-tabs-header-height: 50px;
   --el-color-primary: #252525;

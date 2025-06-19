@@ -423,8 +423,8 @@
       "popoverTitle": "类间接口",
       "items": [
         {
-          "id": "is-exist-product-order",
-          "name": "类间接口：商品是否存在于订单"
+          "id": "exist-pro",
+          "name": "类间接口：商品是否存在于订单项"
         }
       ]
     },
