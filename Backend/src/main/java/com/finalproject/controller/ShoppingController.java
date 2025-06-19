@@ -13,8 +13,10 @@ import com.finalproject.service.OrderItemService;
 import com.finalproject.service.ProductService;
 import com.finalproject.service.OneYuanShoppingRecordService;
 import com.finalproject.DTO.OneYuanShoppingRecordDTOs.OneYuanShoppingRecordDTO;
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -52,9 +54,14 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取用户收藏的商品 todo
+    // 获取用户收藏的商品 todo ok
     @GetMapping("/favourite/get-favourite-products")
     public ResponseEntity<Result<List<FavouriteProductsDTO>>> getFavouriteProducts(Authentication authentication) {
+        // 检查认证信息
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Result.error(HttpStatus.UNAUTHORIZED.value(), "用户未登录"));
+        }
         String userId = (String) authentication.getPrincipal();
         Result<List<FavouriteProductsDTO>> response = favouriteService.getFavouriteProducts(userId);
         return ResponseEntity.status(response.getCode()).body(response);
@@ -68,9 +75,19 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 收藏商品 todo
+    // 收藏商品 todo ok
     @PostMapping("/favourite/bookmark-product")
     public ResponseEntity<Result<String>> bookmarkProduct(@RequestBody ProductIdDTO model, Authentication authentication) {
+        // 检查认证信息
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Result.error(HttpStatus.UNAUTHORIZED.value(), "Unauthorized"));
+        }
+        // 2. 检查请求体参数
+        if (model == null || model.getProductId() == null || model.getProductId().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Result.error(HttpStatus.BAD_REQUEST.value(), "商品ID不能为空"));
+        }
         String userId = (String) authentication.getPrincipal();
         Result<String> response = favouriteService.bookmarkProduct(userId,model.getProductId());
         return ResponseEntity.status(response.getCode()).body(response);
@@ -119,9 +136,13 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 添加商品评价 todo
+    // 添加商品评价 todo ok
     @PutMapping("/order/remark-order-item")
     public ResponseEntity<Result<String>> remarkOrderItem(@RequestBody UpdateOrderItemRemarkDTO updateOrderItemRemarkDTO) {
+        if (updateOrderItemRemarkDTO.getScore() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Result.error(HttpStatus.BAD_REQUEST.value(), "评分不能为空"));
+        }
         Result<String>response = orderItemService.remarkOrderItem(updateOrderItemRemarkDTO);
         return ResponseEntity.status(response.getCode()).body(response);
     }
@@ -133,17 +154,26 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取店铺所有订单评论 todo
+    // 获取店铺所有订单评论 todo ok
     @GetMapping("/order/get-store-remarks")
     public ResponseEntity<Result<List<GetStoreRemarkDTO>>> getStoreRemarks(@RequestParam String storeId) {
+        // 1. 参数校验（强化校验逻辑）
+        if (storeId == null || storeId.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Result.error(400, "店铺ID不能为空"));
+        }
         Result<List<GetStoreRemarkDTO>> response = orderItemService.getStoreRemarks(storeId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 判断是否存在当前商品的订单项
+    // 判断是否存在当前商品的订单项 todo ok
     @GetMapping("/order/is-exist-product-order")
-    public ResponseEntity<Result<Boolean>> IsExistProductOrder(@RequestParam ProductIdDTO productIdDTO) {
-        Result<Boolean> response = orderItemService.isExistProductOrder(productIdDTO.getProductId());
+    public ResponseEntity<Result<Boolean>> IsExistProductOrder(@RequestParam String productId) {
+        // 1. 参数校验（空值检查）
+        if (productId==null || productId.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Result.error(400, "productId 不能为空"));
+        }
+        Result<Boolean> response = orderItemService.isExistProductOrder(productId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -162,10 +192,14 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 更改订单项的状态为售后结束(子系统接口)todo
-    @PutMapping("/order/end_return/{item_id}")
+    // 更改订单项的状态为售后结束(子系统接口)todo ok
+    @PutMapping({"/order/end_return/{item_id}", "/order/end_return/"}) // 添加空路径映射
     public ResponseEntity<Result<Map<String,String>>>
-    endReturnOrderItem(@PathVariable String item_id){
+    endReturnOrderItem(@PathVariable(required = false) String item_id){
+        // 1. 参数校验
+        if (item_id==null || item_id.trim().isEmpty()) {
+            return ResponseEntity.status(400).body(Result.error(400, "item_id 不可为空"));
+        }
         Result<Map<String,String>> response =orderItemService.endAfterSell(item_id);
         return ResponseEntity.status(response.getCode()).body(response);
     }
@@ -217,12 +251,18 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 判断买家是否有权限修改某订单项状态（子系统接口）todo
-    @GetMapping("/order/buyer/have_item/{user_id}/{item_id}")
+    // 判断买家是否有权限修改某订单项状态（子系统接口）todo ok
+    @GetMapping({"/order/buyer/have_item/{user_id}/{item_id}", "/order/buyer/have_item/{user_id}/"})
     public ResponseEntity<Result<Map<String,String>>>
-    checkBuyerForItemChange(@PathVariable String user_id,@PathVariable String item_id){
+    checkBuyerForItemChange(@PathVariable String user_id, @PathVariable(required = false) String item_id) {
+        if (user_id == null || user_id.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Result.error(400, "userId不能为空"));
+        }
+        if (item_id == null || item_id.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Result.error(400, "item_id不能为空"));
+        }
         Result<Map<String,String>> response = orderItemService.
-                isUserExistOrderItem(user_id,item_id);
+                isUserExistOrderItem(user_id, item_id);
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
@@ -243,9 +283,14 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取当前买家所有订单信息 todo
+    // 获取当前买家所有订单信息 todo ok
     @GetMapping("/order/get-all-buyer-orders")
     public ResponseEntity<Result<List<OrderCenterDTO>>> getAllBuyerOrders(Authentication authentication) {
+        // 检查认证信息
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Result.error(HttpStatus.UNAUTHORIZED.value(), "Unauthorized"));
+        }
         String userId = (String) authentication.getPrincipal();
         Result<List<OrderCenterDTO>> response = orderService.getBuyersAllOrders(userId);
         return ResponseEntity.status(response.getCode()).body(response);
@@ -259,9 +304,12 @@ public class ShoppingController {
         return ResponseEntity.status(response.getCode()).body(response);
     }
 
-    // 获取单个订单信息 todo
+    // 获取单个订单信息 todo ok
     @GetMapping("/order/get-one-order")
-    public ResponseEntity<Result<OrderCenterDTO>> getOneOrder(@RequestParam String orderId) {
+    public ResponseEntity<Result<OrderCenterDTO>> getOneOrder(@RequestParam String orderId) {// 1. 参数校验（空值检查）
+        if (orderId==null || orderId.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Result.error(400, "orderId不能为空"));
+        }
         Result<OrderCenterDTO> response = orderService.getOneOrder(orderId);
         return ResponseEntity.status(response.getCode()).body(response);
     }

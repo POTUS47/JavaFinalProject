@@ -19,11 +19,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 
 @Service
@@ -518,7 +514,7 @@ public class OrderService {
         // 查找该买家的所有订单信息
         List<Order> orders = orderRepository.findByBuyerId(userId);
         if (orders == null || orders.isEmpty()) {
-            return Result.error(404,"无相关用户订单");
+            return Result.success("无相关用户订单", Collections.emptyList());
         }
         Result<List<OrderCenterDTO>> response=getAllOrders(orders);
         return Result.success(response.getData());
