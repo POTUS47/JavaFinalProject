@@ -7,6 +7,11 @@
       "id": "correct-version",
       "name": "正确版本",
       "code": "function calculateSalesCommission(hosts, displays, peripherals) {\n  if (hosts === -1) {\n    return \"输入为结束信号：无需计算销售额与佣金。\";\n  }\n\n  // 最大数量限制\n  if (\n    hosts < 1 || hosts > 70 ||\n    displays < 1 || displays > 80 ||\n    peripherals < 1 || peripherals > 90\n  ) {\n    return \"输入错误：某个组件数量超出限制范围或未能组成至少一台完整电脑。\";\n  }\n\n  // 计算总销售额\n  const totalSales =\n    hosts * 25 +\n    displays * 30 +\n    peripherals * 45;\n\n  // 计算佣金\n  let commissionRate = 0.1;\n  if (totalSales > 1800) {\n    commissionRate = 0.2;\n  } else if (totalSales > 1000) {\n    commissionRate = 0.15;\n  }\n  const commission = totalSales * commissionRate;\n\n  return `销售总额为 ¥${totalSales}，佣金为 ¥${commission.toFixed(2)}（提成比例：${commissionRate * 100}%）`;\n}"
+    },
+    {
+      "id": "wrong-version",
+      "name": "错误版本",
+      "code": "function calculateSalesCommission(hosts, displays, peripherals) {\n  // 错误版本：计算佣金时判断区间的顺序反了，导致判断错误\n  if (hosts === -1) {\n    return \"输入为结束信号：无需计算销售额与佣金。\";\n  }\n\n  // 最大数量限制\n  if (\n    hosts < 1 || hosts > 70 ||\n    displays < 1 || displays > 80 ||\n    peripherals < 1 || peripherals > 90\n  ) {\n    return \"输入错误：某个组件数量超出限制范围或未能组成至少一台完整电脑。\";\n  }\n\n  // 计算总销售额\n  const totalSales =\n    hosts * 25 +\n    displays * 30 +\n    peripherals * 45;\n\n  // 计算佣金\n  let commissionRate = 0.1;\n  if (totalSales > 1000) {\n    commissionRate = 0.15;\n  } else if (totalSales > 1800) {\n    commissionRate = 0.2;\n  }\n  const commission = totalSales * commissionRate;\n\n  return `销售总额为 ¥${totalSales}，佣金为 ¥${commission.toFixed(2)}（提成比例：${commissionRate * 100}%）`;\n}"
     }
   ]
 }

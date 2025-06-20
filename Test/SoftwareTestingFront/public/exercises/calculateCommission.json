@@ -7,6 +7,11 @@
       "id": "correct-version",
       "name": "正确版本",
       "code": "function calculateCommission(salesAmount, leaveDays, cashReceivedPercent) {\n  if (salesAmount < 0) {\n    return \"销售额不能为负数\";\n  }\n  if (leaveDays < 0) {\n    return \"请假天数不能为负数\";\n  }\n  if (cashReceivedPercent < 0 || cashReceivedPercent > 100) {\n    return \"现金到账百分比应在0~100之间\";\n  }\n  if (salesAmount > 2000000 && leaveDays <= 10) {\n    if (cashReceivedPercent >= 60) {\n      return `佣金为：${(salesAmount / 7).toFixed(2)} 元`;\n    } else {\n      return \"现金到帐不足60%，不计算佣金\";\n    }\n  } else {\n    if (cashReceivedPercent <= 85) {\n      return `佣金为：${(salesAmount / 6).toFixed(2)} 元`;\n    } else {\n      return `佣金为：${(salesAmount / 5).toFixed(2)} 元`;\n    }\n  }\n}"
+    },
+    {
+      "id": "wrong-version",
+      "name": "错误版本",
+      "code": "function calculateCommission(salesAmount, leaveDays, cashReceivedPercent) {\n  if (salesAmount < 0) {\n    return \"销售额不能为负数\";\n  }\n  if (leaveDays < 0) {\n    return \"请假天数不能为负数\";\n  }\n  if (cashReceivedPercent < 0 || cashReceivedPercent > 100) {\n    return \"现金到账百分比应在0~100之间\";\n  }\n  if (salesAmount > 2000000 && leaveDays <= 10) {\n    if (cashReceivedPercent >= 85) {\n      return `佣金为：${(salesAmount / 7).toFixed(2)} 元`;\n    } else {\n      return \"现金到帐不足60%，不计算佣金\";\n    }\n  } else {\n    if (cashReceivedPercent <= 60) {\n      return `佣金为：${(salesAmount / 6).toFixed(2)} 元`;\n    } else {\n      return `佣金为：${(salesAmount / 5).toFixed(2)} 元`;\n    }\n  }\n}"
     }
   ]
 }

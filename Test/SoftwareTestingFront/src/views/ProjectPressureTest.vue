@@ -3,7 +3,7 @@
         <div class="title">登录功能压力测试报告</div>
         <div class="select-group">
           <label>测试用例类别：</label>
-          <select v-model="selectedVersion">
+          <select v-model="selectedVersionId">
             <option v-for="version in testVersion" :key="version.id" :value="version.id">
               {{ version.name }}
             </option>
@@ -24,7 +24,6 @@
 <script setup>
 import { computed, ref } from 'vue'
 
-const selectedVersion = ref(1) // 默认选择第一个版本
 const testVersion = ref([
     { id: 1, name: '20并发测试版本', url: '/pressureTest/report20/index.html' },
     { id: 2, name: '25并发测试版本', url: '/pressureTest/report25/index.html' },
@@ -34,8 +33,9 @@ const testVersion = ref([
     { id: 6, name: '45并发测试版本', url: '/pressureTest/report45/index.html' },
     { id: 7, name: '50并发测试版本', url: '/pressureTest/report50/index.html' }
 ])
+const selectedVersionId = ref(1) // 默认选择第一个版本
 const selectedUrl = computed(() => {
-    const version = testVersion.value.find(v => v.id === selectedVersion.value)
+    const version = testVersion.value.find(v => v.id === selectedVersionId.value)
     return version ? version.url : ''
 })
 
