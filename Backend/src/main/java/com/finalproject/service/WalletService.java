@@ -82,6 +82,8 @@ public class WalletService {
         }
         wallet.get().setBalance(wallet.get().getBalance().subtract(amount));
         walletRepository.save(wallet.get());
+//        Optional<Wallet> wallet1=walletRepository.findByAccountId(userId);
+//        System.out.println("找BUG"+wallet1.get().getBalance());
         BigDecimal newBalance=wallet.get().getBalance();
         Map<String, String> data = new HashMap<>();
         data.put("message", "消费成功！");
@@ -92,15 +94,19 @@ public class WalletService {
 
     // 买家支付，商家得利
     public Result<Map<String, String>> transferMoney(String userId, String storeId, BigDecimal amount) {
+        System.out.println("进入进入进入");
         Result<Map<String, String>> payResult = subtract(userId, amount);
+        System.out.println("成功信息"+payResult.getData());
+
         if(payResult.getCode()!=200){
+            System.out.println("失败了");
             return payResult;
         }
         Optional<Store> storeOpt=getStoreById(storeId);
         if (storeOpt.isEmpty()) {
             return Result.error(404,"商家不存在");
         }
-        Result<Map<String, String>> recharge = recharge(userId, amount);
+        Result<Map<String, String>> recharge = recharge(storeId, amount);
         if(recharge.getCode()!=200){
             return recharge;
         }

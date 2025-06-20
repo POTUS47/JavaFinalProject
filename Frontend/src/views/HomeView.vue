@@ -182,7 +182,7 @@ const fetchRecommendProducts = async () => {
   try {
     const response = await axiosInstance.post('/productController/recommend/user');
     products.value = response.data.data;
-    console.log('返回数据', response.data);
+    console.log('推荐商品列表返回数据', response.data);
 
     if (response.data) {
       products.value = response.data.data;

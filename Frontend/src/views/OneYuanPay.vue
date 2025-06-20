@@ -102,16 +102,16 @@
               right:60px;
               bottom:20px;
               position: absolute">支付￥ 1</el-button>
-        <el-dialog v-model="payVisible" width="20%" :style="{ borderRadius: '15px' }">
-          <div v-show="isPaySuccess === true">
+        <!-- <el-dialog v-model="payVisible" width="20%" :style="{ borderRadius: '15px' }">
+          <div v-if="isPaySuccess === true">
             <p class="text_pay_isSuccess">支付成功</p>
           </div>
-          <!-- <div v-show="isPaySuccess === false">
+          <div v-else>
             <p class="text_pay_isSuccess">支付失败</p>
             <p class="text_pay">钱包余额不足，请及时充值</p>
-          </div> -->
+          </div>
 
-        </el-dialog>
+        </el-dialog> -->
       </div>
     </div>
     <el-dialog v-model="payChoiceVisible" width="20%" :style="{ borderRadius: '15px' }">
@@ -342,8 +342,18 @@ const openPay = async () => {
       });
       isPaySuccess.value = true;
       confirmOneYuan();
+      ElMessage.success("支付成功");
+      setTimeout(() => {
+        const path = routerPath ? routerPath : '/home';
+        router.push(path);
+      }, 500);
     } catch (error) {
       isPaySuccess.value = false;
+      ElMessage.error("钱包余额不足，支付失败，请及时充值");
+      setTimeout(() => {
+        const path = routerPath ? routerPath : '/home';
+        router.push(path);
+      }, 500);
     }
   }
 }
