@@ -15,4 +15,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // vite.config.js
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000'
+      }
+    }
+  }
 })
+
