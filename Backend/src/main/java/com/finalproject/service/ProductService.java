@@ -48,7 +48,7 @@ public class ProductService {
     @Autowired
     private RestTemplate restTemplate;
 //    @Autowired
-//    private RecommendService recommendService;
+    private RecommendService recommendService;
 
     ProductService(){
         idGenerator = new SnowflakeIdGenerator();
@@ -372,8 +372,8 @@ public class ProductService {
 
         productRepository.save(product);
 
-//        recommendService.generateProductFeature(productId,newProduct.getDescription(),
-//                newProduct.getProductName());
+        recommendService.generateProductFeature(productId,newProduct.getDescription(),
+                newProduct.getProductName());
 
         return Result.success(productId);
     }
@@ -449,7 +449,7 @@ public class ProductService {
         Optional<Product> updatedProduct = productRepository.findById(dto.getProductId());
         if (updatedProduct.isPresent()) {
             Product newProduct = updatedProduct.get();
-            //recommendService.updateProductFeature(newProduct.getProductId(), product.getDescription(), newProduct.getProductName());
+            recommendService.updateProductFeature(newProduct.getProductId(), product.getDescription(), newProduct.getProductName());
         }
         productRepository.save(product);
 

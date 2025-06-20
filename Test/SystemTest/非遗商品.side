@@ -1,0 +1,1463 @@
+{
+  "id": "68a78ab4-f03c-4245-8668-3c59f4f70e19",
+  "version": "2.0",
+  "name": "非遗商品",
+  "url": "http://localhost:5173",
+  "tests": [{
+    "id": "678d5f1d-0272-4d6d-9b75-684c4d549c14",
+    "name": "ProductDetail",
+    "commands": [{
+      "id": "6350c595-e5be-485e-9a14-bceb33c170ec",
+      "comment": "",
+      "command": "open",
+      "target": "/home",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e753a488-4b2f-4191-a9e0-dd51a7207666",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fc427142-1c73-43db-8df9-cac4b4fe577e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b16fd609-0ae9-4829-819d-40e8b569e85a",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "54a524e9-2f2c-4ccb-80b7-62146783af1b",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "89a23f6f-b320-45b9-a56b-763f5f862627",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9dcb65cf-b01d-48f4-ba27-0b90446ebcfd",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item:nth-child(1) > h2",
+      "targets": [
+        ["css=.product-item:nth-child(1) > h2", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/div/div[2]/div/div/div/h2", "xpath:idRelative"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'青花瓷')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "966f19a4-1a84-4b39-8dc0-663ac9958965",
+    "name": "ProductCategory",
+    "commands": [{
+      "id": "4c4df066-850e-4374-a12e-57087e1952bb",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fd9b75ac-da6b-4f22-b6b9-17c91b9971ee",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3dc7373d-903c-4029-a258-c4275206b39f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4) > span",
+      "targets": [
+        ["css=.el-button:nth-child(4) > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9593c083-ad0f-4aca-94e3-7b068c1eb52a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8260ff30-fe46-46ac-a773-0e3ea13971e3",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b74ff5a5-67e1-4f67-abb5-cf96cb97380f",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c9c4802b-a8cb-4f6f-93a7-876a72e38bbf",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b3 > img",
+      "targets": [
+        ["css=.b3 > img", "css:finder"],
+        ["xpath=//img[@alt='织艺锦缎']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[3]/img", "xpath:idRelative"],
+        ["xpath=//div[3]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "410f3b78-0aae-4517-8b3f-9602b132ebea",
+      "comment": "",
+      "command": "click",
+      "target": "css=.category:nth-child(2)",
+      "targets": [
+        ["css=.category:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/aside/div[2]", "xpath:idRelative"],
+        ["xpath=//aside/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f568efb9-8c9c-4e2b-b3df-038c7c3dc728",
+      "comment": "",
+      "command": "click",
+      "target": "css=.category:nth-child(1)",
+      "targets": [
+        ["css=.category:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/aside/div", "xpath:idRelative"],
+        ["xpath=//aside/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1f5eb7da-8a69-45cd-b37b-0e9d440cdfaf",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6c655bb7-cd18-4054-9258-fcbfab53f5ab",
+      "comment": "",
+      "command": "click",
+      "target": "css=.category:nth-child(2)",
+      "targets": [
+        ["css=.category:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/aside/div[2]", "xpath:idRelative"],
+        ["xpath=//aside/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "037894b2-02cf-4891-a75b-e39b8645f95c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.category:nth-child(1)",
+      "targets": [
+        ["css=.category:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/aside/div", "xpath:idRelative"],
+        ["xpath=//aside/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "0aeb6d9c-ec42-427c-86fa-39021f492e91",
+    "name": "PurchaseNormal",
+    "commands": [{
+      "id": "bb8bcdae-43e8-4b35-9bd0-577cf042d206",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "214da390-90ce-43f5-866f-033e0a7033b3",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "31bb4b58-c8b3-43f2-a0e0-b390fcb397fc",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "458d8934-2706-45dd-81f8-541f8453b9b2",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b32796ed-f6ae-4e47-8d19-016893a74f05",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "14b1bae2-0a35-4c28-97b4-c58d90ea32b6",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "bef2bb22-4217-4d41-847f-f92f840f7169",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "35bec201-1e84-41b1-b4b6-e3e00baf5f6b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item:nth-child(1)",
+      "targets": [
+        ["css=.product-item:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/div/div[2]/div/div/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div[2]/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "00690a46-d312-41bb-b009-191c22eca265",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button--success",
+      "targets": [
+        ["css=.el-button--success", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[4]/div[2]/div[8]/button[2]", "xpath:idRelative"],
+        ["xpath=//div[8]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'购买')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5e004ac5-342b-4a52-b1c2-3d0d02851487",
+      "comment": "",
+      "command": "click",
+      "target": "css=.payMoney > span",
+      "targets": [
+        ["css=.payMoney > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[5]/div[5]/button/span", "xpath:idRelative"],
+        ["xpath=//div[5]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'支付￥359')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "32f8ce15-b934-488f-8fc8-49be0e1c92ec",
+    "name": "StoreDetail",
+    "commands": [{
+      "id": "f7e26772-c3cf-4b92-9ade-2e8279270fb6",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "774a3082-9b77-4e2e-b84d-af34e4814631",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "00085e6a-9157-4284-bd0e-175ea83a3ec2",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f9b3edc9-5d0d-4234-aa43-12017b0e3124",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "62f3179e-27d0-4d16-b811-2b68784f80dc",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "763b58fb-e4d0-4ff9-bffd-fe16148b8f26",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c31688a3-4d0b-499a-acce-a08a3a566ba6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3a4ee138-22bc-4c7a-91fa-77d50b966a36",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item:nth-child(1) > h2",
+      "targets": [
+        ["css=.product-item:nth-child(1) > h2", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/div/div[2]/div/div/div/h2", "xpath:idRelative"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'青花瓷')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b6942aa4-45a5-4861-90d6-93148a52b3ac",
+      "comment": "",
+      "command": "click",
+      "target": "css=.enterStore-button > span",
+      "targets": [
+        ["css=.enterStore-button > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button[2]/span", "xpath:idRelative"],
+        ["xpath=//button[2]/span", "xpath:position"],
+        ["xpath=//span[contains(.,'进入店铺')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "9c7e1c7b-9223-40fc-8daa-b07ad06de455",
+    "name": "FavProduct",
+    "commands": [{
+      "id": "eedaa4e8-0642-446d-8f79-9ec073894436",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "52f317be-ce9c-4584-998f-4b6d1124878d",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "89d7c391-96b4-417f-9fd8-6d22b9cef37c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d7d0aca6-e49c-4635-a24c-29578e20ac0a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "df3c6e16-6851-44b0-a457-0148911104d5",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6e86e21b-36cf-4401-8bf6-8558370f6a01",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eb569b86-9fb2-47b5-8abe-89fa5c44f708",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "7908eb4e-39d1-433b-88fb-5e2311ac0f52",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item:nth-child(1)",
+      "targets": [
+        ["css=.product-item:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/div/div[2]/div/div/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div[2]/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1adaac2d-54fd-4b2a-922d-889887426eaf",
+      "comment": "",
+      "command": "mouseDown",
+      "target": "css=.starStore-button > span",
+      "targets": [
+        ["css=.starStore-button > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'收 藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7adc9734-753e-4306-acb7-e8b1aa9a4c51",
+      "comment": "",
+      "command": "mouseUp",
+      "target": "css=.starStore-button",
+      "targets": [
+        ["css=.starStore-button", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'收 藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "15c3675b-3b7b-48ef-a11a-8a8f67d98a43",
+      "comment": "",
+      "command": "click",
+      "target": "css=.starStore-button",
+      "targets": [
+        ["css=.starStore-button", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'收 藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "1ce27e24-38b4-463e-9949-2de66d72e099",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.starStore-button",
+      "targets": [
+        ["css=.starStore-button", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'收 藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "777c32f8-006b-4a71-995e-89c3c005cce9",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.starStore-button",
+      "targets": [
+        ["css=.starStore-button", "css:finder"],
+        ["xpath=(//button[@type='button'])[2]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'已收藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "54d19dca-d653-44a2-8dcb-0138785755b7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.starStore-button > span",
+      "targets": [
+        ["css=.starStore-button > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'已收藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "10019694-3c3f-409d-ac72-0eee657d1c46",
+    "name": "FavStore",
+    "commands": [{
+      "id": "8975f154-cfa0-40c6-96b1-1b1453807f92",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e9dca2e8-9d42-4033-95a0-d680fb3f102e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6efa2038-6635-411d-8844-027529a9db71",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eb076d61-f37a-4966-b6ea-dd6a7cc039dc",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.navbar-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "47eedaef-405b-48a7-b814-eaa92673984b",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a00052ec-ca09-4fda-92b7-711766edeaff",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=商品",
+      "targets": [
+        ["linkText=商品", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'商品')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/merchandise/1')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'商品')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0a99a168-8e28-40bc-b437-cc16a2d77cb1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.b5 > img",
+      "targets": [
+        ["css=.b5 > img", "css:finder"],
+        ["xpath=//img[@alt='匠心器皿']", "xpath:img"],
+        ["xpath=//div[@id='app']/div/div/div/div/div/div[5]/img", "xpath:idRelative"],
+        ["xpath=//div[5]/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "567c2833-71ba-457c-9d31-3b1e77b7f6a5",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item:nth-child(1) > h2",
+      "targets": [
+        ["css=.product-item:nth-child(1) > h2", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div[2]/div/div/div[2]/div/div/div/h2", "xpath:idRelative"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'青花瓷')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5651cf55-97b4-4ee7-bdaf-6a7a7616e5b9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.enterStore-button > span",
+      "targets": [
+        ["css=.enterStore-button > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/button[2]/span", "xpath:idRelative"],
+        ["xpath=//button[2]/span", "xpath:position"],
+        ["xpath=//span[contains(.,'进入店铺')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "bc099a55-9c87-4636-a344-e7137c11ffc3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.favorite-inactive > span",
+      "targets": [
+        ["css=.favorite-inactive > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div[4]/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//div[4]/div/div/div[2]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'收藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f7f9c16e-546a-429f-971b-2a9ebd51892a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.favorite-active > span",
+      "targets": [
+        ["css=.favorite-active > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div[4]/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//div[4]/div/div/div[2]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'已收藏')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2ca2bc77-d157-4a7b-baab-677283c779a4",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "f32feda1-fda7-49ca-8531-81f913b0b6aa",
+    "name": "ViewFavorites",
+    "commands": [{
+      "id": "88e4e8d3-695a-4a43-b871-eb0822aa03a3",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "413e2d79-8616-4acb-a735-3da4ae88b940",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a2531b5d-e566-4944-bee6-f9e3b3e72947",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4) > span",
+      "targets": [
+        ["css=.el-button:nth-child(4) > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e5f778a7-772f-4154-a050-3fc7a50a964c",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=收藏夹",
+      "targets": [
+        ["linkText=收藏夹", "linkText"],
+        ["css=.navbar-item:nth-child(4) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'收藏夹')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[4]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/cart')]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'收藏夹')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "140c1032-4cc4-4d36-9a44-87e448f38fbf",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=收藏夹",
+      "targets": [
+        ["linkText=收藏夹", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'收藏夹')]", "xpath:link"],
+        ["xpath=//div[@id='app']/nav/div[3]/ul/li[4]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/cart')]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'收藏夹')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "50212491-dc05-4c4f-bcf5-859c904fa473",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=收藏夹",
+      "targets": [
+        ["linkText=收藏夹", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'收藏夹')]", "xpath:link"],
+        ["xpath=//div[@id='app']/nav/div[3]/ul/li[4]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/cart')]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'收藏夹')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ce378b13-2393-4814-9fcc-3839f66ea7f8",
+      "comment": "",
+      "command": "click",
+      "target": "id=category-2",
+      "targets": [
+        ["id=category-2", "id"],
+        ["css=#category-2", "css:finder"],
+        ["xpath=//div[@id='category-2']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/aside/div/div[2]", "xpath:idRelative"],
+        ["xpath=//aside/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "23a70bbb-e244-43cb-9eb9-aff21a8d9a13",
+      "comment": "",
+      "command": "click",
+      "target": "id=category-1",
+      "targets": [
+        ["id=category-1", "id"],
+        ["css=#category-1", "css:finder"],
+        ["xpath=//div[@id='category-1']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/aside/div/div", "xpath:idRelative"],
+        ["xpath=//aside/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "0300a3ca-99a6-4070-9157-9c04676fbba9",
+    "name": "ViewOrder",
+    "commands": [{
+      "id": "40b97593-5bb6-4596-bdc2-35ed268ece88",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e1bd34c3-00b8-4ff3-9545-13737ba1ef17",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "03a70f0d-d7d0-4c29-9971-895cb6388752",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4) > span",
+      "targets": [
+        ["css=.el-button:nth-child(4) > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9b99d212-36d0-4f92-871b-afc2398c5992",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=订单中心",
+      "targets": [
+        ["linkText=订单中心", "linkText"],
+        ["css=.navbar-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'订单中心')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/ordercentre')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'订单中心')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f6f61ee7-c0a0-43d4-a48d-821058b16a15",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-menu-item:nth-child(4)",
+      "targets": [
+        ["css=.el-menu-item:nth-child(4)", "css:finder"],
+        ["xpath=//div[@id='app']/section/aside/div[2]/ul/li[4]", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li[4]", "xpath:position"],
+        ["xpath=//li[contains(.,'运输中')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f0a14568-625a-4cba-a98f-cd0d0fa39d9d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-menu-item:nth-child(5)",
+      "targets": [
+        ["css=.el-menu-item:nth-child(5)", "css:finder"],
+        ["xpath=//div[@id='app']/section/aside/div[2]/ul/li[5]", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li[5]", "xpath:position"],
+        ["xpath=//li[contains(.,'已完成')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "4d481b6b-2423-4551-9d36-3bc2817f3012",
+    "name": "RemarkPro",
+    "commands": [{
+      "id": "5f8e8460-6c69-4406-9bc6-df206bcd6801",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "985a31b1-920d-43a7-8b06-9e1b4c6407c8",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "102afb71-0d07-42ef-acb4-db46cd99ebe4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4fe1a01f-ac52-4f3f-966f-d398254a8a07",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=订单中心",
+      "targets": [
+        ["linkText=订单中心", "linkText"],
+        ["css=.navbar-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'订单中心')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/ordercentre')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'订单中心')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2c10b749-d64f-4e31-b811-1a9aa0a5b2ba",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-table__row:nth-child(2) > .el-table_1_column_6 span",
+      "targets": [
+        ["css=.el-table__row:nth-child(2) > .el-table_1_column_6 span", "css:finder"],
+        ["xpath=//div[@id='app']/section/section/div/div/div[3]/div/div/div/table/tbody/tr[2]/td[6]/div/div/button/span", "xpath:idRelative"],
+        ["xpath=//tr[2]/td[6]/div/div/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'去评价')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3cc209df-390a-444b-ab68-c3bc0210b9ce",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[2]/div/input",
+      "targets": [
+        ["id=el-id-2754-12", "id"],
+        ["css=#el-id-2754-12", "css:finder"],
+        ["xpath=//input[@id='el-id-2754-12']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-2754-10']/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "73a83ba6-9ab1-47c6-b4d1-86a37fc9e05f",
+      "comment": "",
+      "command": "type",
+      "target": "xpath=//div[2]/div/input",
+      "targets": [
+        ["id=el-id-2754-12", "id"],
+        ["css=#el-id-2754-12", "css:finder"],
+        ["xpath=//input[@id='el-id-2754-12']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-2754-10']/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": "太好了"
+    }, {
+      "id": "c8fafcfd-3587-4c45-b823-57796a4fbe9c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hover > svg:nth-child(1)",
+      "targets": [
+        ["css=.hover > svg:nth-child(1)", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "41722bfe-1c31-40cb-afa0-fc112db2ac1c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button--primary",
+      "targets": [
+        ["css=.el-button--primary", "css:finder"],
+        ["xpath=(//button[@type='button'])[7]", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-2754-10']/button", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'确定')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "dc8c9c31-9bba-4268-8ce8-0c3b90f2d1ab",
+    "name": "OneYuan",
+    "commands": [{
+      "id": "fefd254f-6079-4918-afc1-fbfc55871808",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "656db03b-5783-426f-a409-47da75ff7c3a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1210x758",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e52de6d3-0416-45e1-9126-a595ad6e780e",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4)",
+      "targets": [
+        ["css=.el-button:nth-child(4)", "css:finder"],
+        ["xpath=//button[@type='button']", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9dae435a-5766-4e16-a05a-7082213f173e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=一元购",
+      "targets": [
+        ["linkText=一元购", "linkText"],
+        ["css=.navbar-item:nth-child(3) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'一元购')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/oneyuan')]", "xpath:href"],
+        ["xpath=//li[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'一元购')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e7483da6-032e-47c6-9258-f312049f6ddf",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=一元购",
+      "targets": [
+        ["linkText=一元购", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'一元购')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/nav/div[3]/ul/li[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/oneyuan')]", "xpath:href"],
+        ["xpath=//li[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'一元购')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "cdec7b61-2b78-4750-affa-3420c3663061",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=一元购",
+      "targets": [
+        ["linkText=一元购", "linkText"],
+        ["css=.active", "css:finder"],
+        ["xpath=//a[contains(text(),'一元购')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/nav/div[3]/ul/li[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/oneyuan')]", "xpath:href"],
+        ["xpath=//li[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'一元购')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9a03358d-3da2-4b4f-850c-fe2508cf467f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-item",
+      "targets": [
+        ["css=.product-item", "css:finder"],
+        ["xpath=(//div[@id='app']/div/div/div/div/div/div/div)[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "28a76daa-93ab-4d35-841d-9ecac46be95d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button--success",
+      "targets": [
+        ["css=.el-button--success", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//div[@id='app']/div[2]/div[4]/div[2]/div[10]/button[2]", "xpath:idRelative"],
+        ["xpath=//div[10]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'参与')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "cfd98d43-1569-480f-bfc0-4ff36bfe3287",
+      "comment": "",
+      "command": "click",
+      "target": "css=.changeAddress > span",
+      "targets": [
+        ["css=.changeAddress > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[3]/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//span", "xpath:position"],
+        ["xpath=//span[contains(.,'修改信息')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f9cd751d-185b-4317-a0aa-10d6df9f5f8c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.dialog-line:nth-child(1)",
+      "targets": [
+        ["css=.dialog-line:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='el-id-9421-10']/div/div", "xpath:idRelative"],
+        ["xpath=//div[3]/div[3]/div/div/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "98253769-2aa8-4a22-bbdb-bc874b6930b6",
+      "comment": "",
+      "command": "type",
+      "target": "xpath=//input",
+      "targets": [
+        ["id=el-id-7250-17", "id"],
+        ["css=#el-id-7250-17", "css:finder"],
+        ["xpath=//input[@id='el-id-7250-17']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-7250-10']/div/div/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "陈子雯"
+    }, {
+      "id": "f89db79d-c42d-4481-9d82-be4f650d7ec0",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[2]/div/div/input",
+      "targets": [
+        ["id=el-id-5713-18", "id"],
+        ["css=#el-id-5713-18", "css:finder"],
+        ["xpath=//input[@id='el-id-5713-18']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-5713-10']/div/div[2]/div[2]/div/div/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e8897673-798b-42b8-8dc6-f781b09f6f4f",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//span[contains(.,'北京市')]",
+      "targets": [
+        ["css=#el-id-9421-16-0-0 > .el-cascader-node__label", "css:finder"],
+        ["xpath=//li[@id='el-id-9421-16-0-0']/span", "xpath:idRelative"],
+        ["xpath=//li/span", "xpath:position"],
+        ["xpath=//span[contains(.,'北京市')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "13590d44-81e4-46f4-9f13-b4f472a83002",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[contains(.,'市辖区')]",
+      "targets": [
+        ["id=el-id-9421-20-1-1", "id"],
+        ["css=#el-id-9421-20-1-1", "css:finder"],
+        ["xpath=//li[@id='el-id-9421-20-1-1']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-9421-15']/div/div[2]/div/ul/li", "xpath:idRelative"],
+        ["xpath=//div[2]/div/ul/li", "xpath:position"],
+        ["xpath=//li[contains(.,'市辖区')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d908f9b9-dd36-457d-83e2-cb2a848243f9",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//span[contains(.,'东城区')]",
+      "targets": [
+        ["css=#el-id-9421-21-2-2 > .el-cascader-node__label", "css:finder"],
+        ["xpath=//li[@id='el-id-9421-21-2-2']/span", "xpath:idRelative"],
+        ["xpath=//div[3]/div/ul/li/span", "xpath:position"],
+        ["xpath=//span[contains(.,'东城区')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2c35589e-1dfd-48d7-b2ef-632ff10fc2bf",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//div[3]/div[2]/div/input",
+      "targets": [
+        ["id=el-id-8759-19", "id"],
+        ["css=#el-id-8759-19", "css:finder"],
+        ["xpath=//input[@id='el-id-8759-19']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-8759-10']/div/div[3]/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div[2]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "0aface98-1d20-4dae-af56-a5909ee15ed1",
+      "comment": "",
+      "command": "type",
+      "target": "xpath=//div[3]/div[2]/div/input",
+      "targets": [
+        ["id=el-id-9421-19", "id"],
+        ["css=#el-id-9421-19", "css:finder"],
+        ["xpath=//input[@id='el-id-9421-19']", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-9421-10']/div/div[3]/div[2]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div[2]/div/input", "xpath:position"]
+      ],
+      "value": "123"
+    }, {
+      "id": "7081ed09-55d2-4150-bc0f-fa716452520b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(2) > span",
+      "targets": [
+        ["css=.el-button:nth-child(2) > span", "css:finder"],
+        ["xpath=//div[@id='el-id-9421-10']/span/button[2]/span", "xpath:idRelative"],
+        ["xpath=//button[2]/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "565aa627-1672-4d3d-9338-bca79aae552b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.payMoney > span",
+      "targets": [
+        ["css=.payMoney > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[5]/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'支付￥ 1')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b5125811-9a38-493e-b8bc-846cec59366d",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.payMoney > span",
+      "targets": [
+        ["css=.payMoney > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[5]/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'支付￥ 1')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "204490bb-341e-47b5-93f8-776abd30e71a",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.payMoney > span",
+      "targets": [
+        ["css=.payMoney > span", "css:finder"],
+        ["xpath=//div[@id='app']/div[2]/div[5]/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'支付￥ 1')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4853b764-2686-499b-b8b6-85a5c3f4e9d7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(3)",
+      "targets": [
+        ["css=.el-button:nth-child(3)", "css:finder"],
+        ["xpath=(//button[@type='button'])[7]", "xpath:attributes"],
+        ["xpath=//div[@id='el-id-9421-14']/button", "xpath:idRelative"],
+        ["xpath=//div[6]/div/div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'确认支付')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d365cdc0-d961-4145-9887-1da73150bfa2",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "adae1b80-46be-4823-bb2f-8b76b17fbcdf",
+    "name": "ReturnPro",
+    "commands": [{
+      "id": "9f4efb66-539f-46cc-817f-536f8dfcacee",
+      "comment": "",
+      "command": "open",
+      "target": "/loginandregister",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d08f3826-0453-4637-af45-c916e564fb55",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1212x760",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b0e1309a-6233-4e06-b9d9-f2cc442616fc",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-button:nth-child(4) > span",
+      "targets": [
+        ["css=.el-button:nth-child(4) > span", "css:finder"],
+        ["xpath=//div[@id='app']/div/div/div/div[2]/button/span", "xpath:idRelative"],
+        ["xpath=//button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'登录')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ac0f1dc7-dc84-4578-b7a2-83e5e181c196",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=订单中心",
+      "targets": [
+        ["linkText=订单中心", "linkText"],
+        ["css=.navbar-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'订单中心')]", "xpath:link"],
+        ["xpath=//div[@id='app']/div/div/div/div/nav/div[3]/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/ordercentre')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'订单中心')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e3319600-8cdc-405e-a38a-01dd94efdf87",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-menu-item:nth-child(5)",
+      "targets": [
+        ["css=.el-menu-item:nth-child(5)", "css:finder"],
+        ["xpath=//div[@id='app']/section/aside/div[2]/ul/li[5]", "xpath:idRelative"],
+        ["xpath=//div[2]/ul/li[5]", "xpath:position"],
+        ["xpath=//li[contains(.,'已完成')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7e0f2230-36f4-45da-b9ec-4b23aabb958c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-table__row:nth-child(4) > .el-table_1_column_3 span",
+      "targets": [
+        ["css=.el-table__row:nth-child(4) > .el-table_1_column_3 span", "css:finder"],
+        ["xpath=//div[@id='app']/section/section/div/div/div[3]/div/div/div/table/tbody/tr[4]/td[3]/div/div/button/span", "xpath:idRelative"],
+        ["xpath=//td[3]/div/div/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'申请退货')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b753fd30-3f49-4d65-9d84-efbdf513d49b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.el-select__placeholder",
+      "targets": [
+        ["css=.el-select__placeholder", "css:finder"],
+        ["xpath=//div[@id='el-id-1177-10']/div/div/div/div[2]", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "626c9279-944e-4ef9-851e-3f97354d1a78",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[contains(.,'商品与图片不符')]",
+      "targets": [
+        ["id=el-id-1177-13", "id"],
+        ["css=#el-id-1177-13", "css:finder"],
+        ["xpath=//li[@id='el-id-1177-13']", "xpath:attributes"],
+        ["xpath=//ul[@id='el-id-1177-11']/li", "xpath:idRelative"],
+        ["xpath=//div/div/ul/li", "xpath:position"],
+        ["xpath=//li[contains(.,'商品与图片不符')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c7a26276-e9df-40a5-bff2-ad2d2784aa19",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//span[contains(.,'确 定')]",
+      "targets": [
+        ["css=.el-button--primary > span", "css:finder"],
+        ["xpath=//div[@id='el-id-1177-10']/div[3]/button/span", "xpath:idRelative"],
+        ["xpath=//div[3]/button/span", "xpath:position"],
+        ["xpath=//span[contains(.,'确 定')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "575403eb-c05a-451e-ac46-513e57d030aa",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["678d5f1d-0272-4d6d-9b75-684c4d549c14"]
+  }],
+  "urls": ["http://localhost:5173/"],
+  "plugins": []
+}
