@@ -9,6 +9,22 @@
       >
         <div class="class-container">
           <div class="class-content-up">
+            <div class="title">测试类状态图</div>
+            <button class="view-btn" @click="drawer = true">查看状态图覆盖情况</button>
+            <el-drawer v-model="drawer" :with-header="false">
+              <el-image
+                style="width: 100%;"
+                :src="imageUrl"
+                :zoom-rate="1.2"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="[imageUrl]"
+                show-progress
+                :initial-index="4"
+                fit="cover"
+              />
+            </el-drawer>
+
             <div class="title">测试对象选择</div>
             <div class="select-container">
               <div class="select-group">
@@ -37,7 +53,7 @@
                 </el-select>
               </div>
 
-              <button @click="handleTestClick" :disabled="isLoading">测试</button>
+              <button class="test-btn" @click="handleTestClick" :disabled="isLoading">测试</button>
             </div>
           </div>
 
@@ -70,8 +86,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue'
-import { ElTabs, ElTabPane, ElSelect, ElOption, ElNotification } from 'element-plus'
+import { ref, reactive, watch, onMounted, computed } from 'vue'
+import { ElTabs, ElTabPane, ElSelect, ElOption, ElNotification, ElDrawer } from 'element-plus'
 import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
 import TestResults from '../components/ProjectTestResults.vue'
@@ -95,6 +111,11 @@ const selectedVersion = ref('')
 const currentCode = ref('')
 const language = ref('java')
 const tableData = ref([])
+
+const drawer = ref(false)
+const imageUrl = computed(() => {
+  return `/unitTest/${selectedClass.value}/state.png`
+})
 
 // 加载单元测试基本数据
 const loadTestObjectsData = async () => {
@@ -298,7 +319,7 @@ onMounted(() => {
   padding: 10px 20px;
 }
 
-button {
+.test-btn {
   background-color: #252525;
   border: none;
   color: white;
@@ -310,11 +331,34 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.test-btn:hover {
   background-color: #1a1a1a;
 }
 
-button:disabled {
+.test-btn:disabled {
+  background-color: #888;
+  color: #eee;
+  cursor: not-allowed;
+}
+
+.view-btn {
+  background-color: #fff;
+  border: #bbb solid 1px;
+  color: #252525;
+  padding: 5px 24px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-btn:hover {
+  background-color: #ddd;
+  color: #fff;
+}
+
+.view-btn:disabled {
   background-color: #888;
   color: #eee;
   cursor: not-allowed;

@@ -6,8 +6,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
 function handleTestClick() {
     runSideTest();
 }
@@ -48,5 +46,24 @@ async function runSideTest() {
   font-weight: bold;
   color: #252525;
   margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 20px;
+  background-color: #252525;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #585858;
+}
+
+button:disabled {
+  background-color: #909090;
+  cursor: not-allowed;
 }
 </style> 
