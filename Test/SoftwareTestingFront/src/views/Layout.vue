@@ -19,6 +19,7 @@
           <router-link to="/project/unit">单元测试</router-link>
           <router-link to="/project/integration">集成测试</router-link>
           <router-link to="/project/system">系统测试</router-link>
+          <router-link to="/project/pressure">压力测试</router-link>
           <!-- <router-link to="/project/test">测试</router-link> -->
         </div>
       </div>

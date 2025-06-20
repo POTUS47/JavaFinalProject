@@ -4,8 +4,8 @@ TC_GETFAVOURITESTORES02,,581960972537861,"code=404, msg=没有收藏任何店铺
 TC_GETFAVOURITESTORES03,,581960972537862,"code=404, msg=没有收藏任何店铺, data=[]","code=404, msg=没有收藏任何店铺, data=[]",强一般等价类,用户ID合法但不存在于数据库,1
 TC_GETFAVOURITESTORES04,,null,"code=400, msg=用户ID不能为空, data=null","code=404, data=null",健壮边界值法,略低于最小值,0
 TC_GETFAVOURITESTORES05,,"","code=400, msg=用户ID不能为空, data=null","code=404, data=null",健壮边界值法,略低于最小值,0
-TC_GETFAVOURITESTORES06,,0,"code=404, msg=没有收藏任何店铺, data=[]","code=404, msg=没有收藏任何店铺, data=[]",健壮边界值法,最小值,1
-TC_GETFAVOURITESTORES07,,1,"code=404, msg=没有收藏任何店铺, data=[]","code=404, msg=没有收藏任何店铺, data=[]",健壮边界值法,略高于最小值,1
+TC_GETFAVOURITESTORES06,,0,"code=200, msg=ok, data=List<FavouriteStoresDTO>","code=200, msg=ok, data=List<FavouriteStoresDTO>",健壮边界值法,最小值,1
+TC_GETFAVOURITESTORES07,,1,"code=200, msg=ok, data=List<FavouriteStoresDTO>","code=200, msg=ok, data=List<FavouriteStoresDTO>",健壮边界值法,略高于最小值,1
 TC_GETFAVOURITESTORES08,,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,"code=404, msg=没有收藏任何店铺, data=[]","code=404, msg=没有收藏任何店铺, data=[]",健壮边界值法,略高于最大值,1
 TC_GETFAVOURITESTORES09,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,"code=200, msg=ok, data=List<FavouriteStoresDTO>","code=200, msg=ok, data=List<FavouriteStoresDTO>",健壮边界值法,最大值,1
 TC_GETFAVOURITESTORES10,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,"code=200, msg=ok, data=List<FavouriteStoresDTO>","code=200, msg=ok, data=List<FavouriteStoresDTO>",健壮边界值法,略低于最大值,1
