@@ -1,0 +1,20 @@
+用例编号,测试场景,userId,productId,预期输出,实际输出,用例来源,备注,运行结果
+TC_ISPRODUCTBOOKMARKED01,,581960972537861,529237152305151,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",强一般等价类,ID均合法且存在，二者有订阅关系,1
+TC_ISPRODUCTBOOKMARKED02,,581960972537861,529237152305152,"code=200, msg=ok, data=false","code=200, msg=ok, data=false",强一般等价类,ID均合法且存在，二者无订阅关系,1
+TC_ISPRODUCTBOOKMARKED03,,581960972537860,529237152305150,"code=200, msg=ok, data=false","code=200, msg=ok, data=false",强一般等价类,ID均合法且不存在,1
+TC_ISPRODUCTBOOKMARKED04,,581960972537860,529237152305151,"code=200, msg=ok, data=false","code=200, msg=ok, data=false",强一般等价类,ID均合法，但 userId 不存在数据库,1
+TC_ISPRODUCTBOOKMARKED05,,581960972537861,529237152305150,"code=200, msg=ok, data=false","code=200, msg=ok, data=false",强一般等价类,ID均合法，但 productId 不存在数据库,1
+TC_ISPRODUCTBOOKMARKED06,,null,529237152305151,"code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,userId略低于最小值,1
+TC_ISPRODUCTBOOKMARKED07,,"",529237152305151,"code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,userId略低于最小值,1
+TC_ISPRODUCTBOOKMARKED08,,0,529237152305151,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,userId最小值,1
+TC_ISPRODUCTBOOKMARKED09,,1,529237152305151,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,userId略高于最小值,1
+TC_ISPRODUCTBOOKMARKED10,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,529237152305151,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,userId略低于最大值,1
+TC_ISPRODUCTBOOKMARKED11,,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,529237152305151,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,userId最大值,1
+TC_ISPRODUCTBOOKMARKED12,,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,529237152305151,"code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,userId略高于最大值,1
+TC_ISPRODUCTBOOKMARKED13,,581960972537861,null,"code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,productId略低于最小值,1
+TC_ISPRODUCTBOOKMARKED14,,581960972537861,"","code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,productId略低于最小值,1
+TC_ISPRODUCTBOOKMARKED15,,581960972537861,0,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,productId最小值,1
+TC_ISPRODUCTBOOKMARKED16,,581960972537861,1,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,productId略高于最小值,1
+TC_ISPRODUCTBOOKMARKED17,,581960972537861,99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999998,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,productId略低于最大值,1
+TC_ISPRODUCTBOOKMARKED18,,581960972537861,999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,"code=200, msg=ok, data=true","code=200, msg=ok, data=true",健壮边界值法,productId最大值,1
+TC_ISPRODUCTBOOKMARKED19,,581960972537861,100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,"code=500, msg=用户ID或商品ID不能为空, data=null","code=500, msg=用户ID或商品ID不能为空, data=null",健壮边界值法,productId略高于最大值,1

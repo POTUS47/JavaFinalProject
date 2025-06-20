@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs-container">
+  <div class="main">
     <el-tabs v-model="selectedClass" class="tabs" @tab-click="handleTabsClick">
       <el-tab-pane 
         v-for="className in dataList.classList"
@@ -44,7 +44,7 @@
           <div>
             <!-- <div class="test-case">
               <div class="title">测试用例及结果</div>
-              <UnitTestResults :tableData="tableData" />
+              <TestResults :tableData="tableData" />
             </div>
             <div class="code">
               <div class="title">代码记录</div>
@@ -55,7 +55,7 @@
             <div v-if="showResult" class="class-content-down">
               <div class="test-case">
                 <div class="title">测试用例及结果</div>
-                <UnitTestResults :tableData="tableData" />
+                <TestResults :tableData="tableData" />
               </div>
               <div class="code">
                 <div class="title">代码记录</div>
@@ -74,7 +74,7 @@ import { ref, reactive, watch, onMounted } from 'vue'
 import { ElTabs, ElTabPane, ElSelect, ElOption, ElNotification } from 'element-plus'
 import Papa from 'papaparse'
 import CodeBlock from '../components/CodeBlock.vue'
-import UnitTestResults from '../components/UnitTestResults.vue'
+import TestResults from '../components/ProjectTestResults.vue'
 
 // 获取的单元测试基本数据
 const testObjectsData = ref({})
@@ -219,7 +219,7 @@ const handleTestClick = () => {
     await loadCaseResult(selectedClass.value, selectedFunc.value, selectedVersion.value)
     await loadCode(selectedClass.value, selectedFunc.value, selectedVersion.value)
     ElNotification({
-      title: '该函数单元测试成功!',
+      title: '该函数单元测试完成!',
       message: '可以下滑查看测试用例、结果和代码记录',
       type: 'success',
       showClose: false,
@@ -238,6 +238,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.main{
+  padding: 20px;
+}
+
 .tabs{
   --el-tabs-header-height: 50px;
   --el-color-primary: #252525;

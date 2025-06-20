@@ -10,5 +10,12 @@
     "deleteOrder": ["v1"],
     "payOrder": ["v1", "v2"],
     "receiveOrder": ["v1", "v2"]
+  },
+  "FavouriteClass": {
+    "bookmarkProduct": ["v1", "v2"],
+    "getFavouriteStores": ["v1", "v2"],
+    "getProductsByStoreId": ["v1", "v2"],
+    "getStoreById": ["v1", "v2"],
+    "isProductBookmarked": ["v1", "v2"]
   }
 }

@@ -146,6 +146,9 @@ th, td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ebeef5;
+  max-width: 200px;
+  word-break: break-all;
+  white-space: normal;
 }
 
 th {
